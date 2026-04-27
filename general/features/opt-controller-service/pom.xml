@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.optel.tmaster.dc</groupId>
+        <artifactId>feature-parent</artifactId>
+        <version>${changelist}</version>
+        <relativePath>../../../parent/feature-parent</relativePath>
+    </parent>
+
+    <groupId>com.optel.tmaster.dc.general</groupId>
+    <artifactId>opt-controller-service</artifactId>
+    <packaging>feature</packaging>
+
+    <name>OPTEL :: general :: opt-controller-service [Karaf Feature]</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>opt-base-util</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>controller-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>
+

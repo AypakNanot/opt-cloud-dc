@@ -1,0 +1,161 @@
+module opt-dci-performance {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:performance";
+    prefix "opt-dci-perf";
+
+    revision "2020-02-10" {
+        description "DCI PERFORMANCE";
+    }
+
+    import base-types  {prefix "base-types";}
+    import optel-oc-performance {prefix opt-oc-perf;}
+    import optel-oc-rpc {prefix opt-oc-rpc;}
+    import optel-oc-performance-types {prefix opt-oc-pm-types;}
+
+
+
+    rpc get-pm-data {
+        input {
+            uses base-types:ne-common-prop;
+            uses opt-oc-perf:get-pm-data-input-grouping;
+        }
+        output {
+            uses opt-oc-perf:get-pm-data-output-grouping;
+        }
+    }
+
+    rpc get-tca {
+        input {
+            uses base-types:ne-common-prop;
+            leaf pm-point {
+                type opt-oc-pm-types:pm-point-ref;
+                description
+                    "The path of the performance monitoring point";
+            }
+
+            leaf pm-parameter {
+                type opt-oc-pm-types:pm-parameter-type;
+                description
+                    "Types of performance monitoring parameters";
+            }
+
+            leaf pm-point-type {
+                type opt-oc-pm-types:pmp-object-type;
+                description
+                    "Categories of performance monitoring objects.";
+            }
+
+            leaf pm-granularity {
+                type opt-oc-pm-types:pm-granularity-type;
+                description
+                    "granularity of performance data";
+            }
+        }
+        output {
+            uses opt-oc-perf:performance-tca-top;
+        }
+    }
+
+    rpc set-tca {
+        input {
+            uses base-types:ne-common-prop;
+			leaf pm-point {
+                type opt-oc-pm-types:pm-point-ref;
+                description
+                    "The path of the performance monitoring point";
+            }
+
+            leaf pm-parameter {
+                type opt-oc-pm-types:pm-parameter-type;
+                description
+                    "Types of performance monitoring parameters";
+            }
+
+            leaf pm-point-type {
+                type opt-oc-pm-types:pmp-object-type;
+                description
+                    "Categories of performance monitoring objects.";
+            }
+
+            leaf pm-granularity {
+                type opt-oc-pm-types:pm-granularity-type;
+                description
+                    "granularity of performance data";
+            }
+
+            uses opt-oc-perf:performance-tca-config;
+        }
+    }
+
+    rpc set-tca-list {
+            input {
+                uses base-types:ne-common-prop;
+                uses opt-oc-perf:performance-tca-top;
+                }
+        }
+
+    // 查询性能监控状态
+    rpc get-pm-pmp{
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list pm-point {
+                  type opt-oc-pm-types:pm-point-ref;
+                  description
+                      "The path of the performance monitoring point";
+              }
+        }
+        output {
+            list pmp {
+                key "pm-point pm-granularity";
+                description
+                    "List of performance point, keyed by path of performance.";
+                leaf pm-point {
+                    type opt-oc-pm-types:pm-point-ref;
+                    description
+                        "The path of the performance monitoring point";
+                }
+                leaf pm-granularity {
+                    type opt-oc-pm-types:pm-granularity-type;
+                    description
+                        "granularity of performance data";
+                }
+                uses opt-oc-perf:performance-pmp-config;
+            }
+        }
+    }
+
+    rpc set-pm-pmp {
+        input {
+            uses base-types:ne-common-prop;
+            leaf pm-point {
+	            type opt-oc-pm-types:pm-point-ref;
+	            description
+	                "The path of the performance monitoring point";
+	        }
+	        // cmcc 有，ctc 无
+	        leaf pm-granularity {
+                type opt-oc-pm-types:pm-granularity-type;
+                description
+                    "granularity of performance data";
+            }
+            uses opt-oc-perf:performance-pmp-config;
+        }
+    }
+
+        rpc set-pm-pmp-list {
+            input {
+                uses base-types:ne-common-prop;
+                uses opt-oc-perf:performance-pmp-top;
+            }
+        }
+
+	rpc reset-counter {
+		input {
+            uses base-types:ne-common-prop;
+			uses opt-oc-rpc:reset-counter-input-grouping;
+		}
+	}
+
+
+
+}

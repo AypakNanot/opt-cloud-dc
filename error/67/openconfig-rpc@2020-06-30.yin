@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:oc-rpc="http://openconfig.net/yang/rpc" xmlns:oc-types="http://openconfig.net/yang/openconfig-types" xmlns:oc-yang="http://openconfig.net/yang/types/yang" xmlns:oc-platform="http://openconfig.net/yang/platform" xmlns:oc-ext="http://openconfig.net/yang/openconfig-ext" xmlns:oc-opt-types="http://openconfig.net/yang/transport-types" xmlns:yang="urn:ietf:params:xml:ns:yang:ietf-yang-types" xmlns:oc-performance-types="http://openconfig.net/yang/performance/types" name="openconfig-rpc">
+    <yang-version value="1"/>
+    <namespace uri="http://openconfig.net/yang/rpc"/>
+    <prefix value="oc-rpc"/>
+    <import module="openconfig-types">
+        <prefix value="oc-types"/>
+    </import>
+    <import module="openconfig-yang-types">
+        <prefix value="oc-yang"/>
+    </import>
+    <import module="openconfig-platform">
+        <prefix value="oc-platform"/>
+    </import>
+    <import module="openconfig-extensions">
+        <prefix value="oc-ext"/>
+    </import>
+    <import module="openconfig-transport-types">
+        <prefix value="oc-opt-types"/>
+    </import>
+    <import module="ietf-yang-types">
+        <prefix value="yang"/>
+    </import>
+    <import module="openconfig-performance-types">
+        <prefix value="oc-performance-types"/>
+    </import>
+    <organization>
+        <text>private</text>
+    </organization>
+    <description>
+        <text>This YANG module contains all RPCs for OLS systems.
+  This module includes all RPCs usable by NETCONF.</text>
+    </description>
+    <oc-ext:openconfig-version semver="1.7.2"/>
+    <revision date="2020-06-30">
+        <description>
+            <text>Initial release version</text>
+        </description>
+        <reference>
+            <text>0.1.0</text>
+        </reference>
+    </revision>
+    <typedef name="rpc-result">
+        <type name="enumeration">
+            <enum name="SUCCESS">
+                <value value="0"/>
+                <description>
+                    <text>The RPC action is success</text>
+                </description>
+            </enum>
+            <enum name="FAIL">
+                <value value="1"/>
+                <description>
+                    <text>The RPC action is fail</text>
+                </description>
+            </enum>
+        </type>
+    </typedef>
+    <typedef name="file-type">
+        <type name="enumeration">
+            <enum name="data">
+                <description>
+                    <text>data</text>
+                </description>
+            </enum>
+            <enum name="upgrade">
+                <description>
+                    <text>upgrade</text>
+                </description>
+            </enum>
+        </type>
+    </typedef>
+    <typedef name="fail-reason-download">
+        <type name="enumeration">
+            <enum name="0-success">
+                <description>
+                    <text>success</text>
+                </description>
+            </enum>
+            <enum name="100-socket-fail">
+                <description>
+                    <text>socket-fail</text>
+                </description>
+            </enum>
+            <enum name="110-auth-fail">
+                <description>
+                    <text>auth-fail</text>
+                </description>
+            </enum>
+            <enum name="120-file-not-exist">
+                <description>
+                    <text>file-not-exist</text>
+                </description>
+            </enum>
+            <enum name="130-timeout">
+                <description>
+                    <text>timeout</text>
+                </description>
+            </enum>
+            <enum name="140-validate-fail">
+                <description>
+                    <text>validate-fail</text>
+                </description>
+            </enum>
+            <enum name="150-file-type-mismatch">
+                <description>
+                    <text>file-type-mismatch</text>
+                </description>
+            </enum>
+            <enum name="999-custom">
+                <description>
+                    <text>custom</text>
+                </description>
+            </enum>
+        </type>
+    </typedef>
+    <typedef name="fail-reason-upload">
+        <type name="enumeration">
+            <enum name="0-success">
+                <description>
+                    <text>success</text>
+                </description>
+            </enum>
+            <enum name="100-socket-fail">
+                <description>
+                    <text>socket-fail</text>
+                </description>
+            </enum>
+            <enum name="110-auth-fail">
+                <description>
+                    <text>auth-fail</text>
+                </description>
+            </enum>
+            <enum name="130-timeout">
+                <description>
+                    <text>timeout</text>
+                </description>
+            </enum>
+            <enum name="150-file-type-mismatch">
+                <description>
+                    <text>file-type-mismatch</text>
+                </description>
+            </enum>
+            <enum name="999-custom">
+                <description>
+                    <text>custom</text>
+                </description>
+            </enum>
+        </type>
+    </typedef>
+    <rpc name="reboot">
+        <description>
+            <text>Reboot the specific component, i.e. card, transceiver</text>
+        </description>
+        <input>
+            <leaf name="component-name">
+                <type name="leafref">
+                    <path value="/oc-platform:components/oc-platform:component/oc-platform:name"/>
+                </type>
+                <description>
+                    <text>target reboot components</text>
+                </description>
+            </leaf>
+            <leaf name="reboot-type">
+                <type name="enumeration">
+                    <enum name="warm">
+                        <description>
+                            <text>warm reboot</text>
+                        </description>
+                    </enum>
+                    <enum name="cold">
+                        <description>
+                            <text>cold reboot</text>
+                        </description>
+                    </enum>
+                </type>
+                <description>
+                    <text>Reboot type</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="reboot-result">
+                <type name="rpc-result"/>
+                <description>
+                    <text>Result of the reboot operation</text>
+                </description>
+            </leaf>
+        </output>
+    </rpc>
+    <rpc name="switch-olp">
+        <description>
+            <text>Manual switch the aps to the desired port</text>
+        </description>
+        <input>
+            <leaf name="name">
+                <type name="leafref">
+                    <path value="/oc-platform:components/oc-platform:component/oc-platform:name"/>
+                </type>
+                <description>
+                    <text>target aps name</text>
+                </description>
+            </leaf>
+            <leaf name="switch-to-port">
+                <type name="enumeration">
+                    <enum name="PRIMARY">
+                        <description>
+                            <text>manual switch the OLP to the primary line port</text>
+                        </description>
+                    </enum>
+                    <enum name="SECONDARY">
+                        <description>
+                            <text>manual switch the OLP to the secondary line port</text>
+                        </description>
+                    </enum>
+                </type>
+                <description>
+                    <text>manual set the optical switch to a port</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="switch-olp-result">
+                <type name="rpc-result"/>
+                <description>
+                    <text>Result of the switch olp operation</text>
+                </description>
+            </leaf>
+        </output>
+    </rpc>
+    <rpc name="set-datetime">
+        <description>
+            <text>Set equipments' datetime.</text>
+        </description>
+        <input>
+            <leaf name="datetime">
+                <type name="yang:date-and-time"/>
+                <description>
+                    <text>Target datetime to be set</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="set-datetime-result">
+                <type name="rpc-result"/>
+                <description>
+                    <text>Result of the set operation</text>
+                </description>
+            </leaf>
+        </output>
+    </rpc>
+    <rpc name="get-oduk-delay">
+        <description>
+            <text>Get delay of ODUk.</text>
+        </description>
+        <input>
+            <leaf name="index">
+                <type name="uint32"/>
+                <description>
+                    <text>The index of logical channel(ODU)</text>
+                </description>
+            </leaf>
+            <leaf name="delay-test-times">
+                <type name="uint32"/>
+                <default value="10"/>
+                <description>
+                    <text>Measurement repeated times.</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="get-delay-result">
+                <type name="rpc-result"/>
+                <description>
+                    <text>Result of the set operation</text>
+                </description>
+            </leaf>
+            <container name="delay-data-value">
+                <uses name="oc-opt-types:avg-min-max-instant-stats-precision2-ns"/>
+                <description>
+                    <text>Test results of ODUk delay measurement</text>
+                </description>
+            </container>
+        </output>
+    </rpc>
+    <rpc name="download-file">
+        <description>
+            <text>download file</text>
+        </description>
+        <input>
+            <leaf name="file-type">
+                <type name="file-type"/>
+                <description>
+                    <text>file-type</text>
+                </description>
+            </leaf>
+            <leaf name="file-name">
+                <type name="string"/>
+                <description>
+                    <text>file name</text>
+                </description>
+            </leaf>
+            <leaf name="path">
+                <type name="string"/>
+                <description>
+                    <text>[sftp]://hostname/directorypath/filename</text>
+                </description>
+            </leaf>
+            <leaf name="username">
+                <type name="string"/>
+                <description>
+                    <text>username</text>
+                </description>
+            </leaf>
+            <leaf name="password">
+                <type name="string"/>
+                <description>
+                    <text>password</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="result">
+                <type name="rpc-result"/>
+                <description>
+                    <text>Result of download file</text>
+                </description>
+            </leaf>
+            <leaf name="msg">
+                <type name="fail-reason-download"/>
+                <description>
+                    <text>fail reason</text>
+                </description>
+            </leaf>
+        </output>
+    </rpc>
+    <rpc name="upload-file">
+        <description>
+            <text>upload file</text>
+        </description>
+        <input>
+            <leaf name="path">
+                <type name="string"/>
+                <description>
+                    <text>path</text>
+                </description>
+            </leaf>
+            <leaf name="file-type">
+                <type name="enumeration">
+                    <enum name="data">
+                        <value value="0"/>
+                    </enum>
+                    <enum name="log">
+                        <value value="1"/>
+                    </enum>
+                </type>
+            </leaf>
+            <leaf name="file-name">
+                <type name="string"/>
+                <description>
+                    <text>file name</text>
+                </description>
+            </leaf>
+            <leaf name="username">
+                <type name="string"/>
+                <description>
+                    <text>username</text>
+                </description>
+            </leaf>
+            <leaf name="password">
+                <type name="string"/>
+                <description>
+                    <text>password</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="result">
+                <type name="rpc-result"/>
+                <description>
+                    <text>Result of upload file</text>
+                </description>
+            </leaf>
+            <leaf name="msg">
+                <type name="fail-reason-upload"/>
+                <description>
+                    <text>fail reason</text>
+                </description>
+            </leaf>
+            <leaf name="md5">
+                <type name="string"/>
+                <description>
+                    <text>md5</text>
+                </description>
+            </leaf>
+            <leaf name="file-name">
+                <type name="string"/>
+                <description>
+                    <text>real file-name</text>
+                </description>
+            </leaf>
+        </output>
+    </rpc>
+    <rpc name="get-file-list">
+        <input>
+            <leaf name="file-type">
+                <type name="enumeration">
+                    <enum name="data">
+                        <value value="0"/>
+                    </enum>
+                    <enum name="upgrade">
+                        <value value="1"/>
+                    </enum>
+                    <enum name="log">
+                        <value value="2"/>
+                    </enum>
+                    <enum name="all">
+                        <value value="3"/>
+                        <description>
+                            <text>all file type</text>
+                        </description>
+                    </enum>
+                </type>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="result">
+                <type name="rpc-result"/>
+                <description>
+                    <text>Result of upload file</text>
+                </description>
+            </leaf>
+            <leaf name="msg">
+                <type name="string"/>
+            </leaf>
+            <list name="file-names">
+                <key value="file-name"/>
+                <leaf name="file-name">
+                    <type name="string"/>
+                </leaf>
+            </list>
+        </output>
+    </rpc>
+    <rpc name="delete-file">
+        <description>
+            <text>delete file</text>
+        </description>
+        <input>
+            <leaf name="file-name">
+                <type name="string"/>
+                <description>
+                    <text>file name</text>
+                </description>
+            </leaf>
+            <leaf name="file-type">
+                <type name="file-type"/>
+                <description>
+                    <text>file type</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="result">
+                <type name="rpc-result"/>
+                <description>
+                    <text>Result of upload file</text>
+                </description>
+            </leaf>
+            <leaf name="msg">
+                <type name="string"/>
+                <description>
+                    <text>fail reason</text>
+                </description>
+            </leaf>
+        </output>
+    </rpc>
+    <rpc name="active-file">
+        <description>
+            <text>active file</text>
+        </description>
+        <input>
+            <leaf name="file-name">
+                <type name="string"/>
+                <description>
+                    <text>file name</text>
+                </description>
+            </leaf>
+            <leaf name="file-type">
+                <type name="file-type"/>
+                <description>
+                    <text>file type</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="result">
+                <type name="rpc-result"/>
+                <description>
+                    <text>Result of upload file</text>
+                </description>
+            </leaf>
+            <leaf name="msg">
+                <type name="string"/>
+                <description>
+                    <text>fail reason</text>
+                </description>
+            </leaf>
+        </output>
+    </rpc>
+    <rpc name="get-active-status">
+        <description>
+            <text>get active status</text>
+        </description>
+        <input>
+            <leaf name="file-type">
+                <type name="file-type"/>
+                <description>
+                    <text>file type</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="result">
+                <type name="enumeration">
+                    <enum name="SUCCESS">
+                        <value value="0"/>
+                    </enum>
+                    <enum name="FAIL">
+                        <value value="1"/>
+                    </enum>
+                    <enum name="PROCESSING">
+                        <value value="2"/>
+                    </enum>
+                </type>
+                <description>
+                    <text>Result of active file</text>
+                </description>
+            </leaf>
+            <leaf name="msg">
+                <type name="string"/>
+                <description>
+                    <text>fail reason</text>
+                </description>
+            </leaf>
+            <leaf name="file-name">
+                <type name="string"/>
+                <description>
+                    <text>file name</text>
+                </description>
+            </leaf>
+            <leaf name="active-time">
+                <type name="yang:date-and-time"/>
+                <description>
+                    <text>last active time</text>
+                </description>
+            </leaf>
+        </output>
+    </rpc>
+    <rpc name="get-download-status">
+        <description>
+            <text>get download status</text>
+        </description>
+        <input>
+            <leaf name="file-type">
+                <type name="file-type"/>
+                <description>
+                    <text>file type</text>
+                </description>
+            </leaf>
+            <leaf name="file-name">
+                <type name="string"/>
+                <description>
+                    <text>file name</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="result">
+                <type name="enumeration">
+                    <enum name="SUCCESS">
+                        <value value="0"/>
+                    </enum>
+                    <enum name="FAIL">
+                        <value value="1"/>
+                    </enum>
+                    <enum name="PROCESSING">
+                        <value value="2"/>
+                    </enum>
+                </type>
+                <description>
+                    <text>Result of download file</text>
+                </description>
+            </leaf>
+            <leaf name="msg">
+                <type name="fail-reason-download"/>
+                <description>
+                    <text>fail reason</text>
+                </description>
+            </leaf>
+        </output>
+    </rpc>
+    <rpc name="reset-counter">
+        <description>
+            <text>get reset counter</text>
+        </description>
+        <input>
+            <leaf name="pm-point">
+                <type name="oc-performance-types:pm-point-ref"/>
+                <description>
+                    <text>The path of the performance monitoring point</text>
+                </description>
+            </leaf>
+            <leaf name="pm-point-type">
+                <type name="oc-performance-types:pmp-object-type"/>
+                <description>
+                    <text>Categories of performance monitoring objects.</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="result">
+                <type name="rpc-result"/>
+                <description>
+                    <text>Result of upload file</text>
+                </description>
+            </leaf>
+        </output>
+    </rpc>
+</module>

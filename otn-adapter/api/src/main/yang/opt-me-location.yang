@@ -1,0 +1,48 @@
+module opt-me-location {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:me:location";
+    prefix "opt-me-location";
+    import base-types  {prefix "base-types";}
+    import optel-otn-ext-api {prefix "optel-otn-ext-api"; }
+    revision "2020-09-11" {
+        description "Home page eq locations";
+    }
+    rpc eq-locations{
+        input{
+            uses base-types:ne-common-prop;
+            leaf device-type {
+                 type uint16;
+            }
+            leaf product-name{
+                  type string;
+             }
+             leaf power-panel-type{
+                  type boolean;
+             }
+        }
+        output{
+            uses optel-otn-ext-api:me-info;
+        }
+    }
+    rpc get-dev-capability-set{
+            input{
+                uses base-types:ne-common-prop;
+                leaf device-type {
+                     type uint16;
+                }
+            }
+            output{
+                uses optel-otn-ext-api:drawing-info;
+                uses optel-otn-ext-api:slot-capability-pac-list;
+            }
+        }
+
+    rpc get-port-state{
+        input{
+            uses base-types:ne-common-prop;
+        }
+        output{
+            uses optel-otn-ext-api:port-lights-info;
+        }
+    }
+}

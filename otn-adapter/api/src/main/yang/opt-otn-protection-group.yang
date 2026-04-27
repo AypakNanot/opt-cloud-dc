@@ -1,0 +1,139 @@
+module opt-otn-protection-group {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:otn:protection";
+    prefix "opt-otn-protection-group";
+
+    import base-types  {prefix "base-types";}
+    import optel-protection-group{prefix optel-pg; }
+    import optel-devm { prefix optel-devm; }
+
+    revision "2020-04-25" {
+        description "Initial revision";
+    }
+
+    rpc query-protection-group{
+        input{
+            uses base-types:ne-common-prop;
+            leaf pg-id {
+                type uint16;
+            }
+        }
+        output{
+            uses optel-pg:pgs-grouping;
+        }
+    }
+
+    rpc perform-protection-command{
+        input{
+            uses base-types:ne-common-prop;
+            uses optel-pg:perform-protection-command-in-grouping;
+        }
+    }
+
+    rpc remove-protection-group{
+        input{
+            uses base-types:ne-common-prop;
+            leaf pg-id {
+                mandatory true;
+                type uint16;
+                description
+                    "pg id";
+            }
+        }
+    }
+
+    rpc create-protection-group{
+        input{
+            uses base-types:ne-common-prop;
+            leaf pg-id {
+                type uint16;
+                description
+                    "pg id";
+            }
+            leaf protection-type {
+                type optel-pg:protection-type;
+                description
+                    "protection type";
+            }
+            leaf reversion-mode {
+                type optel-pg:reversion-mode;
+                description
+                    "reversion mode";
+            }
+            leaf tcm {
+                type uint16;
+            }
+            leaf switch-direction {
+                mandatory true;
+                type optel-pg:switch-direction;
+                default uni-switch;
+            }
+            leaf hold-off {
+                type uint32;
+                units ms;
+                description "hold off time";
+            }
+            leaf wait-to-restore-time {
+                type uint64;
+                units seconds;
+                description "wait to restore time";
+            }
+            leaf sd-trigger {
+                type optel-pg:sd-trigger;
+                description "sd protection";
+            }
+            leaf primary-port {
+                type string;
+                description "primary port";
+            }
+            leaf secondary-port {
+                type string;
+                description "secondary port";
+            }
+        }
+    }
+
+    rpc pre-create-protection-group {
+        input{
+            uses base-types:ne-common-prop;
+            uses optel-pg:pre-create-pg-input-grouping;
+        }
+        output{
+            uses optel-pg:pre-create-pg-output-grouping;
+        }
+    }
+
+    rpc modify-protection-group{
+        input{
+            uses base-types:ne-common-prop;
+            leaf pg-id {
+                type uint16;
+                description
+                    "pg id";
+            }
+            leaf switch-direction {
+                type optel-pg:switch-direction;
+            }
+            leaf reversion-mode {
+                type optel-pg:reversion-mode;
+                description
+                    "reversion mode";
+            }
+            leaf hold-off {
+                type uint32;
+                units ms;
+                description "hold off time";
+            }
+            leaf wait-to-restore-time {
+                type uint64;
+                units seconds;
+                description "wait to restore time";
+            }
+            leaf sd-trigger {
+                type optel-pg:sd-trigger;
+                description "sd protection";
+            }
+        }
+    }
+
+}

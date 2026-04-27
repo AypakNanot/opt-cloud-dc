@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!--
+Copyright © 2019 optel and others. All rights reserved.
+
+This program and the accompanying materials are made available under the
+terms of the Eclipse Public License v1.0 which accompanies this distribution,
+and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0"
+           odl:use-default-for-reference-types="true">
+    <reference id="deviceRpcProviderService"
+               interface="com.optel.tmaster.dc.general.base.action.IDeviceRpcProviderService"/>
+
+    <bean id="netconfNodeServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.listener.NetconfNodeServiceImpl"/>
+    <bean id="cmccOptAlarmServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptAlarmServiceImpl"/>
+    <bean id="cmccOptCommonResourceServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptCommonResourceServiceImpl"/>
+    <bean id="cmccOptDciApsServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptDciApsServiceImpl"/>
+    <bean id="cmccOptDciInterfaceServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptDciInterfaceServiceImpl"/>
+    <bean id="cmccOptDciLldpServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptDciLldpServiceImpl"/>
+    <bean id="cmccOptDciNatServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptDciNatServiceImpl"/>
+    <bean id="cmccOptDciNeServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptDciNeServiceImpl"/>
+    <bean id="cmccOptDciNeTimeServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptDciNeTimeServiceImpl"/>
+    <bean id="cmccOptDciPerformanceServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptDciPerformanceServiceImpl"/>
+    <bean id="cmccOptDciPortServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptDciPortServiceImpl"/>
+    <bean id="cmccOptDciServiceServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptDciServiceServiceImpl"/>
+    <bean id="cmccOptDciTestServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptDciTestServiceImpl"/>
+    <bean id="cmccOptEdfaServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptEdfaServiceImpl"/>
+    <bean id="cmccOptEqServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptEqServiceImpl"/>
+    <bean id="cmccOptFileServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptFileServiceImpl"/>
+    <bean id="cmccOptOcmServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptOcmServiceImpl"/>
+    <bean id="cmccOptOpticalChannelServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptOpticalChannelServiceImpl"/>
+    <bean id="cmccOptOtdrServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptOtdrServiceImpl"/>
+    <bean id="cmccOptTelemetryServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptTelemetryServiceImpl"/>
+    <bean id="cmccOptTransceiverServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptTransceiverServiceImpl"/>
+    <bean id="cmccOptWdmExtensionServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.dci.cmcc.impl.CmccOptWdmExtensionServiceImpl"/>
+
+
+    <bean id="cmccDciProvider" class="com.optel.tmaster.dc.device.impl.dci.cmcc.CmccDciProvider"
+          init-method="init" destroy-method="close">
+        <argument ref="deviceRpcProviderService"/>
+        <argument>
+            <list>
+                <ref component-id="netconfNodeServiceImpl"/>
+                <ref component-id="cmccOptAlarmServiceImpl"/>
+                <ref component-id="cmccOptCommonResourceServiceImpl"/>
+                <ref component-id="cmccOptDciApsServiceImpl"/>
+                <ref component-id="cmccOptDciInterfaceServiceImpl"/>
+                <ref component-id="cmccOptDciLldpServiceImpl"/>
+                <ref component-id="cmccOptDciNatServiceImpl"/>
+                <ref component-id="cmccOptDciNeServiceImpl"/>
+                <ref component-id="cmccOptDciNeTimeServiceImpl"/>
+                <ref component-id="cmccOptDciPerformanceServiceImpl"/>
+                <ref component-id="cmccOptDciPortServiceImpl"/>
+                <ref component-id="cmccOptDciServiceServiceImpl"/>
+                <ref component-id="cmccOptDciTestServiceImpl"/>
+                <ref component-id="cmccOptEdfaServiceImpl"/>
+                <ref component-id="cmccOptEqServiceImpl"/>
+                <ref component-id="cmccOptFileServiceImpl"/>
+                <ref component-id="cmccOptOcmServiceImpl"/>
+                <ref component-id="cmccOptOpticalChannelServiceImpl"/>
+                <ref component-id="cmccOptOtdrServiceImpl"/>
+                <ref component-id="cmccOptTelemetryServiceImpl"/>
+                <ref component-id="cmccOptTransceiverServiceImpl"/>
+                <ref component-id="cmccOptWdmExtensionServiceImpl"/>
+            </list>
+        </argument>
+
+    </bean>
+</blueprint>

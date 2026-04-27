@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:oc-fan="http://openconfig.net/yang/platform/fan" xmlns:oc-platform="http://openconfig.net/yang/platform" xmlns:oc-ext="http://openconfig.net/yang/openconfig-ext" xmlns:oc-platform-types="http://openconfig.net/yang/platform-types" name="openconfig-platform-fan">
+    <yang-version value="1"/>
+    <namespace uri="http://openconfig.net/yang/platform/fan"/>
+    <prefix value="oc-fan"/>
+    <import module="openconfig-platform">
+        <prefix value="oc-platform"/>
+    </import>
+    <import module="openconfig-extensions">
+        <prefix value="oc-ext"/>
+    </import>
+    <import module="openconfig-platform-types">
+        <prefix value="oc-platform-types"/>
+    </import>
+    <organization>
+        <text>OpenConfig working group</text>
+    </organization>
+    <contact>
+        <text>OpenConfig working group
+www.openconfig.net</text>
+    </contact>
+    <description>
+        <text>This module defines data related to FAN components in the
+OpenConfig platform model.</text>
+    </description>
+    <oc-ext:openconfig-version semver="0.1.1"/>
+    <revision date="2020-06-30">
+        <description>
+            <text>Initial release for DCI Box.</text>
+        </description>
+        <reference>
+            <text>0.1.2</text>
+        </reference>
+    </revision>
+    <revision date="2018-11-21">
+        <description>
+            <text>Add OpenConfig module metadata extensions.</text>
+        </description>
+        <reference>
+            <text>0.1.1</text>
+        </reference>
+    </revision>
+    <revision date="2018-01-18">
+        <description>
+            <text>Initial revision</text>
+        </description>
+        <reference>
+            <text>0.1.0</text>
+        </reference>
+    </revision>
+    <oc-ext:regexp-posix/>
+    <oc-ext:catalog-organization org="openconfig"/>
+    <oc-ext:origin origin="openconfig"/>
+    <grouping name="fan-config">
+        <description>
+            <text>Operational config data for fan components</text>
+        </description>
+        <leaf name="fan-mode">
+            <type name="oc-platform-types:fan-mode-type"/>
+            <description>
+                <text>Sets fan mode</text>
+            </description>
+        </leaf>
+        <leaf name="fan-speed">
+            <type name="oc-platform-types:fan-speed-type"/>
+            <description>
+                <text>Sets fan speed</text>
+            </description>
+        </leaf>
+    </grouping>
+    <grouping name="fan-state">
+        <description>
+            <text>Operational state data for fan components</text>
+        </description>
+    </grouping>
+    <augment target-node="/oc-platform:components/oc-platform:component/oc-platform:fan/oc-platform:config">
+        <description>
+            <text>Adding fan data to component model</text>
+        </description>
+        <uses name="fan-config"/>
+    </augment>
+    <augment target-node="/oc-platform:components/oc-platform:component/oc-platform:fan/oc-platform:state">
+        <description>
+            <text>Adding fan data to component model</text>
+        </description>
+        <uses name="fan-config"/>
+        <uses name="fan-state"/>
+    </augment>
+</module>

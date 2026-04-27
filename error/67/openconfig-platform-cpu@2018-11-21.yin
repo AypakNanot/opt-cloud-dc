@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:oc-cpu="http://openconfig.net/yang/platform/cpu" xmlns:oc-platform="http://openconfig.net/yang/platform" xmlns:oc-types="http://openconfig.net/yang/openconfig-types" xmlns:oc-ext="http://openconfig.net/yang/openconfig-ext" name="openconfig-platform-cpu">
+    <yang-version value="1"/>
+    <namespace uri="http://openconfig.net/yang/platform/cpu"/>
+    <prefix value="oc-cpu"/>
+    <import module="openconfig-platform">
+        <prefix value="oc-platform"/>
+    </import>
+    <import module="openconfig-types">
+        <prefix value="oc-types"/>
+    </import>
+    <import module="openconfig-extensions">
+        <prefix value="oc-ext"/>
+    </import>
+    <organization>
+        <text>OpenConfig working group</text>
+    </organization>
+    <contact>
+        <text>OpenConfig working group
+www.openconfig.net</text>
+    </contact>
+    <description>
+        <text>This module defines data related to FAN components in the
+OpenConfig platform model.</text>
+    </description>
+    <oc-ext:openconfig-version semver="0.1.1"/>
+    <revision date="2018-11-21">
+        <description>
+            <text>Add OpenConfig module metadata extensions.</text>
+        </description>
+        <reference>
+            <text>0.1.1</text>
+        </reference>
+    </revision>
+    <revision date="2018-01-30">
+        <description>
+            <text>Initial revision</text>
+        </description>
+        <reference>
+            <text>0.1.0</text>
+        </reference>
+    </revision>
+    <oc-ext:regexp-posix/>
+    <oc-ext:catalog-organization org="openconfig"/>
+    <oc-ext:origin origin="openconfig"/>
+    <grouping name="component-cpu-utilization">
+        <description>
+            <text>Per-component CPU statistics</text>
+        </description>
+        <container name="utilization">
+            <description>
+                <text>Statistics representing CPU utilization of the
+component.</text>
+            </description>
+            <container name="state">
+                <config value="false"/>
+                <description>
+                    <text>Operational state variables relating to the utilization
+of the CPU.</text>
+                </description>
+                <uses name="oc-types:avg-min-max-instant-stats-pct"/>
+            </container>
+        </container>
+    </grouping>
+    <augment target-node="/oc-platform:components/oc-platform:component/oc-platform:cpu">
+        <description>
+            <text>Adding CPU utilization data to component model</text>
+        </description>
+        <uses name="component-cpu-utilization"/>
+    </augment>
+</module>

@@ -1,0 +1,58 @@
+module opt-dci-port {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:port";
+    prefix "opt-dci-port";
+
+    revision "2020-02-10" {
+        description "DCI DEVICE PORT";
+    }
+    import base-types  {prefix "base-types";}
+    import optel-oc-platform-port {prefix "opt-oc-platform-port";}
+    import optel-oc-platform {prefix "opt-oc-platform";}
+
+    rpc set-electric-port{
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+            }
+            uses opt-oc-platform-port:port-config;
+        }
+    }
+
+    rpc get-electric-port{
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list name{
+                type string;
+            }
+        }
+        output{
+            uses opt-oc-platform:platform-component-top;
+        }
+    }
+    rpc set-optical-port{
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+            }
+            leaf power-offset {
+                type decimal64{
+                    fraction-digits 2;
+                }
+            }
+        }
+    }
+    rpc get-optical-port{
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list name{
+                type string;
+            }
+        }
+        output{
+            uses opt-oc-platform:platform-component-top;
+        }
+    }
+}

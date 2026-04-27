@@ -1,0 +1,24 @@
+module opt-data-base{
+    yang-version 1;
+    namespace "com:optel:device:opt:data:base";
+    prefix "opt-data-base";
+
+    revision "2020-09-29" {
+        description "Initial revision";
+    }
+
+    import base-types  {prefix "base-types";}
+
+    //查询网元节点的南向接口yang模式
+    rpc query-ne-yang-mode {
+        input{
+            uses base-types:ne-common-prop;
+        }
+        output{
+            leaf yang-mode{
+                type string;
+            }
+        }
+    }
+
+}

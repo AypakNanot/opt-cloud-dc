@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.optel.tmaster.dc</groupId>
+        <artifactId>feature-parent</artifactId>
+        <version>${changelist}</version>
+        <relativePath>../../../parent/feature-parent</relativePath>
+    </parent>
+
+    <groupId>com.optel.tmaster.dc.general</groupId>
+    <artifactId>features-general-netconf</artifactId>
+    <packaging>feature</packaging>
+    <name>OPTEL :: general :: netconf [Karaf Feature]</name>
+    <description>
+        此feature 是为了 将netconf设备连接需要的feature整合到一起，不使用odl本来提供的odl-netconf-clustered-topology,因为它包含了集群与非集群的所有，所以要重写
+    </description>
+
+    <dependencies>
+        <!--   odl-netconf-clustered-topology 包含 的 odl-netconf-connector和odl-netconf-ssh 都在下面的包含了，不需要特殊引入，
+        features odl-netconf-topology 包含了 odl-netconf-ssh
+             features odl-netconf-connector 下面就有
+             修复dc连接设备出现两个连接，lihua 2023-02-14 情人节快乐
+             修复方式： 将 odl-netconf-clustered-topology 所有的移到此处，删除掉集群的topology引用
+             -->
+        <!--<dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>odl-netconf-clustered-topology</artifactId>
+            <version>${netconf.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>-->
+        <!--<dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>odl-netconf-ssh</artifactId>
+            <version>${netconf.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>-->
+
+        <dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>odl-netconf-connector</artifactId>
+            <version>${netconf.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
+        <!--<dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>odl-netconf-connector</artifactId>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>-->
+        <!--<dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>odl-netconf-connector-all</artifactId>
+            <version>${netconf.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>-->
+        <!-- By LiH 2023-08-19 禁止dc的callhome，在otn中默认实现了 callhome，如果后期需要再进行打开-->
+        <!--<dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>odl-netconf-callhome-ssh</artifactId>
+            <version>${netconf.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>-->
+        <dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>odl-netconf-console</artifactId>
+            <version>${netconf.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.opendaylight.netconf</groupId>
+                    <artifactId>odl-netconf-connector-all</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.opendaylight.netconf</groupId>
+                    <artifactId>odl-netconf-ssh</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>odl-netconf-topology</artifactId>
+            <version>${netconf.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.opendaylight.netconf</groupId>
+                    <artifactId>odl-netconf-ssh</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+
+</project>

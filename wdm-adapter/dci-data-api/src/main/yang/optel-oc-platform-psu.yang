@@ -1,0 +1,145 @@
+module optel-oc-platform-psu {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://platform/psu";
+
+  prefix "oc-platform-psu";
+
+  // import some basic types
+  import optel-oc-types { prefix oc-types; }
+  import optel-oc-platform-types { prefix oc-platform-types; }
+
+
+  // meta
+  organization "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+    www.openconfig.net";
+
+  description
+    "This module defines a schema for power supply components in
+    the OpenConfig platform model.";
+
+  revision "2022-02-08" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+  // identity statements
+
+  // typedef statements
+
+  // grouping statements
+
+  grouping psu-config {
+  leaf power-load-high-threshold{
+    type uint32;
+    units watts;
+    description
+      "power load high threshold";
+  }
+
+  description
+      "Configuration data for power supply components";
+
+  }
+
+  grouping psu-state {
+    description
+      "Operational state data for power supply components";
+
+    leaf enabled {
+      //mandatory true;
+      type boolean;
+      description
+        "Adminsitrative control on the on/off state of the power
+        supply unit.";
+    }
+	
+    // TODO(aashaikh): May need to convert some of these to
+    // interval statistics once decided on which leaves to include.
+    leaf capacity {
+      //mandatory true;
+      type decimal64{
+        fraction-digits 2;
+      }
+      units watts;
+      description
+        "Maximum power capacity of the power supply.";
+    }
+
+    leaf input-current {
+     // mandatory true;
+      type decimal64{
+        fraction-digits 2;
+      }
+      units mA;
+      description
+        "The input current draw of the power supply.";
+    }
+
+    leaf input-voltage {
+     // mandatory true;
+      type decimal64{
+        fraction-digits 2;
+      }
+      units volts;
+      description
+        "Input voltage to the power supply.";
+    }
+
+    leaf output-current {
+      //mandatory true;
+      type decimal64{
+        fraction-digits 2;
+      }
+      units mA;
+      description
+        "The output current supplied by the power supply.";
+    }
+
+    leaf output-voltage {
+     // mandatory true;
+      type decimal64{
+        fraction-digits 2;
+      }
+      units volts;
+      description
+        "Output voltage supplied by the power supply.";
+    }
+
+    leaf output-power {
+      type decimal64{
+        fraction-digits 2;
+      }
+      units watts;
+      description
+        "Output power supplied by the power supply.";
+    }
+    
+    leaf-list supported-power-supply-mode {
+      //min-elements 1;
+      type oc-platform-types:psu-mode-type;
+      description
+           "Reference to supported mode";
+    }
+    
+    leaf used-power-supply-mode {
+      type oc-platform-types:psu-mode-type; 
+      description
+        "Output power supplied by the power supply.";
+    }
+  }
+
+  // data definition statements
+
+  // augment statements
+
+  // rpc statements
+
+  // notification statements
+}

@@ -1,0 +1,42 @@
+{
+  "optVersion":[
+    {
+      "yangMode": "1",
+      "capability": [
+        "com:opt:s-otn:yearning:yang:version?revision=2024-04-30"
+      ]
+    },{
+      "yangMode": "2",
+      "capability":[
+        "com:opt:s-otn:diligent:yang:version?revision=2024-04-30",
+        "com:opt:s-otn:diligent:yang:version?revision=2024-07-31",
+        "com:opt:s-otn:diligent:yang:version?revision=2024-08-01",
+        "com:opt:s-otn:diligent:yang:version?revision=2024-09-19",
+        "com:opt:s-otn:diligent:yang:version?revision=2025-03-30",
+        "com:opt:s-otn:diligent:yang:version?revision=2025-05-06"
+      ]
+    },{
+      "yangMode": "3",
+      "capability":[
+        "com:opt:v-otn:diligent:yang:version?revision=2024-04-30"
+      ]
+    },
+    {
+      "yangMode": "201",
+      "capability": [
+        "com:opt:dci:diligent:yang:version?revision=2024-04-30"
+      ]
+    },
+    {
+      "yangMode": "202",
+      "capability": [
+        "com:opt:dci:yearning:yang:version?revision=2024-04-30",
+        "com:opt:dci:liberal:yang:version?revision=2024-04-30",
+        "com:opt:wdm:yearning:yang:version?revision=2024-12-11"
+      ]
+    }
+
+  ]
+
+
+}

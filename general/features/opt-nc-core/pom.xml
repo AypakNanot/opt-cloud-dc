@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.optel.tmaster.dc</groupId>
+        <artifactId>feature-parent</artifactId>
+        <version>${changelist}</version>
+        <relativePath>../../../parent/feature-parent</relativePath>
+    </parent>
+
+    <groupId>com.optel.tmaster.dc.general</groupId>
+    <artifactId>opt-nc-core</artifactId>
+    <packaging>feature</packaging>
+
+    <name>OPTEL :: general :: nc-core [Karaf Feature]</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>opt-base-util</artifactId>
+            <version>${project.version}</version>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
+        <!--   新版本的features-netconf-connector 包含了topology 的默认实现与集群实现，会有两个netconf连接，需要去掉 netconf-topology-singleton    -->
+        <!--   features-netconf-connector 包含以下的topoloy，移除     -->
+        <!--   修复dc连接设备出现两个连接，lihua 2023-02-14 情人节快乐   -->
+        <!--<dependency>
+            <groupId>org.opendaylight.netconf</groupId>
+            <artifactId>features-netconf-connector</artifactId>
+            <version>${netconf.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>-->
+        <dependency>
+            <groupId>com.optel.tmaster.dc.general</groupId>
+            <artifactId>features-general-netconf</artifactId>
+            <version>${project.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>nc-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

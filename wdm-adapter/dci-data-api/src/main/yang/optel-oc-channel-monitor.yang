@@ -1,0 +1,253 @@
+module optel-oc-channel-monitor {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://channel-monitor";
+
+  prefix "oc-chan-monitor";
+
+  // import some basic types
+  import optel-oc-interfaces { prefix oc-if; }
+  import optel-oc-transport-types { prefix oc-opt-types; }
+  import optel-oc-platform-types { prefix oc-platform-types; }
+
+  revision "2022-02-08" {
+    description
+      "Initial revision";
+  }
+
+  // grouping statements
+
+  grouping media-channel-port-config {
+    description
+      "Configuration data for a media channel source/dest port";
+
+    leaf port-name {
+      type oc-if:base-interface-ref;
+      description
+        "Reference to the corresponding node interface";
+    }
+  }
+
+  grouping media-channel-port-state {
+    description
+      "Operational state data for a media channel source/dest port";
+  }
+
+  grouping media-channel-source-port-top {
+    description
+      "Top-level grouping for source of the media channel";
+
+    container source {
+      description
+        "Top-level container for media channel source";
+
+      container config {
+        description
+          "Configuration data for the media channel source";
+
+        uses media-channel-port-config;
+      }
+
+      container state {
+
+        config false;
+
+        description
+          "Operational state data for the media channel source";
+
+        uses media-channel-port-config;
+        uses media-channel-port-state;
+      }
+    }
+  }
+
+  grouping media-channel-dest-port-top {
+    description
+      "Top-level grouping for destination of the media channel";
+
+    container dest {
+      description
+        "Top-level container for media channel destination";
+
+      container config {
+        description
+          "Configuration data for the media channel destination";
+
+        uses media-channel-port-config;
+      }
+
+      container state {
+
+        config false;
+
+        description
+          "Operational state data for the media channel destination";
+
+        uses media-channel-port-config;
+        uses media-channel-port-state;
+      }
+    }
+  }
+
+  grouping media-channel-spectrum-power-state {
+    description
+      "Operational state data for the media channel spectrum power";
+
+    leaf lower-frequency {
+      type oc-opt-types:frequency-type;
+      description
+        "Lower frequency of the specified spectrum power";
+    }
+
+    leaf upper-frequency {
+      type oc-opt-types:frequency-type;
+      description
+        "Upper frequency of the specified spectrum power";
+    }
+
+    leaf power {
+      type decimal64 {
+        fraction-digits 2;
+      }
+      units dBm;
+      description
+        "Average measured optical power over the specified spectrum";
+    }
+    
+    leaf osnr {
+      type decimal64 {
+        fraction-digits 2;
+      }
+      units dB;
+      description
+        "OSNR of the specified channel";
+    }
+  }
+
+
+  grouping media-channel-spectrum-power-top {
+    description
+      "Top-level grouping ";
+      list channel {
+        key "lower-frequency upper-frequency";
+        config false;
+        uses media-channel-spectrum-power-state;
+
+    }
+  }
+
+  grouping media-channel-config {
+    description
+      "Configuration data for media channel definitions";
+
+    leaf index {
+      type uint32;
+      description
+        "Identifier for the defined media channel";
+    }
+
+    leaf lower-frequency {
+      type oc-opt-types:frequency-type;
+      description
+        "The lower frequency for the spectrum defined by this media
+        channel";
+    }
+
+    leaf upper-frequency {
+      type oc-opt-types:frequency-type;
+      description
+        "The upper frequency for the spectrum defined by this media
+        channel";
+    }
+
+  }
+
+  grouping channel-monitor-config {
+    description
+      "Configuration data for the optical channel monitor";
+
+    leaf name {
+      type string;
+      description
+        "Reference to system-supplied name of the port on the
+        optical channel monitor (OCM). If this port is embedded
+        in another card (i.e. an amplifier card) the device
+        should still define a port representing the OCM even if
+        it is internal and not physically present on the
+        faceplate of the card";
+    }
+
+    leaf monitor-port {
+      type string;
+      description
+        "Reference to system-supplied name of the port that the
+        channel monitor is physically connected to. This port
+        will be of type MONITOR. This port is a tap off of the
+        monitored-port and would be in the same card as the
+        monitored port. If this port is embedded in another card
+        (i.e. an amplifier card) the device should still define
+        a port representing the monitor port if it is internal
+        and not physically present on the faceplate of the card";
+    }
+	
+	leaf active-local-port {
+	  type string;
+	  description
+        "Indicates the port on which monitoring is being performed. 
+		For example, if the OCM has eight monitoring ports, you 
+		need to switch the optical switch to this port to perform 
+		OCM scanning.This parameter is required only for independent 
+		OCM linecards";
+    }
+	
+	leaf lower-frequency {
+	  type oc-opt-types:frequency-type;
+	  description 
+	    "lower frequency";
+	}
+	
+	leaf upper-frequency {
+	  type oc-opt-types:frequency-type;
+	  description 
+	    "upper frequency";
+	}
+	
+	leaf channel-interval {
+	  type oc-platform-types:channel-interval-type;
+	  description 
+	    "50/75/100GHz";
+	} 
+  }
+
+  grouping channel-monitor-state {
+    description
+      "Operational state data ";   
+    
+  }
+
+  grouping channel-monitor-top {
+    description
+      "Top-level grouping ";
+      list channel-monitor {
+        key "name";
+        uses channel-monitor-config;
+        uses channel-monitor-state;
+        uses media-channel-spectrum-power-top;
+        leaf switch-ability{
+            type boolean;
+        }
+    }
+  }
+
+  // data definition statements
+
+
+  // augment statements
+
+  // rpc statements
+
+  // notification statements
+
+}

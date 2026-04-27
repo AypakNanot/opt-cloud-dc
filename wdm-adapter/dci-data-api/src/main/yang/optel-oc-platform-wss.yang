@@ -1,0 +1,78 @@
+
+ module optel-oc-platform-wss {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://platform/wss";
+
+  prefix "oc-wss";
+
+  import optel-oc-platform-types { prefix oc-platform-types; }
+  import optel-oc-transport-types { prefix oc-opt-types; }
+  import optel-oc-platform-mux { prefix oc-mux; }
+
+  // meta
+  organization " working group";
+
+  contact
+    "working group";
+
+  description
+    "This module defines data related to wss components in
+    the optel-oc-platform model";
+ 
+  revision "2022-02-08" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+
+  grouping wss-config {
+    uses oc-mux:frequency-config;
+  }
+
+  grouping wss-state {
+    description 
+        "Wss state";
+    uses oc-mux:frequency-state;  
+    leaf min-flexible-grid  {
+      type decimal64{
+        fraction-digits 2;
+      }
+      description
+         "Minimum grid supported by WSS";
+    }
+
+    leaf max-degree {
+      //TODO: mandatory true;
+      type uint32;
+      description
+         "The largest dimension of WSS";
+    }
+    leaf lower-frequency {
+      type oc-opt-types:frequency-type;
+      description
+        "The frequency in MHz of the individual physical channel
+        (e.g. ITU C50 - 195.0THz and would be reported as
+        195,000,000 MHz in this model). This attribute is not
+        configurable on most client ports.";
+    }
+
+    leaf upper-frequency {
+      type oc-opt-types:frequency-type;
+      description
+        "The frequency in MHz of the individual physical channel
+        (e.g. ITU C50 - 195.0THz and would be reported as
+        195,000,000 MHz in this model). This attribute is not
+        configurable on most client ports.";
+    }
+  }
+
+  // rpc statements
+  
+  // notification statements
+
+}
+

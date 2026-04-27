@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:oc-event="http://openconfig.net/yang/event" xmlns:oc-alarm-types="http://openconfig.net/yang/alarms/types" xmlns:oc-ext="http://openconfig.net/yang/openconfig-ext" xmlns:oc-types="http://openconfig.net/yang/openconfig-types" xmlns:oc-inet="http://openconfig.net/yang/types/inet" name="openconfig-event">
+    <yang-version value="1"/>
+    <namespace uri="http://openconfig.net/yang/event"/>
+    <prefix value="oc-event"/>
+    <import module="openconfig-alarm-types">
+        <prefix value="oc-alarm-types"/>
+    </import>
+    <import module="openconfig-extensions">
+        <prefix value="oc-ext"/>
+    </import>
+    <import module="openconfig-types">
+        <prefix value="oc-types"/>
+    </import>
+    <import module="openconfig-inet-types">
+        <prefix value="oc-inet"/>
+    </import>
+    <organization>
+        <text>private</text>
+    </organization>
+    <description>
+        <text>This YANG module contains all event notification for DCI Box systems.</text>
+    </description>
+    <oc-ext:openconfig-version semver="0.12.2"/>
+    <revision date="2020-06-30">
+        <description>
+            <text>Initial release version</text>
+        </description>
+        <reference>
+            <text>0.1.0</text>
+        </reference>
+    </revision>
+    <grouping name="event-top">
+        <description>
+            <text>state data for device events</text>
+        </description>
+        <leaf name="id">
+            <type name="string"/>
+            <description>
+                <text>Unique ID for the event -- this will not be a
+configurable parameter on many implementations</text>
+            </description>
+        </leaf>
+        <leaf name="resource">
+            <type name="string"/>
+            <description>
+                <text>The item that is under event within the device. The
+resource may be a reference to an item which is
+defined elsewhere in the model. For example, it
+may be a platform/component, interfaces/interface,
+terminal-device/logical-channels/channel, etc. In this
+case the system should match the name of the referenced
+item exactly. The referenced item could alternatively be
+the path of the item within the model.</text>
+            </description>
+        </leaf>
+        <leaf name="text">
+            <type name="string"/>
+            <description>
+                <text>The string used to inform operators about the event. This
+MUST contain enough information for an operator to be able
+to understand the problem. If this string contains structure,
+this format should be clearly documented for programs to be
+able to parse that information</text>
+            </description>
+        </leaf>
+        <leaf name="time-created">
+            <type name="oc-types:timeticks64"/>
+            <description>
+                <text>The time at which the event was raised by the system.
+This value is expressed as nanoseconds since the Unix Epoch</text>
+            </description>
+        </leaf>
+        <leaf name="severity">
+            <type name="identityref">
+                <base name="oc-alarm-types:OPENCONFIG_ALARM_SEVERITY"/>
+            </type>
+            <description>
+                <text>The severity level indicating the criticality and impact
+of the event</text>
+            </description>
+        </leaf>
+        <leaf name="type-id">
+            <type name="union">
+                <type name="string"/>
+                <type name="identityref">
+                    <base name="oc-alarm-types:OPENCONFIG_ALARM_TYPE_ID"/>
+                </type>
+            </type>
+            <description>
+                <text>The abbreviated name of the alarm, for example LOS,
+EQPT, or OTS. Also referred to in different systems as
+condition type, alarm identifier, or alarm mnemonic. It
+is recommended to use the OPENCONFIG_ALARM_TYPE_ID
+identities where possible and only use the string type
+when the desired identityref is not yet defined</text>
+            </description>
+        </leaf>
+        <leaf name="vendor-type">
+            <type name="string"/>
+            <description>
+                <text>vendor-type leaf in the platform yang model.
+Device model type for the component, defined by the supplier.  
+Where component preconfiguration is supported, for example,
+the component name may be configurable.</text>
+            </description>
+        </leaf>
+        <leaf name="event-abbreviate">
+            <type name="string"/>
+            <description>
+                <text>Event abbreviate for this event.</text>
+            </description>
+        </leaf>
+        <leaf name="hostname">
+            <type name="oc-inet:domain-name"/>
+            <description>
+                <text>The hostname of the device.</text>
+            </description>
+        </leaf>
+    </grouping>
+    <notification name="event-notification">
+        <container name="events">
+            <uses name="event-top"/>
+        </container>
+    </notification>
+</module>

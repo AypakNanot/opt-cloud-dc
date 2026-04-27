@@ -1,0 +1,126 @@
+module optel-oc-platform-port {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://platform/port";
+
+  prefix "oc-port";
+
+  // import some basic types
+  import optel-oc-interfaces { prefix oc-if; }
+  import optel-oc-if-ethernet { prefix oc-eth; }
+  import optel-oc-transport-types { prefix oc-opt-types; }
+
+  // meta
+  organization "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+    www.openconfig.net";
+
+  description
+    "This module defines data related to PORT components in the
+    optel-oc-platform model";
+
+  revision "2022-02-08" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+  // extension statements
+
+  // feature statements
+
+  // identity statements
+
+  // typedef statements
+
+  // grouping statements    
+
+  grouping port-breakout-config {
+    description
+      "Configuration data for the port breakout mode";
+    leaf num-channels {
+      //TODO: mandatory true;
+      type uint8;
+      description
+        "Sets the number of channels to 'breakout' on a port
+        capable of channelization";
+    }
+    leaf channel-speed {
+      //TODO: mandatory true;
+      type identityref {
+        base oc-eth:ETHERNET_SPEED;
+      }
+      description
+        "Sets the channel speed on each channel -- the
+        supported values are defined by the
+        ETHERNET_SPEED identity";
+    }
+  }
+
+  grouping port-breakout-state {
+    description
+      "Operational state data for the port breakout mode ";
+  }
+
+  grouping port-breakout-top {
+    description
+      "Top-level grouping for port breakout data";
+    container breakout-mode {
+      description
+        "Top-level container for port breakout data";
+      uses port-breakout-config;
+      uses port-breakout-state;
+    }
+  }
+  
+
+   
+  grouping port-config {
+    leaf reverse-mode {
+      type enumeration {
+	    enum MANUAL {
+	      value 0;
+	    }
+	    enum AUTO {
+	      value 1;
+	    }
+	    enum NONE {
+	      value 2;
+	    }
+	  }
+    }
+	leaf layer-protocol-name {
+      type identityref {
+	    base oc-opt-types:TRIBUTARY_PROTOCOL_TYPE;
+	  }
+	  description
+	    "used layer protocol name";
+    }
+  }
+  grouping port-state {
+    uses port-config;
+	  leaf-list supported-layer-protocol-name {
+        type identityref {
+	      base oc-opt-types:TRIBUTARY_PROTOCOL_TYPE;
+	    }
+	    description
+	      "supported layer protocol name";
+      }
+
+  }
+	
+    
+
+  // data definition statements
+
+  // augment statements
+
+  // rpc statements
+
+  // notification statements
+
+}

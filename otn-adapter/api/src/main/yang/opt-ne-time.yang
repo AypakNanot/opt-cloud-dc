@@ -1,0 +1,36 @@
+module opt-ne-time {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:time";
+    prefix "opt-ne-time";
+
+    import base-types  {prefix "base-types";}
+
+    import ietf-yang-types {
+        prefix yang;
+    }
+
+    revision "2020-04-27" {
+        description "Initial revision";
+    }
+
+    rpc get-object-time{
+        input{
+            uses base-types:ne-common-prop;
+        }
+        output {
+            leaf object-time {
+                type yang:date-and-time;
+            }
+        }
+    }
+
+    rpc set-managed-element-time-ne{
+        input {
+            leaf new-time {
+                    type yang:date-and-time;
+            }
+            uses base-types:ne-common-prop;
+        }
+    }
+
+}

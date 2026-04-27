@@ -1,0 +1,88 @@
+module route-operation {
+	namespace "com:optel:route-operation";
+	prefix router-operation ;
+
+	organization "optel";
+	revision 2022-09-22 {
+		description "Initial revision.";
+	}
+
+      rpc add-route{
+            description "添加路由";
+            input {
+                list ips{
+                key 'target-ip';
+                    leaf source-ip{
+                        type string;
+                    }
+                    leaf target-ip{
+                        type string;
+                    }
+                }
+                leaf sudo-password {
+                    type string;
+                    description "Linux 系统超级管理员权限";
+                }
+            }
+        }
+
+    rpc delete-route{
+        description "删除路由";
+        input {
+            leaf-list ips{
+                type string;
+            }
+            leaf sudo-password {
+                type string;
+                description "Linux 系统超级管理员权限";
+            }
+        }
+    }
+
+    rpc judge-ip-connect{
+        description "判断某个ip是否ping通";
+        input {
+            leaf ip{
+                type string;
+            }
+            leaf port{
+                type string;
+            }
+        }
+        output {
+            leaf ip-result{
+                type boolean;
+            }
+            leaf port-result{
+                type boolean;
+            }
+        }
+    }
+
+
+    rpc get-ems-route-exist{
+        description "判断网管路由存在";
+        input {
+            leaf-list ips{
+                type string;
+            }
+            leaf sudo-password {
+                type string;
+                description "Linux 系统超级管理员权限";
+            }
+        }
+        output{
+            list route-ip{
+                key 'ip';
+                leaf ip{
+                    type string;
+                }
+                leaf is-exist{
+                    type boolean;
+                }
+            }
+        }
+    }
+
+
+}

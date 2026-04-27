@@ -1,0 +1,78 @@
+module opt-dci-interface {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:interface";
+    prefix "opt-dci-if";
+
+    revision "2020-02-10" {
+        description "DCI INTERFACE";
+    }
+
+    import base-types  {prefix "base-types";}
+	import ietf-interfaces { prefix ietf-if; }
+	import optel-oc-terminal-device { prefix terminal-device; }
+	import optel-oc-interfaces { prefix opt-if; }
+	import optel-oc-if-ip { prefix if-ip; }
+    import optel-oc-rpc {prefix oc-rpc;}
+    rpc get-interface {
+        description "查询客户侧以太网接口";
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list name{
+                type string;
+                description "interface name.return all while name is blank";
+            }
+            leaf-list type{
+                type identityref {
+                    base ietf-if:interface-type;
+                }
+            }
+        }
+        output {
+             uses opt-if:interfaces-top;
+        }
+    }
+
+
+     rpc set-client-eth-interface {
+        description "设置客户侧以太网接口 ";
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+                description "interface name";
+            }
+            uses terminal-device:terminal-ethernet-protocol-config;
+            uses opt-if:sdh-top;
+            uses opt-if:otn-top;
+        }
+     }
+
+     rpc set-dcn-interface {
+         description "DCN配置（配置NMInterface，OSCInterface）";
+         input {
+             uses base-types:ne-common-prop;
+             leaf name{
+                 type string;
+                 description "interface name";
+             }
+             uses opt-if:subinterfaces-config;
+             uses if-ip:ipv4-address-config;
+             leaf ospf-enabled {
+                  type boolean;
+                  description
+                    "Whether ospf is enabled on the port";
+                }
+            leaf dhcp-enabled {
+                  type boolean;
+                  description
+                    "Whether dhcp is enabled on the port";
+                }
+         }
+      }
+     rpc set-neighbor-ip {
+        input {
+            uses base-types:ne-common-prop;
+            uses oc-rpc:set-neighbour-ip-input-grouping;
+        }
+     }
+}

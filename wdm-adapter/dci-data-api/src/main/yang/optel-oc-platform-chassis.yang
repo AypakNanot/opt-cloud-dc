@@ -1,0 +1,92 @@
+
+ module optel-oc-platform-chassis {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://platform/chassis";
+
+  prefix "oc-chassis";
+
+  import optel-oc-platform-types { prefix oc-platform-types; }
+
+  // meta
+  organization " working group";
+
+  contact
+    "  working group";
+
+  description
+    "This module defines data related to chassis components in
+    the optel-oc-platform model";
+ 
+  revision "2022-02-08" {
+    description
+      "Initial revision";
+    reference "1.0.0";
+  }
+
+  // extension statements
+
+  // feature statements
+
+  // identity statements
+
+  // typedef statements
+	
+  // grouping statements
+
+  grouping chassis-config {
+    description
+      "Configuration data for chassis components";    
+      
+    leaf lcd  {
+      type string;    
+      description
+         "Sets the lcd content";		  
+    }
+	leaf direction {
+	  type enumeration {
+	    enum EAST {
+		  description
+		    "EAST ";
+		}
+		enum WEST {
+		  description 
+		    "WEST";
+		}
+	  }
+	} 
+  }
+
+  grouping chassis-state {
+    description
+      "Operational state data for chassis components"; 
+	  		  
+    leaf chassis-type  {
+      type oc-platform-types:component-chassis-type;    
+      description
+         "Chassis type for chassis components";		  
+    }
+
+     /* cmcc */
+     leaf remain-power-capacity {
+         type decimal64 {
+             fraction-digits 2;
+         }
+         description "Remain power";
+     }
+  }
+
+  
+
+  // data definition statements
+
+  // augment statements
+
+  // rpc statements
+  
+  // notification statements
+
+}
+

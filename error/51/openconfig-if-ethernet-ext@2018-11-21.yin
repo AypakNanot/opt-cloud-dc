@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:oc-eth-ext="http://openconfig.net/yang/interfaces/ethernet-ext" xmlns:oc-if="http://openconfig.net/yang/interfaces" xmlns:oc-eth="http://openconfig.net/yang/interfaces/ethernet" xmlns:oc-yang="http://openconfig.net/yang/types/yang" xmlns:oc-ext="http://openconfig.net/yang/openconfig-ext" name="openconfig-if-ethernet-ext">
+    <yang-version value="1"/>
+    <namespace uri="http://openconfig.net/yang/interfaces/ethernet-ext"/>
+    <prefix value="oc-eth-ext"/>
+    <import module="openconfig-interfaces">
+        <prefix value="oc-if"/>
+    </import>
+    <import module="openconfig-if-ethernet">
+        <prefix value="oc-eth"/>
+    </import>
+    <import module="openconfig-yang-types">
+        <prefix value="oc-yang"/>
+    </import>
+    <import module="openconfig-extensions">
+        <prefix value="oc-ext"/>
+    </import>
+    <organization>
+        <text>OpenConfig working group</text>
+    </organization>
+    <contact>
+        <text>OpenConfig working group
+www.openconfig.net</text>
+    </contact>
+    <description>
+        <text>This module adds extensions to the base ethernet configuration
+and operational state model to support additional use cases.</text>
+    </description>
+    <oc-ext:openconfig-version semver="0.1.1"/>
+    <revision date="2018-11-21">
+        <description>
+            <text>Add OpenConfig module metadata extensions.</text>
+        </description>
+        <reference>
+            <text>0.1.1</text>
+        </reference>
+    </revision>
+    <revision date="2018-07-10">
+        <description>
+            <text>Initial version of Ethernet extensions module to add frame
+size distribution stats</text>
+        </description>
+        <reference>
+            <text>0.1.0</text>
+        </reference>
+    </revision>
+    <oc-ext:regexp-posix/>
+    <oc-ext:catalog-organization org="openconfig"/>
+    <oc-ext:origin origin="openconfig"/>
+    <grouping name="ethernet-in-frames-size-dist">
+        <description>
+            <text>Grouping for defining the size distribution of the frames
+received</text>
+        </description>
+        <container name="in-distribution">
+            <description>
+                <text>The size distribution of the received frames.</text>
+            </description>
+            <leaf name="in-frames-64-octets">
+                <type name="oc-yang:counter64"/>
+                <description>
+                    <text>Number of packets (including bad packets) received that
+were 64 bytes in length (excluding framing bits but
+including FCS bytes).</text>
+                </description>
+            </leaf>
+            <leaf name="in-frames-65-127-octets">
+                <type name="oc-yang:counter64"/>
+                <description>
+                    <text>Number of good and bad packets received that were
+between 65 and 127 bytes in length (excluding framing bits
+but including FCS bytes).</text>
+                </description>
+            </leaf>
+            <leaf name="in-frames-128-255-octets">
+                <type name="oc-yang:counter64"/>
+                <description>
+                    <text>Number of good and bad packets received that were
+between 128 and 255 bytes in length inclusive
+(excluding framing bits but including FCS bytes).</text>
+                </description>
+            </leaf>
+            <leaf name="in-frames-256-511-octets">
+                <type name="oc-yang:counter64"/>
+                <description>
+                    <text>Number of good and bad packets received that were
+between 256 and 511 bytes in length inclusive
+(excluding framing bits but including FCS bytes).</text>
+                </description>
+            </leaf>
+            <leaf name="in-frames-512-1023-octets">
+                <type name="oc-yang:counter64"/>
+                <description>
+                    <text>Number of good and bad packets received that were
+between 512 and 1023 bytes in length inclusive
+(excluding framing bits but including FCS bytes).</text>
+                </description>
+            </leaf>
+            <leaf name="in-frames-1024-1518-octets">
+                <type name="oc-yang:counter64"/>
+                <description>
+                    <text>Number of good and bad packets received that were
+between 1024 and 1518 bytes in length inclusive
+(excluding framing bits but including FCS bytes).</text>
+                </description>
+            </leaf>
+        </container>
+    </grouping>
+    <augment target-node="/oc-if:interfaces/oc-if:interface/oc-eth:ethernet/oc-eth:state/oc-eth:counters">
+        <description>
+            <text>Adds size distribution to the ethernet counters</text>
+        </description>
+        <uses name="ethernet-in-frames-size-dist"/>
+    </augment>
+</module>

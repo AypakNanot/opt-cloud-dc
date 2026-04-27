@@ -1,0 +1,69 @@
+module opt-dci-transceiver {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:transceiver";
+    prefix "opt-dci-transceiver";
+
+    revision "2020-02-10" {
+        description "DCI DEVICE transceiver";
+    }
+    import base-types  {prefix "base-types";}
+    import optel-oc-platform-transceiver {prefix "opt-oc-platform-transceiver";}
+    import optel-oc-transport-types  {prefix "oc-opt-types";}
+    import optel-oc-platform {prefix "opt-oc-platform";}
+    rpc get-transceivers{
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list name{
+                type string;
+            }
+        }
+         output{
+             uses opt-oc-platform:platform-component-top;
+         }
+
+    }
+    rpc set-transceiver{
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+            }
+            leaf enabled{
+                type boolean;
+            }
+            leaf used-service-port-type-preconf{
+                type identityref {
+                    base oc-opt-types:TRANSCEIVER_PORT_TYPE;
+               }
+            }
+         }
+    }
+    rpc get-transceivers-channel{
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list name{
+                type string;
+            }
+        }
+        output{
+            uses opt-oc-platform:platform-component-top;
+        }
+    }
+    rpc set-transceiver-channel{
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+            }
+            leaf index{
+                type uint16;
+            }
+            leaf description{
+                type string;
+            }
+            leaf tx-laser{
+                type boolean;
+            }
+        }
+    }
+}

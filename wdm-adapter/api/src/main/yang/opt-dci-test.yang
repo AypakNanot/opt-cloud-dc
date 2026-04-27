@@ -1,0 +1,171 @@
+module opt-dci-test {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:test";
+    prefix "opt-dci-test";
+
+    revision "2023-06-05" {
+        description "DCI TEST";
+    }
+
+    import base-types  {prefix "base-types";}
+    import optel-oc-types {prefix "oc-types";}
+    import optel-oc-alarms {prefix "opt-oc-alarms";}
+
+	rpc generate-dci-event {
+		input {
+    		uses base-types:ne-common-prop;
+            leaf event-abbreviate {
+                type string;
+            }
+            leaf hostname {
+                type string;
+            }
+            leaf id {
+                type string;
+            }
+            leaf resource {
+                type string;
+            }
+            leaf severity {
+                type string;
+            }
+            leaf text {
+                type string;
+            }
+            leaf time-created {
+                type int64;
+            }
+            leaf type-id {
+                type string;
+            }
+            leaf vendor-type {
+                type string;
+            }
+		}
+	}
+
+	rpc report-miniotn-event {
+	    input {
+	        uses base-types:ne-common-prop;
+            leaf event-serial-no {
+                type int64;
+            }
+            leaf event-type {
+                type string;
+            }
+            leaf object-name {
+                type string;
+            }
+            leaf object-type {
+                type string;
+            }
+            leaf attribute-name {
+                type string;
+            }
+            leaf new-value {
+                type string;
+            }
+            leaf old-value {
+                type string;
+            }
+            leaf event-abbr {
+                type string;
+            }
+            leaf time-created {
+                type int64;
+            }
+	    }
+	}
+
+	rpc report-miniotn-alarm {
+	    input {
+	        uses base-types:ne-common-prop;
+	        list data-list{
+	            key "id resource alarm-abbreviate";
+                leaf id {
+                  type string;
+                }
+                leaf resource {
+                  type string;
+                }
+
+                leaf text {
+                  type string;
+                }
+
+                leaf time-created {
+                  type string;
+                }
+
+                leaf end-time {
+                  type string;
+                }
+
+                leaf severity {
+                  type string;
+                }
+
+                leaf type-id {
+                  type string;
+                }
+
+                leaf alarm-abbreviate {
+                  type string;
+                }
+            }
+	        leaf object-name {
+	            type string;
+	        }
+            leaf alarm-code {
+                type string;
+            }
+            leaf alarm-serial-no {
+                type int64;
+            }
+            leaf alarm-size {
+                type int32;
+            }
+            leaf alarm-time {
+                type int64;
+            }
+            leaf additional-text {
+                type string;
+            }
+            leaf start-time {
+                type string;
+            }
+            leaf end-time {
+                mandatory false;
+                type string;
+            }
+	    }
+	}
+
+	rpc report-miniotn-tca {
+        input {
+	        uses base-types:ne-common-prop;
+	        leaf object-type {
+                type oc-types:object-type;
+            }
+	        leaf object-name {
+	            type string;
+	        }
+            leaf pm-parameter-name {
+                type string;
+            }
+            leaf alarm-serial-no {
+                type string;
+            }
+            leaf start-time {
+                type string;
+            }
+            leaf end-time {
+                mandatory false;
+                type string;
+            }
+
+	    }
+	}
+
+
+}

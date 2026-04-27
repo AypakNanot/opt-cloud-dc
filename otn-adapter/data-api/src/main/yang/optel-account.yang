@@ -1,0 +1,56 @@
+module optel-account {
+    yang-version 1.1;
+    namespace "com:optel:yang:api:optel-account";
+    prefix optel-account;
+
+    revision 2023-12-16 {
+        description "login accounts management";
+    }
+    typedef user-role {
+        type enumeration {
+            enum service-operator{
+                value 0;
+                description "业务操作者";
+            }
+            enum read-only {
+                value 1;
+                description "只读用户";
+            }
+            enum default-role {
+                value 2;
+                description "厂商若不支持或者没有明确的上述两种类型，按设备内创建用户默认权限";
+            }
+        }
+
+    }
+
+    grouping account {
+        leaf user-name {
+            type string;
+        }
+        leaf role {
+            type user-role;
+            description "业务操作或者只读用户";
+        }
+        leaf account-valid-period {
+            type string;
+            description "账号有效期，可选";
+        }
+        leaf pwd-valid-period {
+            type string;
+            description "密码有效期，可选";
+        }
+        leaf additional {
+            type string;
+            description "信息描述，可选";
+        }
+    }
+
+    grouping accounts {
+        list account {
+            key 'user-name';
+            uses account;
+        }
+    }
+
+}

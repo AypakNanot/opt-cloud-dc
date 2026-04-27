@@ -1,0 +1,52 @@
+module opt-dci-lldp {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:lldp";
+    prefix "opt-dci-lldp";
+
+    revision "2020-02-10" {
+        description "DCI LLDP";
+    }
+
+    import base-types  {prefix "base-types";}
+    import optel-oc-lldp  {prefix opt-oc-lldp;}
+	import optel-oc-interfaces { prefix oc-if; }
+	import optel-oc-rpc  {prefix opt-oc-rpc;}
+
+
+	rpc get-lldp {
+		input {
+    		uses base-types:ne-common-prop;
+		}
+		output {
+		    uses opt-oc-lldp:lldp-top;
+		}
+	}
+
+	rpc set-lldp-if-enable {
+		input {
+			uses base-types:ne-common-prop;
+			uses opt-oc-lldp:lldp-interface-config;
+		}
+	}
+
+	rpc set-neighbour-ip {
+		input {
+			uses base-types:ne-common-prop;
+			uses opt-oc-rpc:set-neighbour-ip-input-grouping;
+		}
+	}
+
+	rpc set-lldp {
+	    input {
+	        uses base-types:ne-common-prop;
+	        uses opt-oc-lldp:lldp-config;
+	    }
+	}
+
+
+
+
+
+
+
+}

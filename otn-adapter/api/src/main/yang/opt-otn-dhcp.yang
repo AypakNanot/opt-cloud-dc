@@ -1,0 +1,48 @@
+module opt-otn-dhcp {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:otn:dhcp";
+    prefix "opt-otn-dhcp";
+
+    revision "2021-01-04" {
+        description "Initial revision";
+    }
+
+    import base-types  {prefix "base-types";}
+    import optel-otn-ext-api {prefix "optel-otn-ext-api";  }
+
+    rpc query-dhcp-relay {
+        input{
+            uses base-types:ne-common-prop;
+        }
+        output{
+            uses optel-otn-ext-api:dhcp-relay-grouping;
+        }
+    }
+
+    rpc set-dhcp-relay-enable {
+        input{
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:dhcp-relay-grouping;
+        }
+    }
+
+    rpc config-dhcp-relay-interfaces{
+        input{
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:dhcp-relay-interface-grouping;
+        }
+    }
+
+    rpc delete-dhcp-relay-interfaces{
+        input{
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string {
+                    length "1..64";
+                }
+                mandatory true;
+            }
+        }
+    }
+
+}

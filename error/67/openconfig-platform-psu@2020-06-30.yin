@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:oc-platform-psu="http://openconfig.net/yang/platform/psu" xmlns:oc-ext="http://openconfig.net/yang/openconfig-ext" xmlns:oc-types="http://openconfig.net/yang/openconfig-types" xmlns:oc-platform="http://openconfig.net/yang/platform" xmlns:oc-platform-types="http://openconfig.net/yang/platform-types" name="openconfig-platform-psu">
+    <yang-version value="1"/>
+    <namespace uri="http://openconfig.net/yang/platform/psu"/>
+    <prefix value="oc-platform-psu"/>
+    <import module="openconfig-extensions">
+        <prefix value="oc-ext"/>
+    </import>
+    <import module="openconfig-types">
+        <prefix value="oc-types"/>
+    </import>
+    <import module="openconfig-platform">
+        <prefix value="oc-platform"/>
+    </import>
+    <import module="openconfig-platform-types">
+        <prefix value="oc-platform-types"/>
+    </import>
+    <organization>
+        <text>OpenConfig working group</text>
+    </organization>
+    <contact>
+        <text>OpenConfig working group
+www.openconfig.net</text>
+    </contact>
+    <description>
+        <text>This module defines a schema for power supply components in
+the OpenConfig platform model.</text>
+    </description>
+    <oc-ext:openconfig-version semver="0.2.1"/>
+    <revision date="2020-06-30">
+        <description>
+            <text>Initial release for DCI Box.</text>
+        </description>
+        <reference>
+            <text>0.2.2</text>
+        </reference>
+    </revision>
+    <revision date="2018-11-21">
+        <description>
+            <text>Add OpenConfig module metadata extensions.</text>
+        </description>
+        <reference>
+            <text>0.2.1</text>
+        </reference>
+    </revision>
+    <revision date="2018-01-16">
+        <description>
+            <text>Changed admin state leaf name</text>
+        </description>
+        <reference>
+            <text>0.2.0</text>
+        </reference>
+    </revision>
+    <revision date="2017-12-21">
+        <description>
+            <text>Initial revision</text>
+        </description>
+        <reference>
+            <text>0.1.0</text>
+        </reference>
+    </revision>
+    <oc-ext:regexp-posix/>
+    <oc-ext:catalog-organization org="openconfig"/>
+    <oc-ext:origin origin="openconfig"/>
+    <grouping name="psu-config">
+        <description>
+            <text>Configuration data for power supply components</text>
+        </description>
+    </grouping>
+    <grouping name="psu-state">
+        <description>
+            <text>Operational state data for power supply components</text>
+        </description>
+        <leaf name="enabled">
+            <type name="boolean"/>
+            <default value="true"/>
+            <description>
+                <text>Adminsitrative control on the on/off state of the power
+supply unit.</text>
+            </description>
+        </leaf>
+        <leaf name="capacity">
+            <type name="decimal64">
+                <fraction-digits value="2"/>
+            </type>
+            <units name="watts"/>
+            <description>
+                <text>Maximum power capacity of the power supply.</text>
+            </description>
+        </leaf>
+        <leaf name="input-current">
+            <type name="decimal64">
+                <fraction-digits value="2"/>
+            </type>
+            <units name="mA"/>
+            <description>
+                <text>The input current draw of the power supply.</text>
+            </description>
+        </leaf>
+        <leaf name="input-voltage">
+            <type name="decimal64">
+                <fraction-digits value="2"/>
+            </type>
+            <units name="volts"/>
+            <description>
+                <text>Input voltage to the power supply.</text>
+            </description>
+        </leaf>
+        <leaf name="output-current">
+            <type name="decimal64">
+                <fraction-digits value="2"/>
+            </type>
+            <units name="mA"/>
+            <description>
+                <text>The output current supplied by the power supply.</text>
+            </description>
+        </leaf>
+        <leaf name="output-voltage">
+            <type name="decimal64">
+                <fraction-digits value="2"/>
+            </type>
+            <units name="volts"/>
+            <description>
+                <text>Output voltage supplied by the power supply.</text>
+            </description>
+        </leaf>
+        <leaf name="output-power">
+            <type name="decimal64">
+                <fraction-digits value="2"/>
+            </type>
+            <units name="watts"/>
+            <description>
+                <text>Output power supplied by the power supply.</text>
+            </description>
+        </leaf>
+        <container name="supported-power-supply-modes">
+            <leaf-list name="supported-power-supply-mode">
+                <type name="oc-platform-types:psu-mode-type"/>
+                <description>
+                    <text>Reference to supported mode</text>
+                </description>
+            </leaf-list>
+        </container>
+        <leaf name="used-power-supply-mode">
+            <type name="oc-platform-types:psu-mode-type"/>
+            <description>
+                <text>Output power supplied by the power supply.</text>
+            </description>
+        </leaf>
+    </grouping>
+    <augment target-node="/oc-platform:components/oc-platform:component/oc-platform:power-supply/oc-platform:config">
+        <description>
+            <text>Adds power supply data to component operational state.</text>
+        </description>
+        <uses name="psu-config">
+            <when condition="../oc-platform:state/oc-platform:type = 'POWER_SUPPLY'">
+                <description>
+                    <text>This data is valid only for POWER_SUPPLY components</text>
+                </description>
+            </when>
+        </uses>
+    </augment>
+    <augment target-node="/oc-platform:components/oc-platform:component/oc-platform:power-supply/oc-platform:state">
+        <description>
+            <text>Adds power supply data to component operational state.</text>
+        </description>
+        <uses name="psu-config">
+            <when condition="../oc-platform:state/oc-platform:type = 'POWER_SUPPLY'">
+                <description>
+                    <text>This data is valid only for POWER_SUPPLY components</text>
+                </description>
+            </when>
+        </uses>
+        <uses name="psu-state">
+            <when condition="../oc-platform:state/oc-platform:type = 'POWER_SUPPLY'">
+                <description>
+                    <text>This data is valid only for POWER_SUPPLY components</text>
+                </description>
+            </when>
+        </uses>
+    </augment>
+</module>

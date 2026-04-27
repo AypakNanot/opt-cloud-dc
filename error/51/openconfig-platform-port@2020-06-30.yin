@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:oc-port="http://openconfig.net/yang/platform/port" xmlns:oc-platform="http://openconfig.net/yang/platform" xmlns:oc-if="http://openconfig.net/yang/interfaces" xmlns:oc-eth="http://openconfig.net/yang/interfaces/ethernet" xmlns:oc-ext="http://openconfig.net/yang/openconfig-ext" name="openconfig-platform-port">
+    <yang-version value="1"/>
+    <namespace uri="http://openconfig.net/yang/platform/port"/>
+    <prefix value="oc-port"/>
+    <import module="openconfig-platform">
+        <prefix value="oc-platform"/>
+    </import>
+    <import module="openconfig-interfaces">
+        <prefix value="oc-if"/>
+    </import>
+    <import module="openconfig-if-ethernet">
+        <prefix value="oc-eth"/>
+    </import>
+    <import module="openconfig-extensions">
+        <prefix value="oc-ext"/>
+    </import>
+    <organization>
+        <text>OpenConfig working group</text>
+    </organization>
+    <contact>
+        <text>OpenConfig working group
+www.openconfig.net</text>
+    </contact>
+    <description>
+        <text>This module defines data related to PORT components in the
+openconfig-platform model</text>
+    </description>
+    <oc-ext:openconfig-version semver="0.3.2"/>
+    <revision date="2020-06-30">
+        <description>
+            <text>Initial release for DCI Box.</text>
+        </description>
+        <reference>
+            <text>0.3.3</text>
+        </reference>
+    </revision>
+    <revision date="2018-11-21">
+        <description>
+            <text>Add OpenConfig module metadata extensions.</text>
+        </description>
+        <reference>
+            <text>0.3.2</text>
+        </reference>
+    </revision>
+    <revision date="2018-11-07">
+        <description>
+            <text>Fixed error in when statement path</text>
+        </description>
+        <reference>
+            <text>0.3.1</text>
+        </reference>
+    </revision>
+    <revision date="2018-01-20">
+        <description>
+            <text>Added augmentation for interface-to-port reference</text>
+        </description>
+        <reference>
+            <text>0.3.0</text>
+        </reference>
+    </revision>
+    <revision date="2017-11-17">
+        <description>
+            <text>Corrected augmentation path for port data</text>
+        </description>
+        <reference>
+            <text>0.2.0</text>
+        </reference>
+    </revision>
+    <revision date="2016-10-24">
+        <description>
+            <text>Initial revision</text>
+        </description>
+        <reference>
+            <text>0.1.0</text>
+        </reference>
+    </revision>
+    <oc-ext:regexp-posix/>
+    <oc-ext:catalog-organization org="openconfig"/>
+    <oc-ext:origin origin="openconfig"/>
+    <grouping name="port-breakout-config">
+        <description>
+            <text>Configuration data for the port breakout mode</text>
+        </description>
+        <leaf name="num-channels">
+            <type name="uint8"/>
+            <description>
+                <text>Sets the number of channels to 'breakout' on a port
+capable of channelization</text>
+            </description>
+        </leaf>
+        <leaf name="channel-speed">
+            <type name="identityref">
+                <base name="oc-eth:ETHERNET_SPEED"/>
+            </type>
+            <description>
+                <text>Sets the channel speed on each channel -- the
+supported values are defined by the
+ETHERNET_SPEED identity</text>
+            </description>
+        </leaf>
+    </grouping>
+    <grouping name="port-breakout-state">
+        <description>
+            <text>Operational state data for the port breakout mode</text>
+        </description>
+    </grouping>
+    <grouping name="port-breakout-top">
+        <description>
+            <text>Top-level grouping for port breakout data</text>
+        </description>
+        <container name="breakout-mode">
+            <description>
+                <text>Top-level container for port breakout data</text>
+            </description>
+            <container name="config">
+                <description>
+                    <text>Configuration data for port breakout</text>
+                </description>
+                <uses name="port-breakout-config"/>
+            </container>
+            <container name="state">
+                <config value="false"/>
+                <description>
+                    <text>Operational state data for port breakout</text>
+                </description>
+                <uses name="port-breakout-config"/>
+                <uses name="port-breakout-state"/>
+            </container>
+        </container>
+    </grouping>
+    <augment target-node="/oc-platform:components/oc-platform:component/oc-platform:port">
+        <description>
+            <text>Adding port breakout data to physical platform data</text>
+        </description>
+        <uses name="port-breakout-top">
+            <when condition="../oc-platform:state/oc-platform:type = 'PORT'">
+                <description>
+                    <text>This data is valid only for PORT components</text>
+                </description>
+            </when>
+        </uses>
+    </augment>
+    <augment target-node="/oc-if:interfaces/oc-if:interface/oc-if:state">
+        <description>
+            <text>Adds a reference from the base interface to the corresponding
+port component in the device inventory.</text>
+        </description>
+        <leaf name="hardware-port">
+            <type name="leafref">
+                <path value="/oc-platform:components/oc-platform:component/oc-platform:name"/>
+            </type>
+            <description>
+                <text>For non-channelized interfaces, references the hardware port
+corresponding to the base interface.</text>
+            </description>
+        </leaf>
+    </augment>
+</module>

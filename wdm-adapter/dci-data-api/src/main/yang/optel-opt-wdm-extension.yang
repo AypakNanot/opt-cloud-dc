@@ -1,0 +1,24 @@
+module optel-opt-wdm-extension {
+    yang-version "1.1";
+	
+    namespace "com:optel:dci:yang://opt/wdm/extension";
+    prefix opt-wdm-extension;
+	
+	description
+    "This module is used for optel to add content for wdm externsions";
+
+    revision 2024-12-11 {
+        description "Initial revision";
+    }
+
+	grouping device-mode-grouping {
+		leaf auto-config-mode {
+			type boolean;
+			description "Enable os disables the automatic power on and off mode for boards and ports";
+		}
+		leaf graded-energy-saving-mode {
+			type boolean;
+			description "The parameter is used to enable or disable the hierarchical energy saving mode";
+		}
+	}
+}

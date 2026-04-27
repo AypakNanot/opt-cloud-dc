@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:oc-line-connect="http://openconfig.net/yang/openconfig-transport-line-connectivity" xmlns:oc-ext="http://openconfig.net/yang/openconfig-ext" xmlns:oc-opt-types="http://openconfig.net/yang/transport-types" name="openconfig-transport-line-connectivity">
+    <yang-version value="1"/>
+    <namespace uri="http://openconfig.net/yang/openconfig-transport-line-connectivity"/>
+    <prefix value="oc-line-connect"/>
+    <import module="openconfig-extensions">
+        <prefix value="oc-ext"/>
+    </import>
+    <import module="openconfig-transport-types">
+        <prefix value="oc-opt-types"/>
+    </import>
+    <organization>
+        <text>OpenConfig working group</text>
+    </organization>
+    <contact>
+        <text>OpenConfig working group
+ www.openconfig.net</text>
+    </contact>
+    <description>
+        <text>This model describes the device-level connectivity
+(e.g., internal port-to-port) for optical transport line
+system elements such as wavelength routers (ROADMs) and
+amplifiers. All connections are uni-directional. Note that
+this model explicitly does not intend to model or provide
+a path to any higher layer topology modeling and is only
+for modeling internal links</text>
+    </description>
+    <oc-ext:openconfig-version semver="0.1.0"/>
+    <revision date="2019-06-27">
+        <description>
+            <text>Initial revision</text>
+        </description>
+        <reference>
+            <text>0.1.0</text>
+        </reference>
+    </revision>
+    <oc-ext:regexp-posix/>
+    <oc-ext:catalog-organization org="openconfig"/>
+    <oc-ext:origin origin="openconfig"/>
+    <identity name="PORT_CONNECTION_TYPE">
+        <description>
+            <text>The definition for different types of port connections
+when a specific port is not known</text>
+        </description>
+    </identity>
+    <identity name="EXTERNAL">
+        <base name="PORT_CONNECTION_TYPE"/>
+        <description>
+            <text>The port connection is external to the device</text>
+        </description>
+    </identity>
+    <grouping name="connection-state">
+        <description>
+            <text>Operational state data for connections</text>
+        </description>
+    </grouping>
+    <grouping name="connection-config">
+        <description>
+            <text>Configuration data for line system connections</text>
+        </description>
+        <leaf name="index">
+            <type name="uint32"/>
+            <description>
+                <text>Index for the defined connection</text>
+            </description>
+        </leaf>
+        <leaf name="source">
+            <type name="union">
+                <type name="string"/>
+                <type name="identityref">
+                    <base name="PORT_CONNECTION_TYPE"/>
+                </type>
+            </type>
+            <description>
+                <text>The user supplied name of the source port of the connection
+within the system. If the port is within the device, the
+string should reflect the name of the port as it appears in
+the components model. If the port is not represented in the
+components model (e.g., a port on a passive chassis), the
+string should reflect the system assigned name of the port.
+If the source port is not within the device, then an
+identityref of EXTERNAL should be specified.</text>
+            </description>
+        </leaf>
+        <leaf name="dest">
+            <type name="union">
+                <type name="string"/>
+                <type name="identityref">
+                    <base name="PORT_CONNECTION_TYPE"/>
+                </type>
+            </type>
+            <description>
+                <text>The user supplied name of the destination port of the connection
+within the system. If the port is within the device, the string
+should reflect the name of the port as it appears in the
+components model. If the port is not represented in the components
+model (e.g., a port on a passive chassis), the string should
+reflect the system assigned name of the port. If the destination
+port is not within the device, then an identityref of EXTERNAL
+should be specified.</text>
+            </description>
+        </leaf>
+        <leaf name="fiber-type">
+            <description>
+                <text>The type of fiber jumper used for the connection.</text>
+            </description>
+            <type name="identityref">
+                <base name="oc-opt-types:FIBER_JUMPER_TYPE"/>
+            </type>
+        </leaf>
+    </grouping>
+    <grouping name="line-connectivity-top">
+        <description>
+            <text>Top level grouping for transport line connectivity data</text>
+        </description>
+        <container name="connections">
+            <description>
+                <text>Enclosing container for line system connections list</text>
+            </description>
+            <list name="connection">
+                <key value="index"/>
+                <description>
+                    <text>List of line system connections</text>
+                </description>
+                <leaf name="index">
+                    <type name="leafref">
+                        <path value="../config/index"/>
+                    </type>
+                    <description>
+                        <text>Reference to index number of the connection</text>
+                    </description>
+                </leaf>
+                <container name="config">
+                    <description>
+                        <text>Configuration data</text>
+                    </description>
+                    <uses name="connection-config"/>
+                </container>
+                <container name="state">
+                    <config value="false"/>
+                    <description>
+                        <text>Operational state data</text>
+                    </description>
+                    <uses name="connection-config"/>
+                    <uses name="connection-state"/>
+                </container>
+            </list>
+        </container>
+    </grouping>
+    <uses name="line-connectivity-top"/>
+</module>

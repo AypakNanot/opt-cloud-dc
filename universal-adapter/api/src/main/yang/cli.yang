@@ -1,0 +1,73 @@
+module cli {
+    yang-version 1;
+	namespace "com:optel:device:dev:universal:cli";
+	prefix cli;
+
+	organization "optel";
+	revision 2023-01-03 {
+		description "Initial revision.";
+	}
+
+    rpc cli-connect {
+        description "telnet连接";
+        input {
+            leaf "room-id" {
+                type string;
+                description "该用户该标签页唯一标识，房间ID";
+            }
+            leaf "address" {
+                type string;
+                description "IP地址";
+            }
+            leaf "port" {
+                type uint16;
+                description "端口";
+            }
+            leaf "username" {
+                type string;
+            }
+            leaf "password" {
+                type string;
+            }
+        }
+        output {
+            leaf result {
+                type boolean;
+                description "telnet连接是否成功";
+            }
+            leaf message {
+                type string;
+            }
+        }
+    }
+
+    rpc cli-disconnect {
+        description "telnet断开连接";
+        input {
+            leaf "room-id" {
+                type string;
+                description "该用户该标签页唯一标识，房间ID";
+            }
+        }
+    }
+
+    rpc cli-command {
+        description "CLI发送命令";
+        input {
+            leaf "room-id" {
+                type string;
+                description "该用户该标签页唯一标识，房间ID";
+            }
+            leaf "command" {
+                type string;
+                description "CLI命令";
+            }
+            leaf "mode" {
+                type uint16;
+                description "下发模式，0：普通下发，1：tab键补全";
+            }
+        }
+    }
+
+
+}

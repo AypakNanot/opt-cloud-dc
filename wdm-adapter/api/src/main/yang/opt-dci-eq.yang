@@ -1,0 +1,103 @@
+module opt-dci-eq {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:eq";
+    prefix "opt-dci-eq";
+
+    revision "2020-02-10" {
+        description "DCI DEVICE";
+    }
+
+    import base-types  {prefix "base-types";}
+    import optel-oc-platform {prefix "opt-oc-platform";}
+    import optel-oc-platform-types {prefix "oc-types";}
+    import optel-oc-platform-psu {prefix "opt-oc-platform-psu";}
+    import optel-oc-platform-fan {prefix "opt-oc-platform-fan";}
+    import optel-oc-platform-mcu {prefix "opt-oc-platform-mcu";}
+    import optel-oc-platform-ptm {prefix "opt-oc-platform-ptm";}
+
+    rpc update-fan-eq{
+        description "修改风扇板卡属性";
+        input {
+            uses base-types:ne-common-prop;
+            leaf name {
+                type string ;
+            }
+            leaf fan-mode {
+                type oc-types:fan-mode-type;
+            }
+            leaf fan-speed {
+                type oc-types:fan-speed-type;
+            }
+            leaf fan-speed-high-threshold{
+                type uint32;
+                units rpm;
+                description
+                "Sets fan speed high threshold";
+            }
+        }
+    }
+
+    rpc get-fan-eq{
+    	description "查询风扇板卡属性";
+    	input {
+    		uses base-types:ne-common-prop;
+    	}
+    	output {
+    		uses opt-oc-platform:platform-component-top;
+    	}
+    }
+
+    rpc switch-mcu{
+        description "主控板等关键板卡1+1保护";
+        input{
+            uses base-types:ne-common-prop;
+            leaf name {
+                type string ;
+            }
+        }
+    }
+
+    rpc get-ptm-eq{
+        description "查询PTM板卡属性";
+        input {
+            uses base-types:ne-common-prop;
+        }
+        output {
+            uses opt-oc-platform:platform-component-top;
+        }
+    }
+
+    rpc update-ptm-eq{
+        description "修改PTM板卡属性";
+        input {
+            uses base-types:ne-common-prop;
+            leaf name {
+                type string ;
+            }
+            leaf work-state  {
+              type oc-types:ptm-work-type;
+            }
+        }
+    }
+
+    rpc get-mcu-eq{
+    	description "查询主控板卡属性";
+    	input {
+    		uses base-types:ne-common-prop;
+    	}
+    	output {
+    		uses opt-oc-platform:platform-component-top;
+    	}
+    }
+
+    rpc get-psu-eq{
+    	description "查询电源板卡属性";
+    	input {
+    		uses base-types:ne-common-prop;
+    	}
+    	output {
+    		uses opt-oc-platform:platform-component-top;
+    	}
+    }
+
+}

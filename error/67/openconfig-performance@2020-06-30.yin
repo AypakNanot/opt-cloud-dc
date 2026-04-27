@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:oc-pm="http://openconfig.net/yang/performance" xmlns:oc-performance-types="http://openconfig.net/yang/performance/types" xmlns:oc-yang="http://openconfig.net/yang/types/yang" xmlns:yang="urn:ietf:params:xml:ns:yang:ietf-yang-types" name="openconfig-performance">
+    <yang-version value="1"/>
+    <namespace uri="http://openconfig.net/yang/performance"/>
+    <prefix value="oc-pm"/>
+    <import module="openconfig-performance-types">
+        <prefix value="oc-performance-types"/>
+    </import>
+    <import module="openconfig-yang-types">
+        <prefix value="oc-yang"/>
+    </import>
+    <import module="ietf-yang-types">
+        <prefix value="yang"/>
+    </import>
+    <organization>
+        <text>OpenConfig working group</text>
+    </organization>
+    <contact>
+        <text>OpenConfig working group
+www.openconfig.net</text>
+    </contact>
+    <description>
+        <text>This module is designed to support the configuration of 
+traditional performance data, including enabling/disabling 
+of performance monitoring data. And TCA threshold configuration
+of performance data supporting TCA</text>
+    </description>
+    <revision date="2020-06-30">
+        <description>
+            <text>Initial revision</text>
+        </description>
+        <reference>
+            <text>0.1.0</text>
+        </reference>
+    </revision>
+    <grouping name="performance-tca-config">
+        <description>
+            <text>TCA configuration data for performance monitoring points</text>
+        </description>
+        <leaf name="threshold-value-high">
+            <type name="decimal64">
+                <fraction-digits value="2"/>
+            </type>
+            <description>
+                <text>Performance threshold (upper limit)</text>
+            </description>
+        </leaf>
+        <leaf name="threshold-value-low">
+            <type name="decimal64">
+                <fraction-digits value="2"/>
+            </type>
+            <description>
+                <text>Performance threshold (lower limit)</text>
+            </description>
+        </leaf>
+    </grouping>
+    <grouping name="performance-tca-top">
+        <description>
+            <text>Top-level grouping for TCA data</text>
+        </description>
+        <container name="tcas">
+            <description>
+                <text>Enclosed data for tca.</text>
+            </description>
+            <list name="tca">
+                <key value="pm-parameter pm-point pm-point-type pm-granularity"/>
+                <description>
+                    <text>List of objects that support TCA configuration</text>
+                </description>
+                <leaf name="pm-point">
+                    <type name="oc-performance-types:pm-point-ref"/>
+                    <description>
+                        <text>The path of the performance monitoring point</text>
+                    </description>
+                </leaf>
+                <leaf name="pm-parameter">
+                    <type name="oc-performance-types:pm-parameter-type"/>
+                    <description>
+                        <text>Types of performance monitoring parameters</text>
+                    </description>
+                </leaf>
+                <leaf name="pm-point-type">
+                    <type name="oc-performance-types:pmp-object-type"/>
+                    <description>
+                        <text>Categories of performance monitoring objects.</text>
+                    </description>
+                </leaf>
+                <leaf name="pm-granularity">
+                    <type name="oc-performance-types:pm-granularity-type"/>
+                    <description>
+                        <text>granularity of performance data</text>
+                    </description>
+                </leaf>
+                <uses name="performance-tca-config"/>
+            </list>
+        </container>
+    </grouping>
+    <grouping name="performance-pmp-config">
+        <description>
+            <text>Configuration data for performance monitoring points</text>
+        </description>
+        <leaf name="pm-point-enable">
+            <mandatory value="true"/>
+            <type name="boolean"/>
+            <description>
+                <text>Enable (true) or disable (false) the performance monitoring point for the object</text>
+            </description>
+        </leaf>
+    </grouping>
+    <grouping name="performance-pmp-top">
+        <description>
+            <text>Top-level grouping for performance point in the performance inventory</text>
+        </description>
+        <container name="pmps">
+            <description>
+                <text>Enclosed data for pmp.</text>
+            </description>
+            <list name="pmp">
+                <key value="pm-point"/>
+                <description>
+                    <text>List of performance point, keyed by path of performance.</text>
+                </description>
+                <leaf name="pm-point">
+                    <type name="oc-performance-types:pm-point-ref"/>
+                    <description>
+                        <text>The path of the performance monitoring point</text>
+                    </description>
+                </leaf>
+                <uses name="performance-pmp-config"/>
+            </list>
+        </container>
+    </grouping>
+    <grouping name="performance-config">
+        <description>
+            <text>Configuration data for performance</text>
+        </description>
+    </grouping>
+    <grouping name="performance-state">
+        <description>
+            <text>Operational data for performance</text>
+        </description>
+    </grouping>
+    <grouping name="performance-top">
+        <description>
+            <text>Top-level grouping for performance data</text>
+        </description>
+        <container name="performance">
+            <description>
+                <text>Top-level container for performance data</text>
+            </description>
+            <container name="config">
+                <description>
+                    <text>Configuration data for performance data</text>
+                </description>
+                <uses name="performance-config"/>
+            </container>
+            <container name="state">
+                <config value="false"/>
+                <description>
+                    <text>Operational state data for performance data</text>
+                </description>
+                <uses name="performance-config"/>
+                <uses name="performance-state"/>
+            </container>
+            <uses name="performance-pmp-top"/>
+            <uses name="performance-tca-top"/>
+        </container>
+    </grouping>
+    <uses name="performance-top"/>
+    <rpc name="get-pm-data">
+        <description>
+            <text>get the performance of current and history</text>
+        </description>
+        <input>
+            <leaf name="pm-type">
+                <type name="oc-performance-types:pm-rpc-type"/>
+                <default value="HISTORY"/>
+                <description>
+                    <text>performance, can get current and history</text>
+                </description>
+            </leaf>
+            <leaf name="pm-point">
+                <type name="oc-performance-types:pm-point-ref"/>
+                <description>
+                    <text>The path of the performance monitoring point</text>
+                </description>
+            </leaf>
+            <leaf name="pm-point-type">
+                <type name="oc-performance-types:pmp-object-type"/>
+                <description>
+                    <text>Categories of performance monitoring objects.</text>
+                </description>
+            </leaf>
+            <leaf name="pm-granularity">
+                <type name="oc-performance-types:pm-granularity-type"/>
+                <description>
+                    <text>granularity of performance data</text>
+                </description>
+            </leaf>
+            <leaf name="pm-parameter">
+                <type name="oc-performance-types:pm-parameter-type"/>
+                <description>
+                    <text>Types of performance monitoring parameters</text>
+                </description>
+            </leaf>
+            <leaf name="value-scope">
+                <type name="oc-performance-types:pm-value-scope"/>
+                <description>
+                    <text>Types of performance value scope</text>
+                </description>
+            </leaf>
+            <leaf name="history-data-type">
+                <type name="oc-performance-types:history-pm-type"/>
+                <description>
+                    <text>history performance, can get records and time</text>
+                </description>
+            </leaf>
+            <leaf name="number-of-records">
+                <type name="uint16"/>
+                <description>
+                    <text>number of records ，from start time</text>
+                </description>
+            </leaf>
+            <leaf name="start-mon-date-time">
+                <type name="yang:date-and-time"/>
+                <description>
+                    <text>start time</text>
+                </description>
+            </leaf>
+            <leaf name="end-mon-date-time">
+                <type name="yang:date-and-time"/>
+                <description>
+                    <text>end time</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="get-pm-result">
+                <mandatory value="true"/>
+                <type name="oc-performance-types:pm-rpc-result"/>
+                <description>
+                    <text>Result of the get performance operation</text>
+                </description>
+            </leaf>
+            <leaf name="number-of-bin">
+                <type name="uint16"/>
+                <description>
+                    <text>number of performance</text>
+                </description>
+            </leaf>
+            <list name="performance">
+                <key value="pm-point pm-parameter monitoring-date-time"/>
+                <leaf name="pm-point">
+                    <type name="oc-performance-types:pm-point-ref"/>
+                    <description>
+                        <text>The path of the performance monitoring point</text>
+                    </description>
+                </leaf>
+                <leaf name="pm-parameter">
+                    <type name="oc-performance-types:pm-parameter-type"/>
+                    <description>
+                        <text>Types of performance monitoring parameters</text>
+                    </description>
+                </leaf>
+                <leaf name="monitoring-date-time">
+                    <type name="yang:date-and-time"/>
+                    <description>
+                        <text>time of performance</text>
+                    </description>
+                </leaf>
+                <choice name="pm-data-value">
+                    <case name="instant">
+                        <leaf name="digital-pm-value">
+                            <type name="decimal64">
+                                <fraction-digits value="2"/>
+                            </type>
+                            <description>
+                                <text>digital-pm-value</text>
+                            </description>
+                        </leaf>
+                    </case>
+                    <case name="instant-avg-min-max">
+                        <leaf name="max-value">
+                            <type name="decimal64">
+                                <fraction-digits value="2"/>
+                            </type>
+                            <description>
+                                <text>max-value</text>
+                            </description>
+                        </leaf>
+                        <leaf name="min-value">
+                            <type name="decimal64">
+                                <fraction-digits value="2"/>
+                            </type>
+                            <description>
+                                <text>min-value</text>
+                            </description>
+                        </leaf>
+                        <leaf name="average-value">
+                            <type name="decimal64">
+                                <fraction-digits value="2"/>
+                            </type>
+                            <description>
+                                <text>average-value</text>
+                            </description>
+                        </leaf>
+                        <leaf name="current-value">
+                            <type name="decimal64">
+                                <fraction-digits value="2"/>
+                            </type>
+                            <description>
+                                <text>current-value</text>
+                            </description>
+                        </leaf>
+                    </case>
+                </choice>
+                <description>
+                    <text>List of performance point, keyed by path of performance.</text>
+                </description>
+            </list>
+        </output>
+    </rpc>
+</module>

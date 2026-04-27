@@ -1,0 +1,156 @@
+#!/bin/sh
+#
+#    Licensed to the Apache Software Foundation (ASF) under one or more
+#    contributor license agreements.  See the NOTICE file distributed with
+#    this work for additional information regarding copyright ownership.
+#    The ASF licenses this file to You under the Apache License, Version 2.0
+#    (the "License"); you may not use this file except in compliance with
+#    the License.  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+#
+
+#
+# handle specific scripts; the SCRIPT_NAME is exactly the name of the Karaf
+# script: client, instance, shell, start, status, stop, karaf
+#
+# if [ "${KARAF_SCRIPT}" == "SCRIPT_NAME" ]; then
+#   Actions go here...
+# fi
+
+#
+# general settings which should be applied for all scripts go here; please keep
+# in mind that it is possible that scripts might be executed more than once, e.g.
+# in example of the start script where the start script is executed first and the
+# karaf script afterwards.
+#
+
+#
+# The following section shows the possible configuration options for the default 
+# karaf scripts
+#
+# export JAVA_HOME # Location of Java installation
+# export JAVA_OPTS # Generic JVM options, for instance, where you can pass the memory configuration
+# export JAVA_NON_DEBUG_OPTS # Additional non-debug JVM options
+# export EXTRA_JAVA_OPTS # Additional JVM options
+# export KARAF_HOME # Karaf home folder
+# export KARAF_DATA # Karaf data folder
+# export KARAF_BASE # Karaf base folder
+# export KARAF_ETC  # Karaf etc  folder
+# export KARAF_LOG  # Karaf log  folder
+# export KARAF_SYSTEM_OPTS # First citizen Karaf options
+# export KARAF_OPTS # Additional available Karaf options
+# export KARAF_DEBUG # Enable debug mode
+# export KARAF_REDIRECT # Enable/set the std/err redirection when using bin/start
+# export KARAF_NOROOT # Prevent execution as root if set to true
+realpath() {
+  # Use in priority xpg4 awk or nawk on SunOS as standard awk is outdated
+  AWK=awk
+  if ${solaris}; then
+      if [ -x /usr/xpg4/bin/awk ]; then
+          AWK=/usr/xpg4/bin/awk
+      elif [ -x /usr/bin/nawk ]; then
+          AWK=/usr/bin/nawk
+      fi
+  fi
+
+  READLINK_EXISTS=`command -v readlink &> /dev/null`
+  BINARY_NAME=`basename "${1}"`
+  if [ -z "$READLINK_EXISTS" ]; then
+    OURPWD="`pwd`"
+    cd "`dirname "${1}"`" || exit 2
+    LINK=`ls -l "${BINARY_NAME}" | ${AWK} -F"-> " '{print $2}'`
+    while [ "${LINK}" ]; do
+        echo "link: ${LINK}" >&2
+        cd "`dirname "${LINK}"`" || exit 2
+        LINK=`ls -l "${BINARY_NAME}" | ${AWK} -F"-> " '{print $2}'`
+    done
+    REALPATH="`pwd`/${BINARY_NAME}"
+    cd "${OURPWD}" || exit 2
+    echo "${REALPATH}"
+  else
+    OURPWD="`pwd`"
+    cd "`dirname "${1}"`" || exit 2
+    LINK=`readlink "${BINARY_NAME}"`
+    while [ "${LINK}" ]; do
+        echo "link: ${LINK}" >&2
+        cd "`dirname "${LINK}"`" || exit 2
+        LINK=`readlink "${BINARY_NAME}"`
+    done
+    REALPATH="`pwd`/${BINARY_NAME}"
+    cd "${OURPWD}" || exit 2
+    echo "${REALPATH}"
+  fi
+}
+
+auto_mem()
+{
+    mem_kb=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+    ## sum kb
+    mem=$(($mem_kb / 1000 / 1000))
+
+    if [ $mem -ge 30 ]; then
+    	MEY_PROFILE="HIGH"
+    elif [ $mem -gt 14 ]; then
+    	MEY_PROFILE="MEDIUM"
+    elif [ $mem -gt 7 ]; then
+    	MEY_PROFILE="LOW"
+    else
+    	MEY_PROFILE="ERROR"
+    fi
+    # 自动内存参数设置
+    echo "$MEY_PROFILE"
+}
+
+REALNAME=`realpath "$0"`
+DIRNAME=`dirname "${REALNAME}"`
+
+if [ "x$JAVA_MAX_MEM" = "x" ]; then
+    export JAVA_MAX_MEM="1024m"
+fi
+
+PRO_DIR=$(dirname $0)
+#export JAVA_HOME="${DIRNAME}/../../common/jre_linux_17"
+[ ! -x "$JAVA_HOME/bin/java" ] && chmod -R 755 "$JAVA_HOME/bin" && echo "Change java bin dir permission ok."
+export VERSION="11"
+export JAVA_OPT="-Dorg.opendaylight.yangtools.yang.data.impl.schema.builder.retain-child-order=true -Dsystem.core.path=127.0.0.1:38551"
+# inhibition.capacity.candidate: if set `inhibition.capacity.candidate` value `true`, it's will make device not support candidate on odl when device support candidate
+JAVA_OPT="${JAVA_OPT} -Dinhibition.capacity.candidate=true"
+
+# Configure LOW memory
+MEY_PROFILE_LOW="-server -Xms512m -Xmx1024m -Xmn256m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m"
+export MEY_PROFILE_LOW
+# Configure MEDIUM memory
+MEY_PROFILE_MEDIUM="-server -Xms1024m -Xmx2048m -Xmn512m -XX:MetaspaceSize=256m -XX:MaxMetaspaceSize=1024m -XX:MinHeapFreeRatio=40 -XX:MaxHeapFreeRatio=70"
+MEY_PROFILE_MEDIUM="${MEY_PROFILE_MEDIUM} -XX:+UseG1GC -XX:G1HeapRegionSize=16m -XX:G1ReservePercent=10 -XX:InitiatingHeapOccupancyPercent=30 -XX:SoftRefLRUPolicyMSPerMB=0"
+MEY_PROFILE_MEDIUM="${MEY_PROFILE_MEDIUM} -Xss1024k -XX:NewRatio=8 -XX:SurvivorRatio=32"
+export MEY_PROFILE_MEDIUM
+# Configure HIGH memory
+MEY_PROFILE_HIGH="-server -Xms2048m -Xmx4096m -Xmn1024m -XX:MetaspaceSize=512m -XX:MaxMetaspaceSize=2048m -XX:MinHeapFreeRatio=40 -XX:MaxHeapFreeRatio=70"
+MEY_PROFILE_HIGH="${MEY_PROFILE_HIGH} -XX:+UseG1GC -XX:G1HeapRegionSize=32m -XX:G1ReservePercent=10 -XX:InitiatingHeapOccupancyPercent=30 -XX:SoftRefLRUPolicyMSPerMB=0"
+MEY_PROFILE_HIGH="${MEY_PROFILE_HIGH} -Xss2048k -XX:NewRatio=8 -XX:SurvivorRatio=32"
+export MEY_PROFILE_HIGH
+
+# memory setting profile ,LOW、MEDIUM、HIGH, Configure different memory percentages for different settings, with LOW set as the default.
+_MEY_PROFILE="${MEY_PROFILE}"
+if [ ! "${_MEY_PROFILE}" ]; then
+    _MEY_PROFILE=$(auto_mem)
+fi
+echo "memory profile ${_MEY_PROFILE}."
+if ["$_MEY_PROFILE" = "HIGH"]; then
+    JAVA_OPT="${JAVA_OPT} ${MEY_PROFILE_HIGH}"
+elif [ "$_MEY_PROFILE" = "LOW" ]; then
+    JAVA_OPT="${JAVA_OPT} ${MEY_PROFILE_LOW}"
+else
+    JAVA_OPT="${JAVA_OPT} ${MEY_PROFILE_MEDIUM}"
+fi
+echo "memory setting ${JAVA_OPT}."
+
+export JAVA_OPTS="${JAVA_OPT}"
+

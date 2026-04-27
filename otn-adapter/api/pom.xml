@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright © 2019 optel and others. All rights reserved.
+
+This program and the accompanying materials are made available under the
+terms of the Eclipse Public License v1.0 which accompanies this distribution,
+and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.optel.tmaster.dc</groupId>
+        <artifactId>api-parent</artifactId>
+        <version>${changelist}</version>
+        <relativePath>../../parent/api-parent</relativePath>
+    </parent>
+
+    <groupId>com.optel.tmaster.dc.device</groupId>
+    <artifactId>device-api</artifactId>
+    <!-- <name> formatting is used by autorelease to parse and notify projects on
+         build failure. Please do not modify this unless you have a good reason. -->
+    <name>ODL :: com.optel.tmaster.dc.device :: ${project.artifactId}</name>
+    <packaging>bundle</packaging>
+    <properties>
+        <odlparent.checkstyle.enforce>false</odlparent.checkstyle.enforce>
+        <odlparent.spotbugs.enforce>false</odlparent.spotbugs.enforce>
+        <odlparent.modernizer.enforce>false</odlparent.modernizer.enforce>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.optel.tmaster.dc.universal</groupId>
+            <artifactId>universal-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.optel.tmaster.dc.device</groupId>
+            <artifactId>data-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.mdsal</groupId>
+            <artifactId>mdsal-binding-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.framework</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.7.20</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.optel.tmaster.dc.general</groupId>
+            <artifactId>base-util</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+</project>

@@ -1,0 +1,192 @@
+{
+  "location-3u": {
+    "height": 164,
+    "width": 456,
+    "eq-objects": [
+      {
+        "eqHeight": 154,
+        "eqType": 1,
+        "eqWidth": 35,
+        "locationX": 5,
+        "locationY": 5,
+        "slot": 11
+      },
+      {
+        "eqHeight": 76,
+        "eqType": 1,
+        "eqWidth": 35,
+        "locationX": 42,
+        "locationY": 5,
+        "slot": 12
+      },
+      {
+        "eqHeight": 76,
+        "eqType": 1,
+        "eqWidth": 35,
+        "locationX": 42,
+        "locationY": 83,
+        "slot": 13
+      },
+      {
+        "eqHeight": 24,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 79,
+        "locationY": 5,
+        "slot": 1
+      },
+      {
+        "eqHeight": 24,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 266,
+        "locationY": 5,
+        "slot": 2
+      },
+      {
+        "eqHeight": 24,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 79,
+        "locationY": 31,
+        "slot": 3
+      },
+      {
+        "eqHeight": 24,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 266,
+        "locationY": 31,
+        "slot": 4
+      },
+      {
+        "eqHeight": 24,
+        "eqType": 1,
+        "eqWidth": 372,
+        "locationX": 79,
+        "locationY": 57,
+        "slot": 9
+      },
+      {
+        "eqHeight": 24,
+        "eqType": 1,
+        "eqWidth": 372,
+        "locationX": 79,
+        "locationY": 83,
+        "slot": 10
+      },
+      {
+        "eqHeight": 24,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 79,
+        "locationY": 109,
+        "slot": 5
+      },
+      {
+        "eqHeight": 24,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 266,
+        "locationY": 109,
+        "slot": 6
+      },
+      {
+        "eqHeight": 24,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 79,
+        "locationY": 135,
+        "slot": 7
+      },
+      {
+        "eqHeight": 24,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 266,
+        "locationY": 135,
+        "slot": 8
+      }
+    ]
+  },
+
+  "location-1u": {
+    "height": 175,
+    "width": 1225,
+    "eq-objects": [
+      {
+        "productName": "",
+        "eqHeight": 160,
+        "eqType": 1,
+        "eqWidth": 70,
+        "locationX": 5,
+        "locationY": 5,
+        "slot": 11
+      },
+      {
+        "productName": "",
+        "eqHeight": 65,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 80,
+        "locationY": 5,
+        "slot": 12
+      },
+      {
+        "productName": "",
+        "eqHeight": 65,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 80,
+        "locationY": 100,
+        "slot": 13
+      },
+      {
+        "productName": "",
+        "eqHeight": 160,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 270,
+        "locationY": 5,
+        "slot": 9
+      },
+      {
+        "productName": "",
+        "eqHeight": 50,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 460,
+        "locationY": 5,
+        "slot": 1
+      },
+      {
+        "productName": "",
+        "eqHeight": 50,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 650,
+        "locationY": 5,
+        "slot": 2
+      },
+      {
+        "productName": "",
+        "eqHeight": 50,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 840,
+        "locationY": 5,
+        "slot": 3
+      },
+      {
+        "productName": "M2B2G2S4E",
+        "eqHeight": 50,
+        "eqType": 1,
+        "eqWidth": 185,
+        "locationX": 1030,
+        "locationY": 5,
+        "slot": 4
+      }
+    ]
+  }
+}
+

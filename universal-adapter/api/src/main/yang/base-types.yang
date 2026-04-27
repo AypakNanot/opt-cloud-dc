@@ -1,0 +1,24 @@
+module base-types {
+	namespace "com:optel:base-types";
+	prefix base-types ;
+	
+	organization "optel";
+	revision 2020-04-20 {
+		description "Initial revision.";
+	}
+
+    grouping ne-common-prop{
+        leaf ne-id{
+            mandatory true;
+            type string{
+                length "1..64";
+            }
+        }
+        leaf yang-mode{
+            type string;
+            description "yang文件模式";
+        }
+    }
+
+
+}

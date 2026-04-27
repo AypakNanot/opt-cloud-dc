@@ -1,0 +1,165 @@
+module optel-otn-types {
+  yang-version 1.1;
+  namespace "com:optel:yang:api:optel-otn-types";
+  prefix "optel-otn-types";
+
+  organization
+    "China Communications Standards Association
+     TC 6 WG 1. ";
+
+  description
+    "This module defines common types used for OTN CPE devices.
+     The model fully conforms to the Network Management Datastore
+     Architecture (NMDA).";
+
+  revision "2021-09-27" {
+    description
+      "Initial Version";
+    reference
+      "接入型OTN管控技术要求";
+  }
+
+    typedef switch-type {
+        type enumeration {
+            enum ODU0 {
+                value 0;
+            }
+            enum ODU1 {
+                value 1;
+            }
+            enum ODU2 {
+                value 2;
+            }
+            enum ODU2e {
+                value 3;
+            }
+            enum ODU3 {
+                value 4;
+            }
+            enum ODU4 {
+                value 5;
+            }
+            enum ODUflex-CBR {
+                value 6;
+            }
+            enum ODUflex-GFP {
+                value 7;
+            }
+            enum VC-12 {
+                value 8;
+            }
+            enum VC-3 {
+                value 9;
+            }
+            enum VC-4 {
+                value 10;
+            }
+            enum OSU {
+                value 11;
+                description "设备PTP能力上报时候如支持需上报，但业务下发选用ODU还是OSU或何种能力由具体业务场景决定";
+            }
+        }
+    }
+
+    typedef client-signal-type {
+        type enumeration {
+            enum GE {
+                value 0;
+            }
+            enum FE {
+                value 1;
+            }
+            enum LAN-10GE {
+                value 2;
+            }
+            enum no-signal {
+                value 3;
+            }
+            enum STM-1 {
+                value 4;
+            }
+            enum STM-4 {
+                value 5;
+            }
+            enum STM-16 {
+                value 6;
+            }
+            enum STM-64 {
+                value 7;
+            }
+            enum STM-256 {
+                value 8;
+            }
+            enum OTU0 {
+                value 9;
+            }
+            enum OTU1 {
+                value 10;
+            }
+            enum OTU2 {
+                value 11;
+            }
+            enum OTU2e {
+                value 12;
+            }
+            enum OTU4 {
+                value 13;
+            }
+            enum E1 {
+                value 14;
+            }
+            enum ETH {
+                value 15;
+                description "OSU";
+            }
+        }
+    }
+
+
+    typedef adaptation-type {
+        type enumeration {
+            enum CBR-AMP {
+                value 0;
+            }
+            enum CBR-BMP {
+                value 1;
+            }
+            enum GFP-T {
+                value 2;
+            }
+            enum GFP-F {
+                value 3;
+            }
+            enum NULL {
+                value 4;
+            }
+            enum PRBS {
+                value 5;
+            }
+            enum CBRx {
+                value 6;
+            }
+            enum GMP {
+                value 7;
+            }
+            enum ODUij {
+                value 8;
+            }
+            enum ODUj21 {
+                value 9;
+            }
+            enum ODUk {
+                value 10;
+            }
+            enum GMP-OSU {
+                value 11;
+            }
+            enum IMP-OSU {
+                value 12;
+            }
+            enum IMP {
+                value 13;
+            }
+        }
+    }
+}

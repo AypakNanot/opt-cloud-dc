@@ -1,0 +1,347 @@
+module optel-protection-group {
+    yang-version 1.1;
+    namespace "com:optel:yang:api:optel-protection-group";
+    prefix optel-pg;
+
+    import optel-otn-types {
+        prefix optel-otn-types;
+        revision-date "2021-09-27";
+    }
+
+    revision 2021-09-27 {
+        description
+            "Final revision";
+        reference
+            "CCSA������OTN�ӿڼ���Ҫ��";
+    }
+    
+    /*
+    * common types
+    */
+    typedef protection-type {
+        type enumeration {
+           enum odu-sncp-i {
+                value 0;
+            }
+           enum odu-sncp-s {
+               value 1;
+           }
+            enum odu-sncp-n {
+               value 2;
+           }
+           enum vc-sncp {
+               value 3;
+           }
+           enum och-1-plus-1 {
+               value 4;
+               description "OTU port 1+1 protection";
+           }
+           enum msp-1-plus-1 {
+               value 5;
+           }
+           enum lag-1-to-1 {
+               value 6;
+               description "ETH layer 1:1 manual & static LAG protection";
+           }
+           enum no-protection {
+               value 7;
+           }
+           enum osu-sncp-i {
+               value 8;
+           }
+           enum osu-sncp-n {
+               value 9;
+           }
+           enum osu-sncp-s {
+               value 10;
+           }
+           enum lag-load-blancing {
+               value 11;
+               description "ETH layer LAG load blancing";
+           }
+        }
+    }
+    typedef switch-direction {
+        type enumeration {
+            enum uni-switch {
+                value 0;
+            }
+            enum bi-switch {
+                value 1;
+            }
+        }
+        description
+            "switch direction";
+    }
+    typedef sd-trigger {
+        type enumeration {
+            enum enabled {
+                value 0;
+            }
+            enum disabled {
+                value 1;
+            }
+        }
+        description
+            "sd-trigger";
+    }
+    typedef protection-direction {
+        type enumeration {
+            enum to-primary {
+                value 0;
+            }
+            enum to-secondary {
+                value 1;
+            }
+        }
+    }
+    typedef reversion-mode {
+        type enumeration {
+            enum revertive {
+                value 0;
+            }
+            enum non-revertive {
+                value 1;
+            }
+        }
+    }
+    typedef switch-reason {
+        type enumeration {
+            enum no-switch {
+                value 0;
+            }
+            enum sf-switch {
+                value 1;
+            }
+            enum sd-switch {
+                value 2;
+            }
+            enum manual-switch {
+                value 3;
+            }
+            enum force-switch {
+                value 4;
+            }
+            enum cleared {
+                value 5;
+            }
+            enum wait-for-restore {
+                value 6;
+                description "WTR";
+            }
+            enum lockout {
+                value 7;
+                description "lockout of protection";
+            }
+        }
+    }
+
+
+    /*
+    * groupings
+    */
+    grouping pg {
+        leaf pg-id {
+            mandatory true;
+            type uint16;
+        }
+        leaf create-type {
+            type uint16;
+            description "0:随业务创建   1:预先创建";
+        }
+        leaf delete-cascade {
+            type boolean;
+            description "是否业务删除的时候，该保护组也级联删除。目前暂时对于预先建立的类型，管控固定下发false;对于随业务创建的类型，按原有规则固定下发true";
+        }
+        leaf protection-type {
+            mandatory true;
+            type protection-type;
+        }
+        leaf reversion-mode {
+            mandatory true;
+            type reversion-mode;
+        }
+        leaf tcm {
+            type uint16;
+        }
+        leaf switch-direction {
+            mandatory true;
+            type switch-direction;
+        }
+        
+        leaf switch-reason {
+            type switch-reason;
+            config false;
+            description "switch reason, default NO SWITCH";
+        }
+        leaf protection-direction {
+            type protection-direction;
+            config false;
+            description "switch command, when the service is in primary path, report'toPrimary'.";
+        }
+        leaf hold-off {
+            type uint32;
+            units ms;
+            default 0;
+            description "hold off time";
+        }
+        leaf wait-to-restore-time {
+            mandatory true;
+            type uint64;
+            units seconds;
+            description "wait to restore time";
+        }
+        leaf sd-trigger {
+            type sd-trigger;
+            description "sd protection";
+        }
+        leaf primary-port {
+            mandatory true;
+            type string;
+            description "primary port CTP/FTP/PTP, different ports type for different services";
+        }
+        leaf secondary-port {
+            mandatory true;
+            type string;
+            description "secondary port PTP/FTP/CTP, different ports type for different services";
+        }
+        leaf selected-port {
+            mandatory true;
+            type string;
+            config false;
+            description "selected port PTP/FTP/CTP, different ports type for different services";
+        }
+    }
+
+
+    /*
+    * the data tree
+    */
+    container pgs {
+        uses pgs-grouping;
+        description "pgs";
+    }
+    grouping pgs-grouping {
+        list pg {
+            key 'pg-id';
+            uses pg;
+            description "pg";
+        }
+    }
+
+   notification protection-switch-notification {
+        leaf protection-switch-serial-no {
+            mandatory true;
+            type uint64;
+        }
+        container pg {
+            uses pg;
+        }
+        description "protection switch notification";
+    }
+
+    /*
+    * operations
+    */
+    rpc perform-protection-command {
+        input {
+            uses perform-protection-command-in-grouping;
+        }
+        description
+            "protection";
+    }
+    grouping perform-protection-command-in-grouping {
+            leaf pg-id {
+                mandatory true;
+                type uint64;
+            }
+
+            leaf protection-command {
+                mandatory true;
+                type switch-reason;
+            }
+
+            leaf protection-direction {
+                mandatory true;
+                type protection-direction;
+            }
+    }
+
+        grouping pre-create-pg-input-grouping {
+            leaf primary-port {
+                mandatory true;
+                type string;
+                description "primary port CTP/FTP/PTP,不同业务对应不同的端口类型";
+            }
+            leaf secondary-port {
+                mandatory true;
+                type string;
+                description "secondary port PTP/FTP/CTP,不同业务对应不同的端口类型";
+            }
+            leaf protection-type {
+                type string;
+                default "msp-1-plus-1";
+                description "暂时固定针对msp";
+            }
+
+            leaf sdh-signal-type {
+                mandatory true;
+                type optel-otn-types:client-signal-type;
+                description "STM-1,4,16";
+            }
+            leaf ts-detail {
+                mandatory true;
+                type string;
+                description "ODU 时隙";
+            }
+            leaf delete-cascade {
+                type boolean;
+                default false;
+                description "删除业务是否同时删除该保护组";
+            }
+            leaf service-mapping-mode {
+                type optel-otn-types:adaptation-type;
+                description "default CBR-BMP";
+            }
+            leaf odu-signal-type {
+                type optel-otn-types:client-signal-type;
+                description "ODU1,ODU2";
+            }
+            leaf adaptation-type {
+                type optel-otn-types:adaptation-type;
+                description "ODUj21,ODUk";
+            }
+            leaf switch-capability {
+                type optel-otn-types:switch-type;
+                description "ODU0,ODU1,ODU2";
+            }
+            leaf reversion-mode {
+                type reversion-mode;
+                default  "revertive";
+            }
+        
+            leaf switch-direction {
+                type switch-direction;
+                default "uni-switch";
+            }
+            leaf hold-off {
+                type uint32;
+                units ms;
+                default 0;
+                description  "hold off time";
+            }
+            leaf wait-to-restore-time {
+                type uint64;
+                units seconds;
+                default 300;
+                description "wait to restore time";
+            }
+        }
+
+        grouping pre-create-pg-output-grouping{
+            container pg{
+                uses pg;
+            }
+        }
+
+}

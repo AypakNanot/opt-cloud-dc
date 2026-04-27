@@ -1,0 +1,86 @@
+module snmp-config {
+    yang-version 1;
+    namespace "com:optel:params:yang:snmp:config";
+    prefix "snmp";
+
+    import ietf-inet-types {
+        prefix inet;
+    }
+
+    revision "2021-11-13" {
+        description "Initial revision of snmp model";
+    }
+
+    typedef snmp-get-type {
+        type enumeration {
+            enum GET {
+                value "1";
+            }
+            enum GET_BULK {
+                value "2";
+            }
+            enum GET_NEXT {
+                value "3";
+            }
+            enum GET_WALK {
+                value "4";
+            }
+        }
+    }
+
+    grouping snmp-request-config{
+        leaf ip-address {
+            type inet:ipv4-address;
+            mandatory true;
+        }
+        leaf port{
+            type uint16;
+        }
+        leaf community{
+            type string;
+        }
+    }
+
+    rpc snmp-get {
+        description "Sends an SNMP get to the specified address";
+        input {
+            uses snmp-request-config;
+            leaf get-type {
+                type snmp-get-type;
+                mandatory true;
+            }
+            leaf oid{
+                type string;
+                mandatory true;
+            }
+        }
+        output {
+            list result {
+                leaf oid {
+                    type string;
+                }
+                leaf value {
+                    type string;
+                }
+            }
+        }
+    }
+
+
+    rpc snmp-set {
+        description "Sends an SNMP get to the specified address";
+        input {
+            uses snmp-request-config;
+            leaf oid {
+                type string;
+                mandatory true;
+            }
+            leaf value {
+                type string;
+                mandatory true;
+            }
+        }
+    }
+
+
+}

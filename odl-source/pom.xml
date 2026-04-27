@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright ? 2019 optel and others. All rights reserved.
+This program and the accompanying materials are made available under the
+terms of the Eclipse Public License v1.0 which accompanies this distribution,
+and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.optel.tmaster.dc</groupId>
+        <artifactId>repo-parent</artifactId>
+        <version>${changelist}</version>
+        <relativePath>../parent/repo-parent</relativePath>
+    </parent>
+
+    <artifactId>odl-sources</artifactId>
+    <name>odl-sources</name>
+    <packaging>pom</packaging>
+
+    <modules>
+        <!--  mdsal 顺序： artifacts - common - docs - features - karaf - dom - binding - model - entityownership - singleton-service - trace - netty - replicate - yanglib  -->
+        <!--  mdsal binding 顺序： mdsal-binding-model-api - mdsal-binding-model-ri - mdsal-binding-generator - mdsal-binding-java-api-generator - binding-parent - yang-binding - mdsal-binding-spec-util - mdsal-binding-runtime-api - mdsal-binding-runtime-spi - mdsal-binding-runtime-osgi - mdsal-binding-test-model - mdsal-binding-dom-codec - mdsal-binding-dom-codec-api - mdsal-binding-dom-codec-spi - mdsal-binding-dom-codec-osgi - mdsal-binding-api - mdsal-binding-spi - mdsal-binding-util - mdsal-binding-test-utils - mdsal-binding-dom-adapter   -->
+        <module>yang-data-codec-xml</module>
+        <module>yang-data-impl</module>
+        <module>yang-data-util</module>
+        <module>yang-parser-impl</module>
+        <module>mdsal-dom-broker</module>
+        <module>mdsal-binding-generator</module>
+        <module>yang-binding</module>
+        <module>mdsal-binding-runtime-api</module>
+        <module>mdsal-binding-dom-codec</module>
+        <module>mdsal-binding-dom-adapter</module>
+        <module>odl-mdsal-binding-dom-adapter</module>
+        <module>shaded-sshd-jar</module>
+        <module>shaded-sshd</module>
+        <module>sal-netconf-connector</module>
+        <module>iana-if-type</module>
+        <module>netconf-topology-impl</module>
+    </modules>
+
+</project>

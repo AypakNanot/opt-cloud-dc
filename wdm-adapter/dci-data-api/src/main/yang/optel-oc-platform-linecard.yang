@@ -1,0 +1,80 @@
+module optel-oc-platform-linecard {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://platform/linecard";
+
+  prefix "oc-linecard";
+
+  import optel-oc-platform-types { prefix oc-platform-types; }
+
+
+  // meta
+  organization "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+    www.openconfig.net";
+
+  description
+    "This module defines data related to LINECARD components in
+    the optel-oc-platform model";
+
+  revision "2022-02-08" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+  // extension statements
+
+  // feature statements
+
+  // identity statements
+
+  // typedef statements
+
+  // grouping statements
+
+  grouping linecard-config {
+    description
+      "Configuration data for linecard components";
+
+    leaf power-admin-state {
+      //TODO: mandatory true;
+      type oc-platform-types:component-power-type;
+      description
+        "Enable or disable power to the linecard";
+    }
+  }
+
+  grouping linecard-state {
+    description
+      "Operational state data for linecard components";
+
+    leaf slot-id {
+      type string;
+      description
+        "Identifier for the slot or chassis position in which the
+        linecard is installed";
+    }
+  }
+
+  grouping linecard-top {
+    description
+      "Top-level grouping for linecard data";
+    uses linecard-config;
+    uses linecard-state;
+  }
+
+  // data definition statements
+
+  // augment statements
+
+  // rpc statements
+
+  // notification statements
+
+}
+

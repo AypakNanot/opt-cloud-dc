@@ -1,0 +1,432 @@
+module optel-sdh {
+    yang-version 1.1;
+    namespace "com:optel:yang:api:optel-sdh";
+    prefix optel-sdh;
+
+    import optel-devm {
+        prefix optel-devm;
+        revision-date "2021-09-27";
+    }
+    import optel-connection {
+        prefix optel-con;
+        revision-date "2021-09-27";
+    }
+    import optel-otn {
+        prefix optel-otn;
+        revision-date "2021-09-27";
+    }
+    import optel-yang-types {
+        prefix optel-type;
+        revision-date "2021-09-27";
+    }
+
+    import optel-otn-types {
+        prefix optel-otn-types;
+        revision-date "2021-09-27";
+    }
+
+    import optel-protection-group {
+        prefix optel-pg;
+        revision-date "2021-09-27";
+    }
+
+    revision 2021-09-27 {
+        description
+            "Final revision";
+        reference
+            "CCSA������OTN�ӿڼ���Ҫ��";
+    }
+	
+	identity SDH {
+        base optel-type:layer-protocol-name;
+    }
+
+    grouping vcg-pac {
+        leaf vc-type {
+            mandatory true;
+            type optel-otn-types:switch-type;
+        }
+        leaf lcas {
+            type boolean;
+            default false;
+        }
+        leaf hold-off {
+            type uint32;
+            default 0;
+            description "unit: ms";
+        }
+        leaf wtr {
+            type uint32;
+            default 300;
+            description "unit: s";
+        }
+        leaf tsd {
+            type boolean;
+            default false;
+        }
+        leaf tx-number {
+            type uint64;
+            default 0;
+            config false;
+            description "The actual number of members sent by the LCAS group.";
+        }
+        leaf rx-number {
+            type uint64;
+            default 0;
+            config false;
+            description "The actual number of members received by the LCAS group.";
+        }
+        leaf so-handshake-state {
+            type boolean;
+            default false;
+            config false;
+            description "The handshake state of the source end.";
+        }
+    }
+
+    grouping sdh-ftp {
+        leaf sdh-type {
+            mandatory true;
+            type optel-otn-types:client-signal-type;
+        }
+        leaf vc-type {
+            mandatory true;
+            type optel-otn-types:switch-type;
+        }
+        leaf mapping-path {
+            mandatory true;
+            type string {
+                length "1..64";
+            }
+        }
+        leaf time-slot {
+            type string {
+                length "1..64";
+            }
+        }
+
+    }
+
+    grouping sdh-mapping-pac-grouping {
+            leaf-list supported-sdh-signal-types {
+                type optel-otn-types:client-signal-type;
+            }
+            leaf-list switch-capability {
+                type optel-otn-types:switch-type;
+            }
+    }
+    augment "/optel-devm:ptps/optel-devm:ptp" {
+        container sdh-mapping-pac {
+            uses sdh-mapping-pac-grouping;
+        }
+    }
+    grouping sdh-ptp-pac-grouping {
+            leaf current-sdh-signal-type {
+                mandatory true;
+                type optel-otn-types:client-signal-type;
+            }
+            leaf-list supported-sdh-signal-types {
+                min-elements 1;
+                type optel-otn-types:client-signal-type;
+                config false;
+            }
+            leaf-list switch-capability {
+                min-elements 1;
+                type optel-otn-types:switch-type;
+                config false;
+            }
+            leaf j0-actual-tx {
+                type string;
+            }
+            leaf j0-expected-rx {
+                type string;
+            }
+            leaf j0-actual-rx {
+                type string;
+                config false;
+            }
+    }
+
+    augment "/optel-devm:ptps/optel-devm:ptp" {
+        when "optel-devm:layer-protocol-name = 'optel-sdh:SDH'";
+        container sdh-ptp-pac {
+            uses sdh-ptp-pac-grouping;
+        }
+
+        
+    }
+        grouping sdh-ftp-pac-grouping {
+            leaf sdh-signal-type {
+                mandatory true;
+                type optel-otn-types:client-signal-type;
+            }
+            leaf-list switch-capability {
+                min-elements 1;
+                type optel-otn-types:switch-type;
+                config false;
+            }
+            leaf service-mapping-mode {
+                type optel-otn-types:adaptation-type;
+            }
+            leaf j0-actual-tx {
+                type string;
+            }
+            leaf j0-expected-rx {
+                type string;
+            }
+            leaf j0-actual-rx {
+                type string;
+                config false;
+            }
+        }
+
+    augment "/optel-devm:ftps/optel-devm:ftp" {
+        when "optel-devm:layer-protocol-name = 'optel-sdh:SDH'";
+        container sdh-ftp-pac {
+            uses sdh-ftp-pac-grouping;
+        }
+    }
+
+
+        grouping vc-ctp-pac-grouping {
+            leaf vc-type {
+                mandatory true;
+                type optel-otn-types:switch-type;
+            }
+            leaf mapping-path {
+                mandatory true;
+                type string {
+                    length "1..64";
+                }
+            }
+            leaf j1-actual-tx {
+                type string;
+            }
+            leaf j1-expected-rx {
+                type string;
+            }
+            leaf j1-actual-rx {
+                type string;
+                config false;
+            }
+        }
+
+    augment "/optel-devm:ctps/optel-devm:ctp" {
+        when "optel-devm:layer-protocol-name = 'optel-sdh:SDH'";
+        container vc-ctp-pac {
+            uses vc-ctp-pac-grouping;
+        }
+    }
+
+    /*
+    * operations
+    */
+
+     grouping create-sdh-connection-in-grouping {
+            uses optel-con:create-connection;
+	    leaf service-mapping-mode {
+                type optel-otn-types:adaptation-type;
+            }
+            leaf uni-protection-type {
+                type optel-pg:protection-type;
+                description "default msp-1-plus-1";
+            }
+            leaf nni-protection-type {
+                type optel-pg:protection-type;
+            }
+			leaf nni-tcm {
+				type uint16;
+				description "when nni-protection-type = 'snc-s', needs to be issued to present the nni tcm of both work path and protection path";
+            }	
+            leaf nni2-protection-type {
+                type optel-pg:protection-type;
+            }
+			leaf nni2-tcm {
+				type uint16;
+				description "when nni-protection-type = 'snc-s', needs to be issued to present the nni2 tcm of both work path and protection path";
+            }	
+            container sdh-uni {
+                leaf uni-ptp-name {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf vc-type {
+                    type optel-otn-types:switch-type;
+                }
+                leaf-list mapping-path {
+                    min-elements 1;
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf time-slot {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                description "only for UNI-NNI ";
+            }
+            container second-sdh-uni {
+                leaf uni-ptp-name {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf vc-type {
+                    type optel-otn-types:switch-type;
+                }
+                leaf-list mapping-path {
+                    min-elements 1;
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf time-slot {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                description "only for UNI-NNI ";
+            }	
+            container sdh-nni {
+                leaf nni-ptp-name {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf vc-type {
+                    type optel-otn-types:switch-type;
+                }
+                leaf-list mapping-path {
+                    min-elements 1;
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf time-slot {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                description "only for sdhUNI to sdhNNI";
+            }
+            container second-sdh-nni {
+                leaf nni-ptp-name {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf vc-type {
+                    type optel-otn-types:switch-type;
+                }
+                leaf-list mapping-path {
+                    min-elements 1;
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf time-slot {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                description "only for sdhUNI to sdhNNI";
+            }
+			
+            container primary-nni {
+                uses optel-otn:nni;
+                container sdh-ftp {
+                    uses sdh-ftp;
+                }
+                description "primary nni, mandatory true";
+            }
+            container secondary-nni {
+                uses optel-otn:nni;
+                container sdh-ftp {
+                    uses sdh-ftp;
+                }
+                description "only for service with protection. Optional";
+            }
+            container primary-nni2 {
+                uses optel-otn:nni;
+                container sdh-ftp {
+                    uses sdh-ftp;
+                }
+                description "only NNI2NNI mode, optional!";
+            }
+            container secondary-nni2 {
+                uses optel-otn:nni;
+                container sdh-ftp {
+                    uses sdh-ftp;
+                }
+                description "only NNI2NNI mode and with protection. optional";
+            }
+
+     }
+    rpc create-sdh-connection {
+        input {
+            uses create-sdh-connection-in-grouping;
+        }
+        output {
+            uses create-sdh-connection-out-grouping;
+        }
+    }
+    grouping create-sdh-connection-out-grouping {
+            list connection {
+                key 'name';
+                uses optel-con:connection;
+            }
+            container create-component {
+                leaf-list ftp-name {
+                    min-elements 1;
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf-list ctp-name {
+                    min-elements 1;
+                    type string {
+                        length "1..64";
+                    }
+                }
+            }
+    }
+
+    grouping get-vc-trail-trace-input {
+        leaf ctp-name {
+            type string;
+            mandatory true;
+            description "sdh ctp";
+        }
+        leaf tp-name {
+            type string;
+            mandatory true;
+            description "sdh ftp/ptp";
+        }
+        leaf mapping-path {
+            type string;
+            mandatory true;
+        }
+        leaf vc-type {
+            type optel-otn-types:switch-type;
+        }
+    }
+
+    grouping get-single-vc-trail-trace-output {
+        leaf actual-tx {
+            mandatory true;
+            type string;
+            description "实际发送值";
+        }
+        leaf expected-rx {
+            type string;
+            description "期望接收值";
+        }
+        leaf actual-rx {
+            mandatory true;
+            type string;
+            description "实际接收值";
+        }
+    }
+}

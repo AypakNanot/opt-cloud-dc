@@ -1,0 +1,32 @@
+module opt-dci-ocm {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:ocm";
+    prefix "opt-dci-ocm";
+
+    revision "2020-02-10" {
+        description "DCI OCM";
+    }
+   import optel-oc-channel-monitor  {prefix "oc-chan-monitor";}
+   import base-types  {prefix "base-types";}
+
+
+    rpc get-ocm-config{
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list name{
+                type string;
+            }
+        }
+        output{
+            uses oc-chan-monitor:channel-monitor-top;
+        }
+    }
+
+    rpc set-ocm-config{
+        input {
+            uses base-types:ne-common-prop;
+            uses oc-chan-monitor:channel-monitor-config;
+        }
+    }
+
+    }

@@ -1,0 +1,212 @@
+module opt-otn-performance {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:otn:performance";
+    prefix "otn-performance";
+    import base-types  {prefix "base-types";}
+    import ietf-yang-types {prefix yang;}
+    import optel-yang-types { prefix optel-type; }
+    import optel-performance { prefix optel-performance; }
+    import optel-alarms { prefix optel-alarms; }
+    import optel-otn-ext-api { prefix optel-otn-ext-api; }
+    
+    revision "2020-04-28" {
+        description "Initial revision";
+    }
+
+
+	//查询当前性能
+    rpc get-all-current-performance-monitoring-data-ne {
+		description "none";
+			input {
+				uses base-types:ne-common-prop;
+				uses get-all-current-performance-monitoring-data-grouping;
+
+			}
+			output {
+                    uses optel-performance:performances-grouping;
+                }
+    }
+
+	grouping get-all-current-performance-monitoring-data-grouping {
+        leaf object-name {
+            mandatory true;
+            type string {
+                length "1..64";
+            }
+        }
+        leaf object-type{
+            type uint8;
+            }
+        leaf granularity {
+            mandatory true;
+            type optel-type:granularity;
+        }
+        leaf pm-parameter-name {
+            type string {
+                length "1..64";
+            }
+        }
+    }
+
+    //查询当前性能-扩展rpc
+    rpc get-all-current-performance-monitoring-data-ne-by-rpc {
+    		description "none";
+    			input {
+    				uses base-types:ne-common-prop;
+    				uses optel-otn-ext-api:performance-input-grouping;
+
+    			}
+    			output {
+                        uses optel-performance:performances-grouping;
+                    }
+        }
+
+	//查询历史性能
+    rpc get-history-performance-monitoring-data-ne {
+            description "none";
+                input {
+                    uses base-types:ne-common-prop;
+                    uses optel-performance:get-history-performance-monitoring-data-in-grouping;
+                }
+                output {
+                    uses optel-performance:performances-grouping;
+                }
+        }
+
+    //查询性能阈值门限-扩展rpc
+    rpc get-tca-parameter-by-rpc {
+    		description "get tca parameter";
+                input {
+                    uses base-types:ne-common-prop;
+                    uses optel-otn-ext-api:performance-input-grouping;
+                }
+                output {
+                    uses optel-otn-ext-api:tca-parameters-grouping;
+                }
+        }
+
+
+	//查询性能阈值门限
+
+	grouping get-tca-parameter-in-grouping {
+        leaf object-name {
+            type string {
+                length "1..64";
+            }
+            description "tca-parameter object-name";
+        }
+        leaf object-type{
+            type uint8;
+            }
+        leaf pm-parameter-name {
+            type string {
+                length "1..64";
+            }
+            description "tca-parameter pm-parameter-name";
+        }
+        leaf granularity {
+            type optel-type:granularity;
+            description "tca-parameter granularity";
+        }
+        leaf threshold-type {
+            type optel-type:threshold-type;
+            description "tca-parameter threshold-type";
+        }
+    }
+
+
+	rpc get-tca-parameter {
+		description "get tca parameter";
+		input {
+			uses base-types:ne-common-prop;
+			uses get-tca-parameter-in-grouping;
+		}
+		output {
+			uses optel-alarms:tca-parameters-grouping;
+		}
+	}
+
+
+	//设置性能阈值门限值
+
+	grouping set-tca-parameter-in-grouping {
+		leaf object-name {
+            mandatory true;
+            type string {
+                length "1..64";
+            }
+            description "tca-parameter object-name";
+        }
+        leaf pm-parameter-name {
+            type string {
+                length "1..64";
+            }
+            description "tca-parameter pm-parameter-name";
+        }
+        leaf granularity {
+            type optel-type:granularity;
+            description "tca-parameter granularity";
+        }
+        leaf threshold-type {
+            mandatory true;
+            type optel-type:threshold-type;
+            description "tca-parameter threshold-type";
+        }
+        leaf threshold-value {
+            type optel-type:real;
+            description "tca-parameter threshold-value";
+        }
+        description "tca-parameter";
+	}
+
+
+
+
+	rpc set-tca-Parameter {
+		input {
+			uses base-types:ne-common-prop;
+			uses set-tca-parameter-in-grouping;
+		}
+	}
+
+	    // 查询性能计数器属性
+        rpc get-pm-counter-attr {
+            input {
+                uses base-types:ne-common-prop;
+            }
+            output{
+                uses optel-otn-ext-api:pm-counter-attr-grouping;
+            }
+        }
+        // 配置性能计数器属性
+        rpc set-pm-counter-attr{
+            input{
+                uses base-types:ne-common-prop;
+                uses optel-otn-ext-api:pm-counter-attr-grouping;
+            }
+        }
+
+       rpc get-all-pm-state{
+            input {
+                uses base-types:ne-common-prop;
+                uses  optel-performance:get-all-pm-state-in-grouping;
+            }
+            output {
+                leaf report-policy{
+                    type string;
+                    description "open or close or all 如果为open，则只上报打开的性能开关，如果为close，则只上报关闭的性能开关。如果为all则全部上报，默认不返回此字段，即为all。 按端口查询必须为all，按网元查询可根据设备实际情况选择";
+                }
+                container pm-states {
+                    uses optel-performance:pm-states;
+                    description "performances states";
+                }
+            }
+        }
+
+        rpc set-pm-state {
+            input {
+                uses base-types:ne-common-prop;
+                uses optel-performance:set-pm-state-in-grouping;
+            }
+        }
+}

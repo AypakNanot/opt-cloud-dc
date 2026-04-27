@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright © 2019 optel and others. All rights reserved.
+
+This program and the accompanying materials are made available under the
+terms of the Eclipse Public License v1.0 which accompanies this distribution,
+and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.optel.tmaster.dc</groupId>
+    <artifactId>repo-parent</artifactId>
+    <version>${changelist}</version>
+    <relativePath>../../parent/repo-parent</relativePath>
+  </parent>
+
+  <groupId>com.optel.tmaster.dc.device</groupId>
+  <artifactId>device-features</artifactId>
+  <!-- <name> formatting is used by autorelease to parse and notify projects on
+       build failure. Please do not modify this unless you have a good reason. -->
+  <name>OPTEL ::  ${project.artifactId} :: [Karaf Feature]</name>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>opt-device-api</module>
+    <module>opt-device-impl-base</module>
+    <module>opt-device-impl-otn-cmcc</module>
+<!--    <module>opt-device-impl-otn-ctc</module>-->
+  </modules>
+
+</project>

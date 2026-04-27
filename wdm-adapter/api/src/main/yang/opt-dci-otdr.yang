@@ -1,0 +1,80 @@
+module opt-dci-otdr {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:otdr";
+    prefix "opt-dci-otdr";
+
+    revision "2020-02-10" {
+        description "DCI DEVICE";
+    }
+
+    import base-types  {prefix "base-types";}
+    import optel-oc-otdr  {prefix "opt-oc-otdr";}
+    rpc start-otdr {
+        description
+           "start the specific otdr and get the result file";
+          input {
+            uses base-types:ne-common-prop;
+            uses opt-oc-otdr:start-otdr-input-grouping;
+          }
+
+          output {
+            uses opt-oc-otdr:start-otdr-output-grouping;
+          }
+      }
+
+      rpc stop-otdr {
+        description
+           "stop the specific otdr and get the result file";
+          input {
+            uses base-types:ne-common-prop;
+            uses opt-oc-otdr:stop-otdr-input-grouping;
+          }
+      }
+
+      rpc get-otdr-config{
+          input {
+            uses base-types:ne-common-prop;
+          }
+          output{
+             uses opt-oc-otdr:otdr-top;
+          }
+
+      }
+
+      rpc get-otdr-result{
+        input {
+          uses base-types:ne-common-prop;
+          leaf name{
+            type string;
+          }
+        }
+        output{
+            uses opt-oc-otdr:otdr-result-top;
+        }
+      }
+
+      rpc get-otdr-result-event{
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+            }
+            leaf monitor-port{
+                type string;
+            }
+            leaf index{
+                type uint32;
+            }
+        }
+        output{
+            uses opt-oc-otdr:otdr-result-event;
+        }
+      }
+
+      rpc set-otdr-config{
+        input {
+            uses base-types:ne-common-prop;
+            uses opt-oc-otdr:otdr-config;
+        }
+      }
+    }

@@ -1,0 +1,1320 @@
+module opt-otn-device {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:otn:device";
+    prefix "otn-device";
+
+    import ietf-yang-types {prefix yang;}
+    import yang-ext {prefix ext;}
+    import base-types  {prefix "base-types";}
+    import ietf-inet-types { prefix inet; }
+    import optel-devm {prefix "optel-devm";}
+    import optel-sdh {prefix "optel-sdh";}
+    import optel-otn {prefix "optel-otn";}
+    import optel-eth {prefix "optel-eth";}
+    import optel-connection { prefix optel-con;}
+    import optel-yang-types { prefix optel-type;}
+    import optel-pdh { prefix optel-pdh;}
+    import optel-otn-types { prefix optel-otn-types;}
+    import optel-otn-ext-api { prefix optel-otn-ext-api;}
+    import optel-osu { prefix optel-osu;}
+    import optel-account { prefix optel-account; }
+
+
+    revision "2020-04-25" {
+        description "Initial revision";
+    }
+
+    rpc query-me{
+    	input{
+    		uses base-types:ne-common-prop;
+    	}
+    	output{
+    	    uses optel-devm:me-grouping;
+    	}
+    }
+
+    rpc query-me-ntp{
+    	input{
+    		uses base-types:ne-common-prop;
+    	}
+    	output{
+    	    uses optel-devm:ntp-servers-grouping;
+    	}
+    }
+
+    rpc add-modify-me-ntp{
+    	input{
+    		uses base-types:ne-common-prop;
+            leaf name {
+                mandatory true;
+                type string {
+                    length "1..32";
+                }
+                description "Name of ntp server.";
+            }
+            leaf ip-address {
+                mandatory true;
+                type inet:ipv4-address;
+                description "Ip address of ntp";
+            }
+            leaf port {
+                type inet:port-number;
+                default 123;
+                description "Port number of ntp";
+            }
+            leaf ntp-version {
+                type string {
+                    length "1..64";
+                }
+                description "Ntp version";
+            }
+    	}
+    }
+
+    rpc delete-me-ntp{
+    	input{
+    		uses base-types:ne-common-prop;
+    		leaf name{
+    		    type string;
+    		}
+    	}
+    }
+
+    rpc query-mc-port{
+            input {
+                uses base-types:ne-common-prop;
+                leaf name {
+                   type string {
+                       length "1..64";
+                   }
+                   description "port-name";
+                }
+            }
+            output {
+                uses optel-devm:mcs-groping;
+            }
+        }
+
+        rpc modify-mc-port{
+            input {
+                uses base-types:ne-common-prop;
+                leaf name {
+                   type string {
+                       length "1..64";
+                   }
+                   description "port-name";
+                }
+                leaf admin-state {
+                    type optel-devm:admin-state;
+                }
+            }
+        }
+
+    rpc query-eqs{
+        input{
+            uses base-types:ne-common-prop;
+            leaf eq-name {
+                type string{
+                    length "1..64";
+                }
+                description "name";
+            }
+        }
+        output{
+            uses optel-devm:eqs-grouping ;
+        }
+    }
+    rpc delete-eq{
+        input{
+            uses base-types:ne-common-prop;
+            leaf eq-name{
+                type string{
+                    length "1..64";
+             }
+                description "name";
+            }
+        }
+    }
+    rpc query-lpt{
+        input{
+            uses base-types:ne-common-prop;
+            leaf-list ptp-name {
+                type string{
+                   length "1..64";
+                }
+                description "Name of ptp";
+            }
+        }
+        output{
+            uses optel-otn-ext-api:lpt-grouping;
+        }
+    }
+    rpc modify-lpt{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+                type string{
+                   length "1..64";
+                }
+                description "Name of ptp";
+            }
+            leaf admin-state{
+                type optel-devm:admin-state;
+            }
+            leaf lpt-mode{
+                type optel-otn-ext-api:lpt-mode;
+            }
+        }
+    }
+
+    rpc query-ptps{
+    	input{
+            uses base-types:ne-common-prop;
+            leaf-list ptp-name {
+                type string{
+                   length "1..64";
+                }
+                description "Name of ptp";
+            }
+        }
+        output{
+            uses optel-devm:ptps-grouping;
+        }
+    }
+
+    rpc query-ctps{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ctp-name {
+                type string{
+                   length "1..64";
+                }
+                description "Name of ctp";
+            }
+        }
+        output{
+            uses optel-devm:ctps-grouping ;
+        }
+    }
+	// 查询以太网性能
+    rpc query-eth-performance {
+		input {
+			uses base-types:ne-common-prop;
+            leaf ctp-name {
+                type string{
+                   length "1..64";
+                }
+                description "Name of ctp";
+            }
+		}
+		output{
+            uses optel-eth:eth-performance-grouping ;
+        }
+    }
+
+    rpc modify-user-password-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-devm:modify-user-password-in-grouping;
+        }
+    }
+
+    rpc query-account {
+        input {
+           uses base-types:ne-common-prop;
+        }
+        output {
+            uses optel-account:accounts;
+        }
+    }
+
+    rpc modify-account {
+        input {
+            uses base-types:ne-common-prop;
+            leaf user-name{
+                mandatory true;
+                type string;
+            }
+            leaf pwd {
+                mandatory true;
+                type string;
+                description "密码强度由上层系统下发保障，设备本身不用做判断了，只需要支持简单密码或者复杂密码的强度即可。";
+            }
+            leaf role {
+                type optel-account:user-role;
+                description "根据设备实际情况配置，可选，若不支持可忽略，或按设备默认权限";
+            }
+            leaf additional {
+                type string;
+                description "信息描述，可选";
+            }
+            leaf sudo-pwd{
+                type string;
+                description "可选，删建用户等操作可能会用到root权限，因此需要提供sudo操作的密码。考虑设备内实现不一样，如不需要此密码，可忽略";
+            }
+        }
+    }
+
+    rpc add-account {
+        input {
+            uses base-types:ne-common-prop;
+            leaf user-name{
+                mandatory true;
+                type string;
+            }
+            leaf pwd {
+                mandatory true;
+                type string;
+                description "密码强度由上层系统下发保障，设备本身不用做判断了，只需要支持简单密码或者复杂密码的强度即可。";
+            }
+            leaf role {
+                type optel-account:user-role;
+                description "根据设备实际情况配置，可选，若不支持可忽略，或按设备默认权限";
+            }
+            leaf additional {
+                type string;
+                description "信息描述，可选";
+            }
+            leaf sudo-pwd{
+                type string;
+                description "可选，删建用户等操作可能会用到root权限，因此需要提供sudo操作的密码。考虑设备内实现不一样，如不需要此密码，可忽略";
+            }
+        }
+    }
+
+
+    rpc del-account {
+        input {
+            uses base-types:ne-common-prop;
+            leaf user-name{
+                mandatory true;
+                type string;
+            }
+            leaf sudo-pwd{
+                type string;
+                description "可选，删建用户等操作可能会用到root权限，因此需要提供sudo操作的密码。考虑设备内实现不一样，如不需要此密码，可忽略";
+            }
+        }
+    }
+
+    rpc modify-me{
+        input{
+            uses base-types:ne-common-prop;
+            leaf name {
+                type string{
+                    length "1..64";
+                }
+                description "name";
+            }
+            leaf status {
+                type optel-devm:me-status;
+                description "";
+            }
+            leaf ip-address {
+                type inet:ipv4-address;
+                description "Ip address(ipv4)";
+            }
+            leaf mask {
+                type yang:dotted-quad;
+                description "Mask";
+            }
+            leaf ntp-enable {
+                type boolean;
+                description "Support ntp or not.";
+            }
+            leaf gate-way1 {
+                type inet:ipv4-address;
+                description "Gat way1(ipv4)";
+            }
+            leaf gate-way2 {
+                type inet:ipv4-address;
+                description "Gat way2(ipv4)";
+            }
+        }
+    }
+
+    rpc reset-ne {
+        description "reset eq";
+        input {
+            uses base-types:ne-common-prop;
+            leaf eq-name {
+                type string{
+                  length "1..64";
+                }
+                description "Name of eq";
+            }
+            leaf reset-type {
+                type optel-devm:reset-type;
+                description "Reset type";
+            }
+        }
+    }
+
+    rpc modify-ptp {
+        input {
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+                mandatory true;
+                type string{
+                   length "1..64";
+                }
+                description "Name of ptp";
+            }
+            leaf layer-protocol-name {
+                type identityref {
+                    base optel-type:layer-protocol-name;
+                }
+                description "Layer protocol name of ptp";
+            }
+            leaf interface-type {
+                type optel-devm:interface-type;
+                description "Interface type of ptp";
+            }
+            leaf loop-back {
+                type optel-devm:loopback-type;
+                description "Loop back type of ptp";
+            }
+        }
+    }
+
+    rpc modify-ptp-optical-power-pac {
+        input {
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+                mandatory true;
+                type string{
+                   length "1..64";
+                }
+                description "Name of ptp";
+            }
+            leaf laser-status {
+                type optel-devm:laser-status;
+                description "Laser status of ptp";
+            }
+            leaf output-power {
+                 type optel-type:real;
+                 description "Output power of ptp";
+            }
+        }
+    }
+
+    rpc delete-eth-ptp-pac-vlan {
+        input {
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+                mandatory true;
+                type string{
+                  length "1..64";
+                }
+                description "Name of ptp";
+            }
+        }
+    }
+
+
+    rpc modify-eth-ptp-pac{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+                mandatory true;
+                type string{
+                  length "1..64";
+                }
+                description "Name of ptp";
+            }
+            leaf current-working-mode {
+                type optel-eth:working-mode;
+                description "none";
+            }
+            leaf current-mtu {
+                type uint64;
+                description "none";
+            }
+            leaf pause-control {
+                type boolean;
+                description "none";
+            }
+            leaf mac-address {
+                type yang:mac-address;
+                description "none";
+            }
+            leaf lldp-enable {
+                type boolean;
+                description "none";
+            }
+            leaf port-type {
+                type optel-eth:port-type;
+                description "port-type";
+            }
+            container vlan-spec {
+                leaf vlan-id {
+                    when "../vlan-type != 'un-tag'";
+                    type string;
+                    description "目前阶段按一个业务只能一个vlanid处理，在智能光收代管的vlan配置情况下，有一次性配置id范围的需要";
+
+                }
+                leaf vlan-priority {
+
+                    when "../vlan-type != 'un-tag'";
+                    type uint64 {
+                        range "0..7";
+                    }
+                    default "0";
+                }
+                leaf access-action {
+                    type optel-con:access-action;
+                }
+                leaf vlan-type {
+                    type optel-con:vlan-type;
+                }
+            }
+            container ingress-capacity {
+                uses optel-con:capacity;
+            }
+            container egress-capacity {
+                uses optel-con:capacity;
+            }
+            leaf frame-space {
+                type uint16 {
+                    range "8..12";
+                }
+            }
+            leaf pvid{
+               type uint16{
+                   range "1..4094";
+               }
+            }
+           leaf port-mode {
+               type optel-otn-ext-api:eth-port-mode;
+           }
+           leaf qinq-enable {
+               type boolean;
+           }
+           leaf remote-management-mode-enable {
+               type boolean;
+           }
+           leaf vlan-list {
+               type string;
+               description "Management VLAN list";
+           }
+        }
+    }
+
+    rpc query-eth-ptp-bandwidth{
+        input{
+           uses base-types:ne-common-prop;
+           leaf ptp-name {
+               mandatory true;
+               type string{
+                 length "1..64";
+               }
+               description "Name of ptp";
+           }
+        }
+        output{
+            uses optel-otn-ext-api:eth-ptp-band-width-grouping;
+        }
+    }
+
+    rpc query-eth-ptp-extension{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+               type string{
+                 length "1..64";
+               }
+               description "Name of ptp";
+           }
+        }
+        output{
+            uses optel-otn-ext-api:eth-ptp-band-width-grouping;
+            uses optel-otn-ext-api:ptp-extension-grouping;
+        }
+    }
+
+    rpc query-ptp-extension{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+               type string{
+                 length "1..64";
+               }
+               description "Name of ptp";
+           }
+        }
+        output{
+            uses optel-otn-ext-api:ptp-extension-grouping;
+        }
+    }
+
+    rpc modify-odu-ptp-extension{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+               type string{
+                 length "1..64";
+               }
+               description "Name of ptp";
+           }
+           leaf sm-tim-mode{
+               type optel-otn-ext-api:tim-mode;
+           }
+           leaf sm-tim-action {
+               type boolean;
+           }
+           leaf pm-tim-mode{
+               type optel-otn-ext-api:tim-mode;
+           }
+           leaf pm-tim-action {
+               type boolean;
+           }
+           leaf fec-mode {
+               type boolean;
+           }
+        }
+    }
+
+    rpc query-ctp-extension{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ctp-name {
+               type string{
+                 length "1..64";
+               }
+               description "Name of ctp";
+           }
+        }
+        output{
+            uses optel-otn-ext-api:ctp-extension-grouping;
+        }
+    }
+
+    rpc modify-odu-ctp-extension{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ctp-name {
+               type string{
+                 length "1..64";
+               }
+               description "Name of ctp";
+           }
+           uses optel-otn-ext-api:odu-ctp-extension-parameter-grouping;
+        }
+    }
+
+    rpc modify-laser-auto-enable{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+               type string{
+                 length "1..64";
+               }
+               description "Name of ptp";
+           }
+           leaf laser-auto-enable {
+               type boolean;
+           }
+        }
+    }
+
+    rpc get-eth-ptp-frame-space{
+        input{
+            uses base-types:ne-common-prop;
+            leaf-list ptp-name {
+               type string{
+                 length "1..64";
+               }
+               description "Name of ptp";
+            }
+        }
+        output{
+            uses optel-otn-ext-api:eth-ptp-frame-spaces-grouping;
+        }
+    }
+
+    rpc get-alarm-delay-insert{
+       description "get-alarm-delay-insert";
+       input {
+            uses base-types:ne-common-prop;
+            leaf name {
+               type string {
+                   length "1..64";
+               }
+               description "ptp-name";
+            }
+       }
+       output {
+            uses optel-otn-ext-api:alarm-delay-inserts-grouping;
+       }
+    }
+
+    rpc modify-alarm-delay-insert{
+       description "modify-alarm-delay-insert";
+       input {
+            uses base-types:ne-common-prop;
+            leaf name {
+               mandatory true;
+               type string {
+                   length "1..64";
+               }
+               description "ptp-name";
+            }
+            leaf insert-type{
+                type optel-otn-ext-api:insert-type;
+            }
+            leaf delay-time{
+                mandatory true;
+                type uint8;
+            }
+
+       }
+       output {
+            uses optel-otn-ext-api:alarm-delay-inserts-grouping;
+       }
+    }
+
+    rpc modify-odu-ptp-pac{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+                mandatory true;
+                type string{
+                  length "1..64";
+                }
+                description "Name of ptp";
+            }
+            leaf smtrail-trace-actual-tx {
+                type string{
+                    length "1..128";
+                }
+                description "The OTU SM trail trace identifier(TTI) transmitted.";
+            }
+            leaf smtrail-trace-expected-rx {
+                type string{
+                    length "1..128";
+                }
+                description "The OTU SM trail trace identifier(TTI) expected.";
+            }
+            leaf pmtrail-trace-actual-tx {
+                type string{
+                    length "1..128";
+                }
+                description "The ODU PM trail trace identifier(TTI) transmitted.";
+            }
+            leaf pmtrail-trace-expected-rx {
+                type string{
+                    length "1..128";
+                }
+                description "The ODU PM trail trace identifier(TTI) expected.";
+            }
+
+        }
+    }
+
+    rpc modify-sdh-ptp-pac{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+                mandatory true;
+                type string{
+                  length "1..64";
+                }
+                description "Name of ptp";
+            }
+            leaf current-sdh-signal-type {
+                type optel-otn-types:client-signal-type;
+            }
+            leaf j0-actual-tx {
+                type string {
+                    length "1..64";
+                }
+                description "none";
+            }
+            leaf j0-expected-rx {
+                type string {
+                    length "1..64";
+                }
+                description "none";
+            }
+        }
+    }
+
+    rpc modify-pdh-ptp{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+                mandatory true;
+                type string{
+                  length "1..64";
+                }
+                description "Name of ptp";
+            }
+            leaf e1-opcode{
+                type optel-pdh:e1-opcode;
+            }
+            leaf e1-frame-type{
+                type optel-pdh:e1-frame-type;
+            }
+        }
+    }
+
+	//修改连接端口CTP对象
+	rpc modify-ctp {
+        input {
+            uses base-types:ne-common-prop;
+            leaf ctp-name {
+                mandatory true;
+                type string{
+                   length "1..64";
+                }
+                description "Name of ctp";
+            }
+            leaf layer-protocol-name {
+                type identityref {
+                    base optel-type:layer-protocol-name;
+                }
+                description "Layer protocol name of ctp";
+            }
+            leaf server-tp {
+                type string{
+                length "1..64";
+                }
+                    description "Server tp";
+            }
+            leaf loop-back {
+                type optel-devm:loopback-type;
+                description "Loop back type of ctp";
+            }
+        }
+    }
+
+    //修改VLAN属性对象Vlanspec和ClientVlanspec
+    rpc modify-eth-ctp-pac {
+        input {
+            uses base-types:ne-common-prop;
+            leaf ctp-name {
+                mandatory true;
+                type string{
+                   length "1..64";
+                }
+                description "Name of ctp";
+            }
+            container vlan-spec-attr {
+				uses optel-con:vlan-spec;
+				description "";
+            }
+            container client-vlan-spec {
+                uses optel-con:vlan-spec;
+                description "";
+            }
+        }
+    }
+
+	//修改ODU CTP对象
+    rpc modify-odu-ctp-pac{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ctp-name {
+                mandatory true;
+                type string{
+                  length "1..64";
+                }
+                description "Name of ctp";
+            }
+            uses optel-otn:odu-ctp-pac-grouping ;
+        }
+    }
+
+	//修改SDH CTP对象
+    rpc modify-sdh-ctp-pac{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ctp-name {
+                mandatory true;
+                type string{
+                  length "1..64";
+                }
+                description "Name of ctp";
+            }
+            uses optel-sdh:vc-ctp-pac-grouping;
+        }
+    }
+
+    	//修改OSU CTP对象
+        rpc modify-osu-ctp-pac{
+            input{
+                uses base-types:ne-common-prop;
+                leaf ctp-name {
+                    mandatory true;
+                    type string{
+                      length "1..64";
+                    }
+                    description "Name of ctp";
+                }
+                uses optel-osu:osu-ctp-pac-grouping ;
+            }
+        }
+
+    // 修改ODU端口类型
+     rpc modify-odu-ptp-type{
+        input{
+            uses base-types:ne-common-prop;
+            leaf odu-ptp-name {
+                type string {
+                    length "1..64";
+                }
+                description "ODU PTP unique identification";
+            }
+            leaf signal-type {
+                type optel-otn-types:client-signal-type;
+                description "The ODU signal type that use to be configurated or modified";
+            }
+        }
+     }
+     //添加业务时延测量
+     rpc add-service-delay-measure-config{
+         input{
+             uses base-types:ne-common-prop;
+             uses optel-otn-ext-api:service-delay-measure-config-grouping;
+            }
+     }
+     //查询业务时延测量
+     rpc get-service-delay-measure-config{
+     input{
+        uses base-types:ne-common-prop;
+        leaf ptp-name {
+           type string {
+              length "1..64";
+           }
+           description "nni ptp name";
+         }
+         leaf connection-name {
+                          type string {
+                             length "1..64";
+                          }
+                       description "connection name";
+                     }
+     }
+     output{
+        uses optel-otn-ext-api:service-delay-measure-configs-grouping;
+     }
+     }
+     //修改业务时延测量
+     rpc modify-service-delay-measure-config{
+        input{
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:service-delay-measure-config-grouping;
+        }
+     }
+
+     //删除业务时延测量
+     rpc del-service-delay-measure-config{
+        input{
+         uses base-types:ne-common-prop;
+         leaf ptp-name {
+              type string {
+              length "1..64";
+              }
+              description "nni ptp name";
+         }
+         leaf connection-name {
+             type string {
+                 length "1..64";
+             }
+             description "connection name";
+         }
+     }
+
+     }
+     //业务时延测量
+    rpc get-service-delay-measure-result {
+        input {
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+                mandatory true;
+                type string {
+                    length "1..64";
+                }
+                description "nni ptp name";
+            }
+            leaf connection-name {
+                 type string {
+                    length "1..64";
+                 }
+              description "connection name";
+            }
+        }
+        output {
+            uses optel-otn-ext-api:service-delay-measure-result-grouping;
+        }
+    }
+
+    // 查询TCM配置参数
+    rpc query-tcm-parameter {
+        input {
+            uses base-types:ne-common-prop;
+            leaf name {
+                type string {
+                    length "1..64";
+
+                }
+                description "odu ptp/ctp name";
+            }
+        }
+        output{
+            uses optel-otn-ext-api:tcm-parameters-grouping;
+        }
+    }
+
+    // 修改TCM配置参数
+    rpc modify-tcm-parameter{
+        input{
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:tcm-parameter-grouping;
+        }
+    }
+
+	// 查询MSI自动使能配置
+    rpc query-msi-auto-parameter {
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list name {
+                type string {
+                length "1..64";
+                }
+                description "odu ptp name";
+            }
+        }
+        output{
+            uses optel-otn-ext-api:msi-auto-parameter-grouping;
+        }
+    }
+	// 修改MSI自动使能
+    rpc modify-msi-auto-parameter{
+        input{
+            uses base-types:ne-common-prop;
+			leaf name {
+                type string{
+                    length "1..64";
+                }
+                description "Name of ODU PTP";
+            }
+            leaf auto {
+                mandatory true;
+                type boolean;
+                default true;
+            }
+        }
+    }
+
+	// 查询MSI开销配置参数
+    rpc query-msi-parameter {
+        input {
+            uses base-types:ne-common-prop;
+	            leaf-list name {
+	                type string {
+	                length "1..64";
+	                }
+	                description "odu ptp name";
+	            }
+        }
+        output{
+            uses optel-otn-ext-api:msi-parameter-grouping;
+        }
+    }
+	// 修改MSI开销配置参数
+    rpc modify-msi-parameter{
+        input{
+            uses base-types:ne-common-prop;
+			leaf name {
+                type string{
+                    length "1..64";
+                }
+                description "Name of ODU PTP";
+            }
+            leaf tributary-port-num {
+                type uint16;
+                description "The tributary port number.";
+            }
+            leaf oduk-level {
+                type optel-otn-types:switch-type;
+            }
+            leaf ts-num {
+                type uint16;
+                description "The amounts of timeslot.";
+            }
+            leaf ts-occupied-tx {
+                type string;
+                description "The timeslot that should be occupied to transmit.";
+            }
+            leaf ts-occupied-rx {
+                type string;
+                description "The timeslot that should be occupied to receive.";
+            }
+        }
+    }
+    // 电信新增 光模块信息查询
+    rpc get-optical-module-info {
+        input {
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+                type string;
+                description "可选，若指定则只返回单个信息，若不传或者空值则返回所有光模块信息";
+            }
+        }
+        output {
+            container optical-module-infos {
+                list optical-module-info {
+                    key 'ptp-name';
+                    uses optel-devm:optical-module-info;
+                    description 'optical-module-info list';
+                }
+                description 'optical-module-info container';
+            }
+        }
+    }
+
+    //M-OTN 新增 2025-09-03
+    rpc get-fec-status{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ptp-name{
+                mandatory true;
+                type string;
+            }
+        }
+        output{
+            leaf fec-status{
+                mandatory true;
+                type boolean;
+                description "FEC使能状态";
+            }
+        }
+    }
+
+    rpc set-fec-status{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ptp-name{
+                mandatory true;
+                type string;
+            }
+            leaf fec-status{
+                type boolean;
+                description "FEC使能状态";
+            }
+        }
+    }
+
+    rpc get-sm-pm-trail-trace{
+        input{
+            uses base-types:ne-common-prop;
+            leaf tp-name{
+                mandatory true;
+                type string;
+                description "odu,osu ctp/ptp 名称";
+            }
+            leaf trail-trace-type{
+                mandatory true;
+                type string;
+                description "SM or PM";
+            }
+        }
+        output{
+            leaf actual-tx{
+                type string;
+                description "实际发送值";
+            }
+            leaf expected-rx{
+                type string;
+                description "期望接收值";
+            }
+            leaf actual-rx{
+                type string;
+                description "实际接收值";
+            }
+        }
+    }
+
+    rpc set-sm-pm-trail-trace{
+        input{
+            uses base-types:ne-common-prop;
+            leaf tp-name{
+                mandatory true;
+                type string;
+                description "odu,osu ctp/ptp 名称";
+            }
+
+            leaf sm-actual-tx{
+                type string;
+                description "实际发送值";
+            }
+            leaf sm-expected-rx{
+                type string;
+                description "期望接收值";
+            }
+            leaf pm-actual-tx{
+                type string;
+                description "实际发送值";
+            }
+            leaf pm-expected-rx{
+                type string;
+                description "期望接收值";
+            }
+        }
+        description "对PTP可进行SM，PM设置，对CTP进行PM设置";
+    }
+
+    grouping trail-trace-value{
+
+        leaf actual-tx{
+            type string;
+            description "实际发送值";
+        }
+        leaf expected-rx{
+            type string;
+            description "期望接收值";
+        }
+        leaf actual-rx{
+            type string;
+            config false;
+            description "实际接收值";
+        }
+    }
+
+    rpc get-sdh-termination-point-data{
+        input{
+            uses base-types:ne-common-prop;
+            leaf sdh-tp-name{
+                mandatory true;
+                type string;
+                description "sdh ftp/ptp 名称";
+            }
+        }
+        output{
+            uses trail-trace-value;
+        }
+        description "PTP或 FTP的J0 字节的开销";
+    }
+
+    rpc set-sdh-termination-point-data{
+        input{
+            uses base-types:ne-common-prop;
+            leaf tp-name{
+                mandatory true;
+                type string;
+                description "sdh ftp/ptp 名称";
+            }
+            leaf actual-tx{
+                mandatory true;
+                type string;
+                description "实际发送值";
+            }
+            leaf expected-rx{
+                mandatory true;
+                type string;
+                description "期望接收值";
+            }
+        }
+    }
+
+    rpc get-vc-trail-trace-j1 {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-sdh:get-vc-trail-trace-input;
+        }
+        output {
+         uses optel-sdh:get-single-vc-trail-trace-output;
+        }
+    }
+
+   augment "/query-ptps/output/ptp" {
+        ext:augment-identifier "sdh-ptp-pac-ext";
+        when "layer-protocol-name = optel-sdh:SDH";
+        container sdh-ptp-pac-output {
+            uses optel-sdh:sdh-ptp-pac-grouping;
+            description "none";
+        }
+    }
+
+    augment "/query-ptps/output/ptp" {
+        ext:augment-identifier "pdh-ptp-pac-ext";
+        container pdh-ptp-pac-out{
+            uses optel-pdh:pdh-ptp-pac-grouping;
+        }
+    }
+
+    augment "/query-ptps/output/ptp" {
+        ext:augment-identifier "sdh-mapping-pac-ext";
+        container sdh-mapping-pac-output {
+            uses optel-sdh:sdh-mapping-pac-grouping;
+        }
+    }
+
+    augment "/query-ptps/output/ptp" {
+        ext:augment-identifier "osu-ptp-pac-ext";
+        when "layer-protocol-name = optel-osu:OSU";
+        container osu-ptp-pac-output {
+            uses optel-osu:osu-ptp-pac-grouping;
+        }
+    }
+
+    augment "/query-ptps/output/ptp" {
+        ext:augment-identifier "odu-ptp-pac-ext";
+        when "layer-protocol-name = optel-otn:ODU";
+        container odu-ptp-pac-output {
+            uses optel-otn:odu-ptp-pac-grouping;
+            description "none";
+        }
+    }
+
+    augment "/query-ptps/output/ptp" {
+        ext:augment-identifier "eth-mapping-pac-ext";
+        container eth-mapping-pac-output{
+            uses optel-eth:eth-mapping-pac-grouping;
+        }
+    }
+
+    augment "/query-ptps/output/ptp" {
+        ext:augment-identifier "eth-ptp-pac-ext";
+        when "layer-protocol-name = 'optel-eth:ETH'";
+        container eth-ptp-pac-output{
+            uses optel-eth:eth-ptp-pac-grouping;
+        }
+    }
+
+    augment "/query-ctps/output/ctp" {
+        ext:augment-identifier "vc-ctp-pac-ext";
+        when "layer-protocol-name = optel-sdh:SDH";
+        container vc-ctp-pac-out {
+            uses optel-sdh:vc-ctp-pac-grouping;
+        }
+    }
+    augment "/query-ctps/output/ctp" {
+        ext:augment-identifier "eth-ctp-pac-ext";
+        when "layer-protocol-name = 'optel-eth:ETH'";
+        container eth-ctp-pac-out {
+            uses optel-eth:eth-ctp-pac-grouping ;
+        }
+        description "none";
+    }
+
+    augment "/query-ctps/output/ctp" {
+        ext:augment-identifier "odu-ctp-pac-ext";
+        when "layer-protocol-name = optel-otn:ODU";
+        container odu-ctp-pac-out {
+            uses optel-otn:odu-ctp-pac-grouping ;
+            description "none";
+        }
+    }
+
+    augment "/query-ctps/output/ctp" {
+            ext:augment-identifier "osu-ctp-pac-ext";
+            when "layer-protocol-name = optel-osu:OSU";
+            container osu-ctp-pac-out {
+                uses optel-osu:osu-ctp-pac-grouping ;
+                description "none";
+            }
+        }
+
+}

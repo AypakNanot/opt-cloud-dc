@@ -1,0 +1,103 @@
+module optel-pdh {
+    yang-version 1.1;
+    namespace "com:optel:yang:api:optel-pdh";
+    prefix optel-pdh;
+
+    import optel-devm {
+        prefix optel-devm;
+        revision-date "2021-09-27";
+    }
+    import optel-sdh {
+        prefix optel-sdh;
+        revision-date "2021-09-27";
+    }
+
+    import optel-otn-types {
+        prefix optel-otn-types;
+        revision-date "2021-09-27";
+    }
+	
+	 revision 2021-09-27 {
+        description "Add Pdh pac for ptp.";
+    }
+	
+	
+	/*
+   * common types
+   */
+   
+	typedef e1-phy-type {
+		type enumeration {
+			enum 75o {
+				value 1;
+				description "Units: Ω 欧姆. ";
+			}
+			enum 120o {
+				value 2;
+				description "Units: Ω 欧姆. ";
+			}
+		}
+        description "E1 interface type.";
+	}
+   
+   typedef e1-opcode {
+        type enumeration {
+            enum HDB3 {
+                value 1;
+                description "HBD3";
+            }
+            enum AMI {
+                value 2;
+                description "AMI";
+            }
+		}
+        description "Encoding format of PDH ptp port. ";
+	}
+	
+	typedef e1-frame-type {
+        type enumeration {
+            enum unframe {
+                value 1;
+                description "unframe";
+            }
+            enum PCM30 {
+                value 2;
+                description "PCM30";
+            }
+            enum PCM31 {
+                value 3;
+                description "PCM31";
+            }
+            enum PCM30C {
+                value 4;
+                description "PCM30C";
+            }
+            enum PCM31C {
+                value 5;
+                description "PCM31C";
+            }
+        }
+        description "E1 frame type. ";
+    }
+
+    grouping pdh-ptp-pac-grouping {
+        leaf e1-phy-type {
+			config false;
+            type e1-phy-type;
+			description "optional";
+        }
+        leaf e1-opcode {
+            type e1-opcode;
+			description "optional";
+        }
+        leaf e1-frame-type {
+            type e1-frame-type;
+            description "optional";
+        }
+    }
+    augment "/optel-devm:ptps/optel-devm:ptp" {
+        container pdh-ptp-pac {
+            uses pdh-ptp-pac-grouping;
+	}
+}
+}

@@ -1,0 +1,35 @@
+module opt-dci-edfa {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:edfa";
+    prefix "opt-dci-edfa";
+
+    revision "2020-02-10" {
+        description "DCI EDFA";
+    }
+
+    import base-types  {prefix "base-types";}
+    import optel-oc-optical-amplifier  {prefix "opt-oc-amp";}
+
+
+    rpc get-edfa-config{
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list name{
+                type string;
+            }
+        }
+        output{
+            uses opt-oc-amp:optical-amplifier-top;
+        }
+    }
+
+    rpc set-edfa-config{
+        input {
+            uses base-types:ne-common-prop;
+            uses opt-oc-amp:optical-amplifier-config;
+        }
+    }
+
+
+
+    }

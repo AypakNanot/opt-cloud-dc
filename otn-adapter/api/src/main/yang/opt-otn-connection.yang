@@ -1,0 +1,299 @@
+module opt-connection {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:connection";
+    prefix "opt-connection";
+
+    import base-types  {prefix "base-types";}
+    import optel-sdh {prefix "optel-sdh";}
+    import optel-eth {prefix "optel-eth";}
+    import optel-otn {prefix "optel-otn";}
+    import optel-connection {prefix optel-con;}
+    import optel-eos {prefix optel-eos;}
+    import optel-otn-ext-api {prefix "opt-ext";}
+    import optel-osu {prefix "opt-osu"; }
+    revision "2020-04-27" {
+        description "Initial revision";
+    }
+
+    rpc create-eth-connection-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-eth:create-eth-connection-in-grouping;
+        }
+        output {
+            uses optel-eth:create-eth-connection-out-grouping;
+        }
+    }
+
+    rpc create-sdh-connection-ne {
+        description "";
+        input {
+            uses base-types:ne-common-prop; 
+            uses optel-sdh:create-sdh-connection-in-grouping;
+        }
+        output {
+            uses optel-sdh:create-sdh-connection-out-grouping;
+        }
+    }
+
+    rpc create-odu-connection-ne {
+        description "";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn:create-odu-connection-in-grouping;
+        }
+        output {
+            uses optel-otn:create-odu-connection-out-grouping;
+        }
+    }
+
+    rpc create-eos-connection-ne {
+        description "";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-eos:create-eos-connection-in-grouping;
+        }
+        output {
+            uses optel-eos:create-eos-connection-out-grouping;
+        }
+    }
+
+    rpc delete-connection {
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                mandatory true;
+                type string;
+                description "connection name";
+            }
+        }
+    }
+
+    rpc query-connection {
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+                description "connection name";
+            }
+        }
+        output {
+            list connection-output {
+                key 'name';
+                uses optel-con:connection;
+                description "connection list";
+            }
+        }
+    }
+
+    rpc modify-eth-connection-capacity-ne {
+        input {
+            uses base-types:ne-common-prop;
+            leaf con-name{
+                type string;
+                description "connection name";
+            }
+            leaf label {
+                type string;
+                description "业务ID标签，为方便网管上层端到端串接；需要支持管控修改，支持中文";
+            }
+            container requested-capacity {
+                uses optel-con:capacity;
+            }
+            container egress-capacity {
+                uses optel-con:capacity;
+                description "It is used only for eth connection.";
+            }
+        }
+    }
+
+    rpc modify-odu-connection-capacity-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn:modify-odu-connection-capacity-in-grouping;
+        }
+    }
+
+    rpc modify-vcg-connection-capacity-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-eos:modify-vcg-connection-capacity-in-grouping;
+        }
+        output {
+            leaf-list connection-name {
+                type string;
+            }
+            leaf-list ctp-name {
+                type string {
+                    length "1..64";
+                }
+            }
+        }
+    }
+
+    rpc create-eth-lan-service-ne {
+        input{
+            uses base-types:ne-common-prop;
+            uses opt-ext:create-eth-lan-service-in-grouping;
+        }
+        output{
+            uses opt-ext:create-service-out-grouping;
+        }
+    }
+
+    rpc query-vsi {
+        input{
+            uses base-types:ne-common-prop;
+        }
+        output{
+            uses opt-ext:vsis-grouping;
+        }
+    }
+
+    rpc add-vsi-uni-member-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses opt-ext:add-vsi-uni-member-in-grouping;
+        }
+        output {
+            uses opt-ext:add-vsi-uni-member-out-grouping;
+        }
+    }
+
+    rpc add-vsi-nni-member-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses opt-ext:add-vsi-nni-member-in-grouping;
+        }
+        output {
+            uses opt-ext:add-vsi-nni-member-out-grouping;
+        }
+    }
+
+    rpc delete-vsi-member-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses opt-ext:delete-vsi-member-in-grouping;
+        }
+    }
+
+    rpc get-vsi-member-attr-ne {
+        input{
+            uses base-types:ne-common-prop;
+            leaf vsi-name {
+                mandatory true;
+                type string;
+                description "vsi name";
+            }
+        }
+        output{
+            uses opt-ext:get-vsi-member-attr-out-grouping;
+        }
+    }
+
+
+    rpc delete-vsi {
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+                mandatory true;
+            }
+        }
+    }
+
+    rpc modify-vsi {
+        input {
+            uses base-types:ne-common-prop;
+            leaf name {
+                mandatory true;
+                type string;
+                description "vsi name must be unique in one device";
+            }
+            leaf mtu {
+                type uint16{
+                    range "64..9216";
+                }
+                description "Maximum transmission unit";
+            }
+            uses opt-ext:unknown-frame-grouping;
+            uses opt-ext:mac-learning-grouping;
+        }
+    }
+
+    rpc create-eth-tree-service-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses opt-ext:create-eth-tree-service-in-grouping;
+        }
+        output {
+            uses opt-ext:create-service-out-grouping;
+        }
+    }
+
+    rpc create-eo-osu-connection-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses opt-osu:create-eo-osu-connection-in-grouping;
+        }
+        output{
+            uses opt-osu:create-eo-osu-connection-out-grouping;
+        }
+    }
+
+    rpc create-osu-connection-ne {
+        input{
+            uses base-types:ne-common-prop;
+            uses opt-osu:create-osu-connection-in-grouping;
+        }
+        output{
+            uses opt-osu:create-osu-connection-out-grouping;
+        }
+    }
+
+    rpc create-eos2eoosu-connection-ne{
+        input{
+            uses base-types:ne-common-prop;
+            uses opt-osu:create-eos2eoosu-connection-in-grouping;
+        }
+        output{
+            uses opt-osu:create-eos2eoosu-connection-out-grouping;
+        }
+
+    }
+
+    rpc delete-connection-group-ne {
+        input {
+            uses base-types:ne-common-prop;
+            leaf group-id {
+                type uint16;
+            }
+        }
+    }
+    rpc osu-two-way-dm {
+        input {
+            uses base-types:ne-common-prop;
+            leaf ctp-name {
+	    	    mandatory true;
+                type string;
+            }
+            leaf dm-type {
+	    	    mandatory true;
+                type string;
+                description "PM or TCM1";
+            }
+        }
+        output {
+            leaf osu-delay {
+	    	    mandatory true;
+                type uint64;
+            }
+        }
+    }
+    rpc modify-osu-connection-capacity {
+        input {
+            uses base-types:ne-common-prop;
+            uses opt-osu:modify-osu-connection-capacity-in-grouping;
+        }
+    }
+}

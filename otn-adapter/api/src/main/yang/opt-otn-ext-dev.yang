@@ -1,0 +1,358 @@
+module opt-otn-ext-dev {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:otn:ext:dev";
+    prefix "opt-otn-ext-dev";
+    import optel-eth { prefix "optel-eth" ;}
+    import base-types  {prefix "base-types";}
+    import optel-otn-ext-api { prefix optel-otn-ext-api;}
+    import optel-connection {prefix optel-con;}
+    import optel-otn-create-service { prefix optel-create-service;}
+    revision "2021-04-22" {
+        description "Initial revision";
+    }
+    rpc create-service-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-create-service:create-service-input-grouping;
+        }
+        output {
+            uses optel-create-service:create-service-output-grouping;
+        }
+    }
+
+
+    rpc add-service-member-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-create-service:add-service-member-input-grouping;
+        }
+        output {
+            uses optel-create-service:add-service-member-output-grouping;
+        }
+    }
+
+    rpc delete-service-member-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-create-service:delete-service-member-input-grouping;
+        }
+        output {
+            uses optel-create-service:delete-service-member-output-grouping;
+        }
+    }
+    rpc query-remote-module{
+        input{
+            uses base-types:ne-common-prop;
+            leaf-list ptp-name {
+                type string{
+                    length "1..64";
+                }
+                description "Name of eth PTP";
+            }
+        }
+        output{
+            uses optel-otn-ext-api:remote-module-grouping;
+        }
+    }
+
+    rpc modify-remote-module{
+        input{
+            uses base-types:ne-common-prop;
+            leaf name {
+                type string{
+                    length "1..64";
+                }
+                description "Name of eth PTP";
+            }
+            leaf monitoring-enable {
+                type boolean;
+            }
+            leaf vlan-id {
+                type uint16 {
+                   range "1..4094";
+                }
+                description "default 4094";
+            }
+            leaf remote-module-name {
+                type string{
+                    length "1..64";
+                }
+                description "Name of remote module";
+            }
+        }
+        output{
+            uses optel-otn-ext-api:remote-module-grouping;
+        }
+    }
+
+    rpc delete-remote-module{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ptp-name {
+                type string{
+                    length "1..64";
+                }
+                description "Name of eth PTP";
+            }
+        }
+    }
+    rpc select-tpids{
+        input{
+            uses base-types:ne-common-prop;
+            leaf-list name{
+                type string{
+                    length "1..64";
+                }
+                description "PTP/name、FTP/name、CTP/name";
+            }
+            }
+
+
+        output{
+            uses optel-otn-ext-api:tpid-grouping;
+        }
+    }
+
+     rpc modify-tpids{
+        input{
+           uses base-types:ne-common-prop;
+           leaf name {
+               type string{
+                   length "1..64";
+               }
+               description "Name of eth PTP or eth FTP or eth CTP";
+           }
+           leaf tpid-value {
+               mandatory true;
+               type optel-eth:tpid-difinition;
+               default 0x8100;
+           }
+        }
+
+      }
+
+
+     rpc query-lag-parameter {
+        input{
+            uses base-types:ne-common-prop;
+            leaf lag-id {
+                type uint16{
+                    range "1..65535";
+                }
+            }
+        }
+        output{
+            uses optel-otn-ext-api:lag-parameters-grouping;
+        }
+     }
+
+     rpc add-or-update-lag-parameter {
+        input{
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:lag-parameter-grouping;
+        }
+     }
+
+     rpc delete-lag-parameter{
+         input{
+             uses base-types:ne-common-prop;
+             leaf lag-id {
+                 type uint16{
+                     range "1..65535";
+                 }
+             }
+         }
+     }
+
+    // 添加VCG虚级联路径
+    rpc add-vcg-path-ne {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:add-vcg-path-input-grouping;
+        }
+        output {
+            uses optel-otn-ext-api:add-vcg-path-output-grouping;
+        }
+    }
+
+    // 查询PTP端口类型
+    rpc query-port-type {
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string{
+                    length "1..64";
+                }
+            }
+        }
+        output {
+            uses optel-otn-ext-api:ptp-type-grouping;
+        }
+    }
+
+    //修改以太网专网汇聚业务属性
+    rpc modify-eth-ctp{
+        input {
+            uses base-types:ne-common-prop;
+            leaf ctp-name{
+                type string{
+                    length "1..64";
+                }
+            }
+            container ingress-capacity {
+                uses optel-con:capacity;
+            }
+            container egress-capacity {
+                uses optel-con:capacity;
+            }
+            leaf partition-id {
+                type uint16 {
+                    range "0..127";
+                }
+                description "水平分割组ID.";
+            }
+            container storm-suppression-pac {
+                uses optel-otn-ext-api:storm-suppression-grouping;
+                description "storm suppression container";
+            }
+
+        }
+    }
+    rpc get-unknown-tpn {
+        description "Query unknown tpn number";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:ctp-name-grouping;
+        }
+        output {
+            container unknown-tpns {
+                uses optel-otn-ext-api:unknown-tpn-grouping;
+            }
+        }
+    }
+    rpc set-prbs-parameters {
+        description "Set prbs configuration parameter";
+        input {
+            uses base-types:ne-common-prop;
+            container prbs-parameters {
+                uses optel-otn-ext-api:prbs-parameters-grouping;
+            }
+        }
+    }
+
+    rpc get-prbs-parameter {
+        description "Get prbs configuration parameter";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:ctp-name-grouping;
+        }
+        output {
+            container prbs-parameters {
+                uses optel-otn-ext-api:prbs-parameters-grouping;
+            }
+        }
+    }
+
+    rpc prbs-bit-error-value-clean {
+        description "prbs bit error value clean";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:ctp-name-grouping;
+        }
+    }
+
+    rpc get-prbs-result {
+         description "Get prbs result";
+         input {
+             uses base-types:ne-common-prop;
+             uses optel-otn-ext-api:ctp-name-grouping;
+         }
+         output {
+             leaf result {
+                default "line-normal";
+                type optel-otn-ext-api:prbs-result-type;
+                description "PRBS result, default line-normal";
+                config false;
+             }
+             leaf bit-error-value {
+                type uint64;
+                config false;
+                description "PRBS bit error value";
+             }
+             leaf measure-state {
+                default "finished";
+                type optel-otn-ext-api:prbs-measure-state;
+                config false;
+                description "PRBS work state";
+             }
+         }
+    }
+
+    rpc get-license-info {
+        input {
+            uses base-types:ne-common-prop;
+        }
+        output {
+            list license {
+                key 'license-name serial-number';
+                uses optel-otn-ext-api:license;
+                description 'license info';
+            }
+        }
+    }
+
+    rpc get-remote-ftr {
+        input {
+            uses base-types:ne-common-prop;
+        }
+        output {
+            uses optel-otn-ext-api:ftr-extension-grouping;
+        }
+    }
+
+    rpc modify-remote-ftr {
+        input {
+            uses base-types:ne-common-prop;
+            leaf local-name {
+                mandatory true;
+                type string {
+                    length "1..64";
+                }
+                description "Name of eth PTP";
+            }
+            leaf vlan-id {
+                mandatory true;
+                type uint16 {
+                   range "1..4094";
+                }
+                description "default 4094";
+            }
+            leaf name {
+                type string {
+                   length "1..64";
+                }
+                description "";
+            }
+        }
+    }
+
+    rpc delete-remote-ftr {
+        input {
+            uses base-types:ne-common-prop;
+            leaf local-name {
+                mandatory true;
+                type string {
+                    length "1..64";
+                }
+                description "Name of eth PTP";
+            }
+            leaf vlan-id {
+                mandatory true;
+                type uint16 {
+                   range "1..4094";
+                }
+                description "default 4094";
+            }
+        }
+    }
+}

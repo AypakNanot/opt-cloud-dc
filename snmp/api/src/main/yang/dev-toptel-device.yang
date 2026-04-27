@@ -1,0 +1,54 @@
+module dev-toptel-device {
+    yang-version 1;
+    namespace "com:optel:params:yang:dev:toptel:device";
+    prefix "snmp";
+
+    import ietf-inet-types {
+        prefix inet;
+    }
+
+    import snmp-config{prefix "snmp-config";}
+
+    revision "2021-11-13" {
+        description "Initial revision of snmp model";
+    }
+
+    //查询拓普泰尔设备信息
+    rpc query-toptel-device-info{
+    	input{
+    		uses snmp-config:snmp-request-config;
+    	}
+    	output{
+            leaf ip-address{
+    	        type inet:ipv4-address;
+    	    }
+    	    leaf device-type{
+    	        type string;
+    	    }
+    	    leaf mac-address{
+    	        type string;
+    	    }
+    	}
+    }
+
+    // 心跳维持
+    rpc heart-beat{
+    	input{
+    		uses snmp-config:snmp-request-config;
+    	}
+    }
+
+
+    // 拓普泰尔设备注册结果
+    rpc register-result{
+    	input{
+    		uses snmp-config:snmp-request-config;
+    		leaf result{
+    		    type uint8;
+    		    mandatory true;
+    		    description "注册结果，0－失败,1－成功";
+    		}
+    	}
+    }
+
+}

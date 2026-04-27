@@ -1,0 +1,50 @@
+module opt-dci-wdm-extension {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:wdm:extension";
+    prefix "opt-dci-wdm-extension";
+
+	revision 2024-12-11 {
+		description
+		"This revision change history:
+		-2024-12-11 add rpc operate-port-server
+		-2024-12-04 init wdm externsions for optel to add content
+		";
+	}
+
+    import base-types  {prefix "base-types";}
+    import optel-oc-types {prefix "oc-types";}
+	import optel-opt-wdm-extension { prefix "opt-wdm-extension";}
+
+    /* 获取支架的optel扩展信息 设备自动上下电模式  */
+	rpc get-device-mode {
+		input {
+    		uses base-types:ne-common-prop;
+		}
+		output {
+			uses opt-wdm-extension:device-mode-grouping;
+		}
+	}
+
+	rpc modify-device-mode {
+	    input {
+	        uses base-types:ne-common-prop;
+			uses opt-wdm-extension:device-mode-grouping;
+	    }
+	}
+
+	/* The operate of create or delete the port server */
+    rpc operate-port-server {
+        description "create or delete the port server";
+        input {
+            uses base-types:ne-common-prop;
+            leaf obj-name {
+                type string;
+                description "obj name";
+            }
+            leaf operate {
+                type string;
+                description "create or delete";
+            }
+        }
+    }
+}

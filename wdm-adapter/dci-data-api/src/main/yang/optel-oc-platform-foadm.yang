@@ -1,0 +1,105 @@
+module optel-oc-platform-foadm {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://platform/foadm";
+
+  prefix "oc-foadm";
+
+  import optel-oc-platform-types { prefix oc-platform-types; }
+  import optel-oc-transport-types { prefix oc-opt-types; }
+
+
+  // meta
+  organization "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+    www.openconfig.net";
+
+  description
+    "This module defines data related to foadm components in the
+    OpenConfig platform model.";
+
+  revision "2022-02-08" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+  // identity statements
+
+  // typedef statements
+
+  // grouping statements
+  grouping media-channel-spectrum-state {
+    description
+      "Operational state data for the media channel";
+
+    leaf lower-frequency {
+      type oc-opt-types:frequency-type;
+      description
+        "Lower frequency of the specified spectrum power";
+    }
+
+    leaf upper-frequency {
+      type oc-opt-types:frequency-type;
+      description
+        "Upper frequency of the specified spectrum power";
+    } 
+  }
+  
+  grouping add-drop-pac{
+    description
+      "Add/drop information for foadm components";
+    
+    leaf add-drop-port {
+      type string;
+      description
+        "Reference to system-supplied name of the wavelength-router
+        port component.";
+    }       
+  }
+
+  grouping foadm-config {
+    description
+      "Operational config data for foadm components";
+  }
+  
+  grouping foadm-state {
+    description
+      "Operational state data for foadm components";
+
+    leaf channel-interval {
+      type oc-platform-types:channel-interval-type;
+      description
+        "Sets foadm mode";
+    } 
+    
+    leaf add-drop-channel-num {
+      type uint32;
+      description
+        "Add drop channel number, currently add number should equals 
+         drop number";
+    }
+    
+    container frequence-channels{
+	    config false;
+        list frequence-channel {
+            key "lower-frequency upper-frequency";
+            uses media-channel-spectrum-state; 
+            uses add-drop-pac;
+        }
+    }
+	
+	 
+  }
+
+
+  // data definition statements
+
+  // augment statements
+
+}
+

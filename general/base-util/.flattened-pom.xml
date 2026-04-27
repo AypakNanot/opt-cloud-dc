@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.optel.tmaster.dc</groupId>
+    <artifactId>impl-parent</artifactId>
+    <version>9.00-SNAPSHOT</version>
+    <relativePath>../../parent/impl-parent</relativePath>
+  </parent>
+  <groupId>com.optel.tmaster.dc.general</groupId>
+  <artifactId>base-util</artifactId>
+  <version>9.00-SNAPSHOT</version>
+  <packaging>bundle</packaging>
+  <name>ODL :: com.optel.tmaster.dc.general.base :: ${project.artifactId}</name>
+  <licenses>
+    <license>
+      <name>Eclipse Public License v1.0</name>
+      <url>https://www.eclipse.org/legal/epl-v10.html</url>
+    </license>
+  </licenses>
+  <properties>
+    <hutool.version>5.7.20</hutool.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>org.opendaylight.mdsal</groupId>
+      <artifactId>mdsal-binding-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.framework</artifactId>
+      <version>7.0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>com.optel.tmaster.dc.common</groupId>
+      <artifactId>common</artifactId>
+      <version>${changelist}</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-all</artifactId>
+      <version>${hutool.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+      <version>1.10</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>1.9.2</version>
+    </dependency>
+  </dependencies>
+</project>

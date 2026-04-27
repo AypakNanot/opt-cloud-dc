@@ -1,0 +1,74 @@
+module opt-dev-protection-group {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:dev:protection";
+    prefix "opt-dev-protection-group";
+
+    import base-types  {prefix "base-types";}
+    import optel-otn-ext-api { prefix optel-otn-ext-api;}
+
+    revision "2020-09-01" {
+        description "Initial revision";
+    }
+
+    rpc query-dev-protection-group{
+        input{
+            uses base-types:ne-common-prop;
+            leaf dev-pg-id {
+                type uint16;
+            }
+        }
+        output{
+            uses optel-otn-ext-api:dev-pgs-grouping;
+        }
+    }
+
+    rpc dev-pg-switch{
+        input{
+            uses base-types:ne-common-prop;
+            leaf dev-pg-id{
+                type uint64;
+            }
+
+            leaf protection-command {
+                mandatory true;
+                type optel-otn-ext-api:switch-reason;
+                description "eq protection command";
+            }
+
+            leaf protection-direction {
+                mandatory true;
+                type optel-otn-ext-api:protection-direction;
+                description "eq protection direction";
+            }
+        }
+    }
+
+    rpc query-sf-persistency-timers{
+        input{
+            uses base-types:ne-common-prop;
+            leaf-list pg-id {
+                type uint16;
+            }
+        }
+        output{
+           uses optel-otn-ext-api:sf-persistency-timers-grouping;
+        }
+    }
+
+    rpc modify-sf-persistency-timer{
+        input{
+            uses base-types:ne-common-prop;
+            leaf pg-id {
+                type uint16;
+            }
+            leaf persistency-time{
+                type uint16 {
+                    range "0..10";
+                }
+                default 0;
+                description "SF persistency time";
+            }
+        }
+    }
+
+}

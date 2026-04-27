@@ -1,0 +1,220 @@
+module opt-cfm-oam {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:cfm:oam";
+    prefix "opt-cfm-oam";
+
+    revision "2020-08-14" {
+        description "OTN CFM OAM";
+    }
+
+    import base-types  {prefix "base-types";}
+    import optel-eth {prefix "optel-eth"; }
+    import optel-otn-ext-api  {prefix "optel-otn-ext-api"; }
+
+    rpc delete-eth-oam-mip-config {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:ctp-name-grouping;
+        }
+    }
+
+    rpc add-eth-oam-mip-config {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:eth-oam-mip-config-grouping;
+        }
+    }
+
+    rpc get-eth-oam-mip-config {
+        input {
+            uses base-types:ne-common-prop;
+        }
+        output {
+            uses optel-otn-ext-api:eth-oam-mip-configs-grouping;
+        }
+    }
+
+    rpc modify-eth-oam-state-pac {
+        input {
+            uses base-types:ne-common-prop;
+            leaf ctp-name {
+                type string {
+                   length "1..64";
+                }
+                description "Name of ctp";
+            }
+            uses optel-eth:eth-oam-state-pac-grouping;
+        }
+    }
+
+    rpc add-eth-oam-config {
+        input {
+            uses base-types:ne-common-prop;
+            leaf ctp-name {
+                type string {
+                   length "1..64";
+                }
+                description "Name of ctp";
+            }
+            uses optel-eth:eth-oam-config-grouping;
+        }
+    }
+
+    rpc modify-eth-oam-config {
+        input {
+            uses base-types:ne-common-prop;
+            leaf ctp-name {
+                type string{
+                   length "1..64";
+                }
+                description "Name of ctp";
+            }
+            uses optel-eth:eth-oam-config-grouping;
+        }
+    }
+    rpc delete-eth-oam-config {
+        input {
+            uses base-types:ne-common-prop;
+            leaf ctp-name {
+                type string{
+                   length "1..64";
+                }
+                description "Name of ctp";
+            }
+        }
+    }
+
+    rpc start-eth-lb {
+        description "Start eth cfm oam lb test";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:eth-lb-input-grouping;
+        }
+    }
+    rpc get-eth-lb {
+        description "Query eth cfm oam lb test results";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:ctp-name-grouping;
+        }
+        output {
+            uses optel-otn-ext-api:eth-lb-grouping;
+        }
+    }
+    rpc stop-eth-lb {
+        description "Stop eth cfm oam lb test";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:ctp-name-grouping;
+        }
+    }
+    rpc start-eth-lt {
+        description "Start eth cfm oam lt test";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:eth-lt-input-grouping;
+        }
+    }
+    rpc start-eth-lm {
+        description "Start eth cfm oam lm test";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:eth-lm-input-grouping;
+        }
+    }
+    rpc get-eth-lm {
+        description "Query eth cfm oam lm test results";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:eth-lm-input-grouping;
+        }
+        output {
+            uses optel-otn-ext-api:eth-lm-grouping;
+        }
+    }
+    rpc stop-eth-lm {
+        description "Stop eth cfm oam lm test";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:eth-lm-input-grouping;
+        }
+    }
+
+    rpc start-eth-dm {
+        description "Start eth cfm oam dm test";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:eth-dm-input-grouping;
+        }
+    }
+    rpc get-eth-dm {
+        description "Query eth cfm oam dm test results";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:eth-dm-input-grouping;
+        }
+        output {
+            uses optel-otn-ext-api:eth-dm-grouping;
+        }
+    }
+    rpc stop-eth-dm {
+        description "Stop eth cfm oam dm test";
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:eth-dm-input-grouping;
+        }
+    }
+    rpc get-eth-dm-config{
+         description "Query eth cfm oam dm configs test results";
+         input {
+             uses base-types:ne-common-prop;
+         }
+         output {
+             uses optel-otn-ext-api:eth-dm-configs-grouping;
+          }
+    }
+    rpc get-eth-lm-config{
+         description "Query eth cfm oam lm configs test results";
+         input {
+             uses base-types:ne-common-prop;
+          }
+         output {
+            uses optel-otn-ext-api:eth-lm-configs-grouping;
+         }
+    }
+
+    rpc add-eth-lm-config {
+            description "add eth cfm oam lm config";
+            input {
+                uses base-types:ne-common-prop;
+                uses optel-otn-ext-api:eth-lm-config-grouping;
+            }
+        }
+    rpc add-eth-dm-config {
+            description "add eth cfm oam dm config";
+            input {
+                uses base-types:ne-common-prop;
+                uses optel-otn-ext-api:eth-dm-config-grouping;
+            }
+        }
+    rpc delete-eth-lm-config {
+            description "delete eth cfm oam lm config";
+            input {
+                uses base-types:ne-common-prop;
+                leaf name {
+                    type string;
+                    description "Name";
+                }
+            }
+        }
+    rpc delete-eth-dm-config {
+            description "delete eth cfm oam dm config";
+            input {
+                uses base-types:ne-common-prop;
+                leaf name {
+                    type string;
+                    description "Name";
+                }
+            }
+        }
+}

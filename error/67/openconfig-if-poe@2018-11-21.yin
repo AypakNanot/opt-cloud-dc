@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:oc-poe="http://openconfig.net/yang/poe" xmlns:oc-eth="http://openconfig.net/yang/interfaces/ethernet" xmlns:oc-if="http://openconfig.net/yang/interfaces" xmlns:oc-ext="http://openconfig.net/yang/openconfig-ext" name="openconfig-if-poe">
+    <yang-version value="1"/>
+    <namespace uri="http://openconfig.net/yang/poe"/>
+    <prefix value="oc-poe"/>
+    <import module="openconfig-if-ethernet">
+        <prefix value="oc-eth"/>
+    </import>
+    <import module="openconfig-interfaces">
+        <prefix value="oc-if"/>
+    </import>
+    <import module="openconfig-extensions">
+        <prefix value="oc-ext"/>
+    </import>
+    <organization>
+        <text>OpenConfig working group</text>
+    </organization>
+    <contact>
+        <text>Openconfig working group
+www.openconfig.net</text>
+    </contact>
+    <description>
+        <text>This module defines configuration and state data for
+Power over Ethernet (PoE) based on the IEEE 802.3af
+standard.</text>
+    </description>
+    <oc-ext:openconfig-version semver="0.1.1"/>
+    <revision date="2018-11-21">
+        <description>
+            <text>Add OpenConfig module metadata extensions.</text>
+        </description>
+        <reference>
+            <text>0.1.1</text>
+        </reference>
+    </revision>
+    <revision date="2017-09-14">
+        <description>
+            <text>Initial public revision</text>
+        </description>
+        <reference>
+            <text>0.1.0</text>
+        </reference>
+    </revision>
+    <oc-ext:regexp-posix/>
+    <oc-ext:catalog-organization org="openconfig"/>
+    <oc-ext:origin origin="openconfig"/>
+    <grouping name="poe-ethernet-config">
+        <description>
+            <text>PoE ethernet config grouping</text>
+        </description>
+        <leaf name="enabled">
+            <type name="boolean"/>
+            <default value="true"/>
+            <description>
+                <text>Enable or disable PoE in the ethernet interface.</text>
+            </description>
+        </leaf>
+    </grouping>
+    <grouping name="poe-ethernet-state">
+        <description>
+            <text>PoE ethernet state grouping</text>
+        </description>
+        <leaf name="power-used">
+            <type name="decimal64">
+                <fraction-digits value="2"/>
+            </type>
+            <units name="Watts"/>
+            <description>
+                <text>Power used by the ethernet interface in Watts.</text>
+            </description>
+        </leaf>
+        <leaf name="power-class">
+            <type name="uint8"/>
+            <description>
+                <text>IEEE 802.3af Power class detected for this ethernet
+interface.</text>
+            </description>
+        </leaf>
+    </grouping>
+    <grouping name="poe-ethernet-top">
+        <description>
+            <text>Ethernet top level grouping</text>
+        </description>
+        <container name="poe">
+            <description>
+                <text>Top-level container for PoE configuration and state data</text>
+            </description>
+            <container name="config">
+                <description>
+                    <text>Configuration data for PoE</text>
+                </description>
+                <uses name="poe-ethernet-config"/>
+            </container>
+            <container name="state">
+                <config value="false"/>
+                <description>
+                    <text>Operational state data for PoE</text>
+                </description>
+                <uses name="poe-ethernet-config"/>
+                <uses name="poe-ethernet-state"/>
+            </container>
+        </container>
+    </grouping>
+    <augment target-node="/oc-if:interfaces/oc-if:interface/oc-eth:ethernet">
+        <description>
+            <text>Adds PoE to the ethernet model.</text>
+        </description>
+        <uses name="poe-ethernet-top"/>
+    </augment>
+</module>

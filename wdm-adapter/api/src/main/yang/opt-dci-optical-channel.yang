@@ -1,0 +1,33 @@
+module opt-dci-optical-channel {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:optical:channel";
+    prefix "opt-dci-optical-channel";
+
+    revision "2020-02-10" {
+        description "DCI DEVICE optical-channel";
+    }
+    import base-types  {prefix "base-types";}
+    import optel-oc-platform {prefix "opt-oc-platform";}
+    import optel-oc-terminal-device   {prefix "opt-oc-terminal-device";}
+
+    rpc set-optical-channel{
+        input{
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+            }
+            uses opt-oc-terminal-device:terminal-optical-channel-config;
+        }
+    }
+    rpc get-optical-channel{
+        input{
+             uses base-types:ne-common-prop;
+             leaf-list name{
+                type string;
+             }
+        }
+        output{
+             uses opt-oc-platform:platform-component-top;
+        }
+    }
+}

@@ -1,0 +1,58 @@
+module opt-dci-ne-time {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:ne:time";
+    prefix "opt-dci-ne-time";
+
+    revision "2020-02-10" {
+        description "DCI NE TIME";
+    }
+
+    import base-types  {prefix "base-types";}
+	import optel-oc-inet-types { prefix oc-inet; }
+    import optel-oc-system  {prefix opt-oc-sys;}
+    import optel-oc-rpc  {prefix opt-oc-rpc;}
+
+    rpc query-me-ntp{
+    	input{
+    		uses base-types:ne-common-prop;
+    	}
+    	output{
+            uses opt-oc-sys:system-ntp-top;
+        }
+    }
+
+    rpc add-modify-me-ntp{
+    	input{
+    		uses base-types:ne-common-prop;
+            uses opt-oc-sys:system-ntp-server-config;
+    	}
+    }
+
+    rpc delete-me-ntp{
+    	input{
+    		uses base-types:ne-common-prop;
+    		leaf address {
+              type oc-inet:host;
+              description
+                "The address or hostname of the NTP server.";
+            }
+    	}
+    }
+
+    rpc get-ne-time{
+        input{
+            uses base-types:ne-common-prop;
+        }
+        output {
+            uses opt-oc-rpc:set-datetime-input-grouping;
+        }
+    }
+
+    rpc set-ne-time{
+        input {
+            uses base-types:ne-common-prop;
+            uses opt-oc-rpc:set-datetime-input-grouping;
+        }
+    }
+
+}

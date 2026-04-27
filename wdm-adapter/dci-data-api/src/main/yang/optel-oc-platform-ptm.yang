@@ -1,0 +1,59 @@
+
+ module optel-oc-platform-ptm {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://platform/ptm";
+
+  prefix "oc-ptm";
+
+  import optel-oc-platform-types { prefix oc-platform-types; }
+
+
+  // meta
+  organization " working group";
+
+  contact
+    "  working group";
+
+  description
+    "This module defines data related to ptm components in
+    the optel-oc-platform model";
+ 
+  revision "2022-02-08" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+
+  grouping ptm-config {
+    description
+      "Configuration data for ptm components";   
+    leaf work-state  {
+      type oc-platform-types:ptm-work-type;
+      description
+         "Available memory for ptm components";
+    }   
+    
+  }
+
+  grouping ptm-state {
+    description
+      "Operational state data for mux components";
+      uses ptm-config;
+  }
+
+  
+
+  // data definition statements
+
+  // augment statements
+
+  // rpc statements
+  
+  // notification statements
+
+}
+

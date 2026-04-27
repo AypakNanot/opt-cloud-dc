@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.optel.tmaster.dc</groupId>
+    <artifactId>feature-parent</artifactId>
+    <version>9.00-SNAPSHOT</version>
+    <relativePath>../../../parent/feature-parent</relativePath>
+  </parent>
+  <groupId>com.optel.tmaster.dc.general</groupId>
+  <artifactId>features-general-netconf</artifactId>
+  <version>9.00-SNAPSHOT</version>
+  <packaging>feature</packaging>
+  <name>OPTEL :: general :: netconf [Karaf Feature]</name>
+  <description>此feature 是为了 将netconf设备连接需要的feature整合到一起，不使用odl本来提供的odl-netconf-clustered-topology,因为它包含了集群与非集群的所有，所以要重写</description>
+  <licenses>
+    <license>
+      <name>Eclipse Public License v1.0</name>
+      <url>https://www.eclipse.org/legal/epl-v10.html</url>
+    </license>
+  </licenses>
+  <dependencies>
+    <dependency>
+      <groupId>org.opendaylight.netconf</groupId>
+      <artifactId>odl-netconf-connector</artifactId>
+      <version>${netconf.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.netconf</groupId>
+      <artifactId>odl-netconf-console</artifactId>
+      <version>${netconf.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.opendaylight.netconf</groupId>
+          <artifactId>odl-netconf-connector-all</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.opendaylight.netconf</groupId>
+          <artifactId>odl-netconf-ssh</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.netconf</groupId>
+      <artifactId>odl-netconf-topology</artifactId>
+      <version>${netconf.version}</version>
+      <type>xml</type>
+      <classifier>features</classifier>
+      <exclusions>
+        <exclusion>
+          <groupId>org.opendaylight.netconf</groupId>
+          <artifactId>odl-netconf-ssh</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+</project>

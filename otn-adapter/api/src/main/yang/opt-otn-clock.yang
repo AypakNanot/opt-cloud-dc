@@ -1,0 +1,88 @@
+module opt-otn-clock {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:otn:clock";
+    prefix "opt-otn-clock";
+
+    revision "2020-11-19" {
+        description "opt otn clock";
+    }
+
+    import base-types  {prefix "base-types";}
+    import optel-otn-ext-api  {prefix "optel-otn-ext-api";}
+    import optel-clock  {prefix "optel-clock";}
+
+
+    rpc get-sync-source-clock {
+        input {
+            uses base-types:ne-common-prop;
+        }
+        output {
+            uses optel-clock:sync-clock-sources-group;
+        }
+    }
+
+    rpc add-sync-source-clock{
+        input{
+            uses base-types:ne-common-prop;
+            uses optel-clock:sync-clock-source;
+        }
+
+    }
+    rpc delete-sync-source-clock{
+        input{
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+            }
+        }
+
+    }
+    rpc modify-sync-source-clock{
+        input{
+            uses base-types:ne-common-prop;
+            uses optel-clock:sync-clock-source;
+        }
+     }
+    rpc get-current-clock-source {
+         input{
+            uses base-types:ne-common-prop;
+        }
+        output{
+            uses optel-clock:current-sync-clock-grouping;
+        }
+    }
+
+    rpc set-2m-ext-clock{
+        input{
+            uses base-types:ne-common-prop;
+            uses optel-clock:ext-2m-clock;
+        }
+    }
+    rpc get-2m-ext-clock{
+        input{
+           uses base-types:ne-common-prop;
+           leaf name{
+                type string;
+           }
+        }
+        output{
+            uses optel-clock:ext-clock-2m-grouping;
+        }
+    }
+
+    rpc set-global-ssm{
+        input{
+            uses base-types:ne-common-prop;
+            uses optel-clock:global-ssm-grouping;
+        }
+    }
+    rpc get-global-ssm{
+        input{
+            uses base-types:ne-common-prop;
+
+        }
+        output{
+            uses optel-clock:global-ssm-grouping;
+        }
+    }
+}

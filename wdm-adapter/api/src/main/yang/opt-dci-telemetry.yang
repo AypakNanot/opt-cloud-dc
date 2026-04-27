@@ -1,0 +1,36 @@
+module opt-dci-telemetry {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:telemetry";
+    prefix "opt-dci-telemetry";
+
+    revision "2023-08-04" {
+        description "DCI telemetry";
+    }
+
+    import base-types {prefix "base-types";}
+    import optel-oc-telemetry { prefix "opt-oc-telemetry";}
+
+	rpc get-telemetry {
+		input {
+    		uses base-types:ne-common-prop;
+		}
+		output {
+		    uses opt-oc-telemetry:telemetry-data;
+		}
+	}
+
+	rpc set-telemetry {
+		input {
+			uses base-types:ne-common-prop;
+			uses opt-oc-telemetry:telemetry-data;
+		}
+	}
+
+	rpc delete-telemetry {
+	  input {
+      uses base-types:ne-common-prop;
+      uses opt-oc-telemetry:delete-telemetry;
+    }
+	}
+
+}

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!--
+Copyright © 2019 optel and others. All rights reserved.
+
+This program and the accompanying materials are made available under the
+terms of the Eclipse Public License v1.0 which accompanies this distribution,
+and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0"
+           odl:use-default-for-reference-types="true">
+    <reference id="deviceRpcProviderService"
+               interface="com.optel.tmaster.dc.general.base.action.IDeviceRpcProviderService"/>
+
+    <bean id="ctcNetconfNodeServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.listener.CtcNetconfNodeServiceImpl"/>
+    <bean id="ctcOptCfmOamServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptCfmOamServiceImpl"/>
+    <bean id="ctcOptConnectionServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptConnectionServiceImpl"/>
+    <bean id="ctcOptDevProtectionGroupService210924Impl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptDevProtectionGroupService210924Impl"/>
+    <bean id="ctcOptDevProtectionGroupServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptDevProtectionGroupServiceImpl"/>
+    <bean id="ctcOptMeLocationServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptMeLocationServiceImpl"/>
+    <bean id="ctcOptNeTimeServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptNeTimeServiceImpl"/>
+    <bean id="ctcOptObjInstallationServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptObjInstallationServiceImpl"/>
+    <bean id="ctcOptOtnAlarmServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptOtnAlarmServiceImpl"/>
+    <bean id="ctcOptOtnClockServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptOtnClockServiceImpl"/>
+    <bean id="ctcOptOtnDeviceServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptOtnDeviceServiceImpl"/>
+    <bean id="ctcOptOtnDhcpServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptOtnDhcpServiceImpl"/>
+    <bean id="ctcOptOtnExtDevServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptOtnExtDevServiceImpl"/>
+    <bean id="ctcOptOtnFileServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptOtnFileServiceImpl"/>
+    <bean id="ctcOptOtnFtpServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptOtnFtpServiceImpl"/>
+    <bean id="ctcOptOtnPerformanceServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptOtnPerformanceServiceImpl"/>
+    <bean id="ctcOptOtnProtectionGroupService210924Impl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptOtnProtectionGroupService210924Impl"/>
+    <bean id="ctcOptOtnProtectionGroupServiceImpl"
+          class="com.optel.tmaster.dc.device.impl.otn.ctc.impl.CtcOptOtnProtectionGroupServiceImpl"/>
+
+    <!-- 具体实现的类，id：索引名称，class：接口实现类， init-method:初始化调用的方法，
+    destroy-method：销毁调用的方法 ，argument：class构造函数所需要的参数	 -->
+    <bean id="deviceCtcProvider" class="com.optel.tmaster.dc.device.impl.otn.ctc.OtnCtcDeviceProvider"
+          init-method="init" destroy-method="close">
+        <argument ref="deviceRpcProviderService"/>
+        <argument>
+            <list>
+                <ref component-id="ctcNetconfNodeServiceImpl"/>
+                <ref component-id="ctcOptCfmOamServiceImpl"/>
+                <ref component-id="ctcOptConnectionServiceImpl"/>
+                <ref component-id="ctcOptDevProtectionGroupService210924Impl"/>
+                <ref component-id="ctcOptDevProtectionGroupServiceImpl"/>
+                <ref component-id="ctcOptMeLocationServiceImpl"/>
+                <ref component-id="ctcOptNeTimeServiceImpl"/>
+                <ref component-id="ctcOptObjInstallationServiceImpl"/>
+                <ref component-id="ctcOptOtnAlarmServiceImpl"/>
+                <ref component-id="ctcOptOtnClockServiceImpl"/>
+                <ref component-id="ctcOptOtnDeviceServiceImpl"/>
+                <ref component-id="ctcOptOtnDhcpServiceImpl"/>
+                <ref component-id="ctcOptOtnExtDevServiceImpl"/>
+                <ref component-id="ctcOptOtnFileServiceImpl"/>
+                <ref component-id="ctcOptOtnFtpServiceImpl"/>
+                <ref component-id="ctcOptOtnPerformanceServiceImpl"/>
+                <ref component-id="ctcOptOtnProtectionGroupService210924Impl"/>
+                <ref component-id="ctcOptOtnProtectionGroupServiceImpl"/>
+            </list>
+        </argument>
+    </bean>
+
+</blueprint>

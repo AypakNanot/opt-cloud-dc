@@ -1,0 +1,89 @@
+/*
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.codec.xml;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.base.MoreObjects;
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.data.util.codec.IdentityCodecUtil;
+import org.opendaylight.yangtools.yang.data.util.codec.QNameCodecUtil;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+
+final class IdentityrefXmlCodec implements XmlCodec<QName> {
+    private final @NonNull EffectiveModelContext context;
+    private final @NonNull QNameModule parentModule;
+    private final @Nullable PreferredPrefixes pref;
+
+    IdentityrefXmlCodec(final EffectiveModelContext context, final QNameModule parentModule,
+            final @Nullable PreferredPrefixes pref) {
+        this.context = requireNonNull(context);
+        this.parentModule = requireNonNull(parentModule);
+        this.pref = pref;
+    }
+
+    @Override
+    public Class<QName> getDataType() {
+        return QName.class;
+    }
+
+    @Override
+    public QName parseValue(final NamespaceContext ctx, final String str) {
+        // FIXME: YANGTOOLS-1523: do not trim()
+        return IdentityCodecUtil.parseIdentity(str.trim(), context, prefix -> {
+            if (prefix.isEmpty()) {
+                return parentModule;
+            }
+
+            var prefixedNS = ctx.getNamespaceURI(prefix);
+            if (prefixedNS == null) {
+                if ("oc-opt-types".equals(prefix)) {
+                    prefixedNS = "http://openconfig.net/yang/transport-types";
+                }
+                else if ("oc-platform-types".equals(prefix)) {
+                    prefixedNS = "http://openconfig.net/yang/platform-types";
+                }
+                else if ("oc-eth".equals(prefix)) {
+                    prefixedNS = "http://openconfig.net/yang/interfaces/ethernet";
+                }
+                else if("oc-telemetry-types".equals(prefix)){
+                    prefixedNS="http://openconfig.net/yang/telemetry-types";
+                }
+            }
+            checkArgument(prefixedNS != null, "Could not find namespace for prefix %s", prefix);
+
+            final var modules = context.findModules(XMLNamespace.of(prefixedNS)).iterator();
+            checkArgument(modules.hasNext(), "Could not find module for namespace %s", prefixedNS);
+            return modules.next().getQNameModule();
+        }).getQName();
+    }
+
+    @Override
+    public void writeValue(final XMLStreamWriter ctx, final QName value) throws XMLStreamException {
+        final var prefixes = new NamespacePrefixes(ctx.getNamespaceContext(), pref);
+        final var str = QNameCodecUtil.encodeQName(value, uri -> prefixes.encodePrefix(uri.getNamespace()));
+
+        for (var entry : prefixes.emittedPrefixes()) {
+            ctx.writeNamespace(entry.getValue(), entry.getKey().toString());
+        }
+        ctx.writeCharacters(str);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("module", parentModule).toString();
+    }
+}

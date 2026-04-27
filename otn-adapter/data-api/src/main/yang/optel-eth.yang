@@ -1,0 +1,585 @@
+module optel-eth {
+    yang-version 1.1;
+    namespace "com:optel:yang:api:optel-eth";
+    prefix optel-eth;
+    import ietf-yang-types {
+        prefix yang;
+    }
+    import optel-yang-types {
+         prefix optel-type;
+         revision-date "2021-09-27";
+    }
+    
+    import optel-devm {
+        prefix optel-devm;
+        revision-date "2021-09-27";
+    }
+    
+    import optel-connection {
+        prefix optel-con;
+        revision-date "2021-09-27";
+    }
+
+    import optel-otn {
+        prefix optel-otn;
+        revision-date "2021-09-27";
+    }
+
+    import optel-otn-types {
+        prefix optel-otn-types;
+        revision-date "2021-09-27";
+    }
+
+    import optel-protection-group {
+        prefix optel-pg;
+        revision-date "2021-09-27";
+    }
+
+	
+    revision 2021-09-27 {
+        description "add vcg-parameters in eth-ftp-pac";
+    }
+
+    /*
+   * common types
+   */
+    identity ETH {
+        base optel-type:layer-protocol-name;
+    }
+   
+    typedef oam-transmit-interval {
+        type enumeration {
+            enum interval-3ms33 {
+                value 1;
+                description "3.33ms";
+            }
+            enum interval-10ms {
+                value 2;
+                description "10ms";
+            }
+            enum interval-100ms {
+                value 3;
+                description "100ms";
+            }
+            enum interval-1s {
+                value 4;
+                description "1s";
+            }
+            enum interval-10s {
+                value 5;
+                description "10s";
+            }
+            enum interval-1min {
+                value 6;
+                description "1min";
+            }
+        }
+        description "oam transmit interval";
+    }
+    
+
+        typedef port-type {
+        type enumeration {
+            enum electrical {
+                value 0;
+            }
+            enum optical {
+                value 1;
+            }
+        }
+        description "none";
+    }
+    typedef working-mode {
+        type enumeration {
+            enum auto {
+                value 0;
+            }
+            enum 100MFullDuplex {
+                value 1;
+            }
+            enum 1000MFullDuplex {
+                value 2;
+            }
+            enum 10GEFullDuplex {
+                value 3;
+            }
+        }
+    }
+
+    
+
+    typedef eth-mapping-type {
+        type enumeration {
+            enum EoO {
+                value 0;
+                description "Ethernet over OTN.";
+            }
+            enum EoS {
+                value 1;
+                description "Ethernet over SDH.";
+            }
+            // yang-ctc中特有
+	        enum EoOSU {
+                value 2;
+                description "Ethernet over OSU.";
+            }
+        }
+    }
+	
+    typedef tpid-difinition {
+        type enumeration {
+            enum 0x8100 {
+                description "0x8100";
+            }
+            enum 0x88a8 {
+                description "0x88a8";
+            }
+            enum 0x9100 {
+                description "0x9100";
+            }
+            enum 0x9200 {
+                description "0x9200";
+            }
+        }
+    }
+
+    /*
+   * groupings
+   */
+    
+
+    grouping eth-ftp-pac {
+        leaf supported-mtu {
+            mandatory true;
+            type uint64;
+            config false;
+        }
+        leaf current-mtu {
+            mandatory true;
+            type uint64;
+        }
+        leaf service-mapping-mode {
+            mandatory true;
+            type optel-otn-types:adaptation-type;
+        }
+        leaf mapping-type {
+            mandatory true;
+            type eth-mapping-type;
+        }
+    }
+
+    grouping eth-mapping-pac-grouping {
+            leaf-list supported-mapping-type {
+                config false;
+                type eth-mapping-type;
+                description "EoO,EoS  1..*";
+            }
+            leaf-list supported-odu-server-switch-capability {
+                config false;
+                type optel-otn-types:switch-type;
+                description "ODU能力上报，支持什么就上报什么";
+            }
+            leaf-list supported-sdh-server-switch-capability {
+                config false;
+                type optel-otn-types:switch-type;
+                description "SDH能力上报，支持什么就上报什么";
+            }
+    }
+    augment "/optel-devm:ptps/optel-devm:ptp" {
+        container eth-mapping-pac {
+            uses eth-mapping-pac-grouping;
+        }
+    }
+
+    grouping eth-ptp-pac-grouping {
+            leaf-list supported-working-mode {
+                type working-mode;
+                config false;
+                min-elements 1;
+            }
+
+            leaf current-working-mode {
+                mandatory true;
+                type working-mode;
+            }
+            leaf supported-mtu {
+                mandatory true;
+                type uint64;
+                config false;
+            }
+            leaf current-mtu {
+                mandatory true;
+                type uint64;
+            }
+            leaf pause-control {
+                mandatory true;
+                type boolean;
+            }
+            leaf mac-address {
+                type yang:mac-address;
+            }
+            leaf port-type {
+                mandatory true;
+                type port-type;
+                config false;
+            }
+            leaf lldp-enable {
+                type boolean;
+            }
+            leaf lldp-peer-chassis-id {
+                config false;
+                type string {
+                    length 0..255;
+                }
+            }
+            leaf lldp-peer-port-id {
+                config false;
+                type string {
+                    length 0..255;
+                }
+                description "hex ascii number without 0x，not normal string";
+            }
+            leaf lldp-peer-system-name {
+                config false;
+                type string {
+                    length 0..64;
+                }
+            }
+            /** 2024-02-21: CTC 支持，CMCC 此结构不支持 */
+            container vlan-spec{
+                leaf vlan-id {
+                    type string;
+                    description "借用vlan-spec结构，当access-action为keep透传的时候，此vlan-id以 1-100,101,200-300 这样打印机的形式一次性记录范围，其他类型的只有一个值。一个端口配置vlan信息只能配一种，所以去掉以前的list形式";
+                }
+                leaf vlan-priority {
+                    type uint64;
+                description "default 0";
+                }
+                leaf access-action {
+                    type optel-con:access-action;
+                }
+                leaf vlan-type {
+                    type optel-con:vlan-type;
+                }
+
+            }
+            /** 2024-02-21: CTC 支持，CMCC 此结构不支持 */
+            container ptp-capacity {
+                uses optel-con:capacity;
+            }
+    }
+    augment "/optel-devm:ptps/optel-devm:ptp" {
+        when "optel-devm:layer-protocol-name = 'optel-eth:ETH'";
+        container eth-ptp-pac {
+            uses eth-ptp-pac-grouping;
+        }
+        
+        
+	
+	    
+    }
+
+    augment "/optel-devm:ftps/optel-devm:ftp" {
+        when "optel-devm:layer-protocol-name = 'optel-eth:ETH'";
+        container eth-ftp-pac {
+            uses eth-ftp-pac;
+        }
+    }
+
+
+    grouping eth-ctp-pac-grouping{
+            container vlan-spec {
+                uses optel-con:vlan-spec;
+                description "vlan spec, UNI port vlan.";
+            }
+            container client-vlan-spec {
+                uses optel-con:vlan-spec;
+                description "client vlan spec, client service vlan.";
+            }
+            container performance {
+                uses eth-performance-grouping;
+                config false;
+            }
+            container oam-state-pac {
+                uses eth-oam-state-pac-grouping;
+            }
+            container oam-config {
+                uses eth-oam-config-grouping;
+            }
+    }
+    grouping eth-performance-grouping{
+                leaf delay {
+                    mandatory true;
+                    type uint64;
+                    description "delay";
+                }
+                leaf near-packet-loss-rate {
+                    mandatory true;
+                    type optel-type:real;
+                    description "near packet loss rate";
+                }
+                leaf far-packet-loss-rate {
+                    mandatory true;
+                    type optel-type:real;
+                    description "far packet loss rate";
+                }
+                leaf tx-bytes {
+                    mandatory true;
+                    type uint64;
+                    description "tx bytes";
+                }
+                leaf rx-bytes {
+                    mandatory true;
+                    type uint64;
+                    description "rx bytes";
+                }
+    }
+    grouping eth-oam-state-pac-grouping {
+                leaf dm-state {
+                    mandatory true;
+                    type boolean;
+                    description "dm state";
+                }
+                leaf tm-state {
+                    mandatory true;
+                    type boolean;
+                    description "tm state";
+                }
+                leaf lm-state {
+                    mandatory true;
+                    type boolean;
+                    description "lm state";
+                }
+                leaf cc-state {
+                    mandatory true;
+                    type boolean;
+                    description "cc state";
+                }
+                description "802.1ag test state";
+    }
+    grouping eth-oam-config-grouping {
+                leaf mep-id {
+                    mandatory true;
+                    type uint16 {
+                        range "1..8191";
+                    }
+                }
+                leaf remote-mep-id {
+                    mandatory true;
+                    type uint16 {
+                        range "1..8191";
+                    }
+                }
+                leaf meg-id {
+                    mandatory true;
+                    type string;
+                }
+                leaf md-name {
+                    type string {
+                        length "1..43";
+                    }
+                }
+                leaf mel {
+                    mandatory true;
+                    type uint8 {
+                        range "0..7";
+                    }
+                }
+                leaf mdl {
+                    type uint8 {
+                        range "0..7";
+                    }
+                }
+                leaf cc-interval {
+                    mandatory true;
+                    type oam-transmit-interval;
+                    description "cv transmit period :3.33ms/10ms/100ms/1s/10s/1min";
+                }
+                leaf lm-interval {
+                    mandatory true;
+                    type oam-transmit-interval;
+                    description "lm transmit period :1s/10s/1min";
+                }
+                leaf dm-interval {
+                    mandatory true;
+                    type oam-transmit-interval;
+                    description "dm transmit period :1s/10s/1min";
+                }
+                description "ethernet oam parameters: mep id, meg id, mel, cc interval, etc";
+    }
+
+    augment "/optel-devm:ctps/optel-devm:ctp" {
+        when "optel-devm:layer-protocol-name = 'optel-eth:ETH'";
+        container eth-ctp-pac {
+            uses eth-ctp-pac-grouping;
+        }
+    }
+
+    notification lldp-change-notification {
+        leaf ptp-name {
+            mandatory true;
+            type string {
+                length 1..64;
+            }
+            description
+                "PTP name.";
+        }
+        leaf lldp-peer-chassis-id {
+              mandatory true;
+            type string {
+                length 1..64;
+            }
+        }
+        leaf lldp-peer-port-id {
+              mandatory true;
+            type string {
+                length 0..64;
+            }
+        }
+        leaf lldp-peer-system-name {
+              mandatory true;
+            type string {
+                length 0..64;
+            }
+        }
+        description "LLDP change notification";
+    }
+
+    grouping create-eth-connection-in-grouping{
+             uses optel-con:create-connection;
+             leaf service-mapping-mode {
+                 type optel-otn-types:adaptation-type;
+             }
+             leaf uni-protection-type {
+                 type optel-pg:protection-type;
+                 description "default lag";
+             }
+             leaf nni-protection-type {
+                 type optel-pg:protection-type;
+             }
+			leaf nni-tcm {
+				type uint16;
+				description "when nni-protection-type = 'snc-s', needs to be issued to present the nni tcm of both work path and protection path";
+            }				
+             leaf nni2-protection-type {
+                 type optel-pg:protection-type;
+            }
+			leaf nni2-tcm {
+				type uint16;
+				description "when nni-protection-type = 'snc-s', needs to be issued to present the nni2 tcm of both work path and protection path";
+            }				
+            container eth-uni {
+                leaf uni-ptp-name {
+                    type string;
+                }
+                leaf second-uni-ptp-name {
+                    type string;
+                }
+				container client-vlan-spec {
+					when "../../service-type = 'EVPL'";
+						uses optel-con:vlan-spec;
+						description "只适用于EVPL，指定C-VLAN，用于客户Vlan与运营商Vlan的匹配，无需携带accessAction。不携带该参数时表示端口匹配";
+                }
+				container uni-vlan-spec {
+					when "../../service-type = 'EVPL'";
+						uses optel-con:vlan-spec;
+						description "可针对client-vlan-spec进行vlan的交换exchange或者添加剥离 pop_push; 或者无client-vlan-spec，单纯push-pop新的vlan；或者不下发";
+                }
+				
+            }
+	    container eth-nni {
+                leaf nni-ptp-name {
+                    type string;
+                }
+                leaf second-nni-ptp-name {
+                    type string;
+                    description "LAG protection PTP name";
+                }
+                container ftp-client-vlan-spec {
+                    uses optel-con:vlan-spec;
+                    description "";
+                }
+                container ftp-vlan-spec {
+                    uses optel-con:vlan-spec;
+                    description "EVPL必须下发，当剥离添加或转换S-Vlan时，指定S-VLAN的值，accessAction = push_pop或accessAction = exchange";
+                }
+                /** 2024-08-01: CTC 支持，CMCC 此结构不支持 */
+                leaf tpid {
+                    type tpid-difinition;
+                }
+                description "仅用于建立ethUNI到ethNNI太网业务";
+	    }
+
+             container primary-nni {
+                 uses optel-otn:nni;
+                container ftp-client-vlan-spec {
+                    uses optel-con:vlan-spec;
+                    description "";
+                }
+                 container ftp-vlan-spec {
+                     uses optel-con:vlan-spec;
+                     description "EVPL必须下发，对于其它业务可选。对于UNI-NNI业务， accessAction=PUSH_POP， 对于NNI-NNI则 pushpop or exchange";
+                 }
+                leaf tpid {
+                    type tpid-difinition;
+                }
+                 description "primary nni,必选";
+             }
+             container secondary-nni {
+                 uses optel-otn:nni;
+                container ftp-client-vlan-spec {
+                    uses optel-con:vlan-spec;
+                    description "";
+                }
+                 container ftp-vlan-spec {
+                     uses optel-con:vlan-spec;
+                     description "EVPL必须下发，对于其它业务可选,对于UNI-NNI业务， accessAction=PUSH_POP";
+                 }
+                 description "ETH带保护模式，可选";
+             }
+             container primary-nni2 {
+                 uses optel-otn:nni;
+                 container ftp-vlan-spec {
+                     uses optel-con:vlan-spec;
+                     description "EVPL必须下发，对于其它业务可选。对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
+                 }
+                leaf tpid {
+                    type tpid-difinition;
+                }
+                 description "NNI-NNI不带保护，可选";
+             }
+             container secondary-nni2 {
+                 uses optel-otn:nni;
+                 container ftp-vlan-spec {
+                     uses optel-con:vlan-spec;
+                     description "EVPL必须下发，对于其它业务可选,对于NNI-NNI业务，accessAction=KEEP或EXCHANGE";
+                 }
+                 description "NNI-NNI带保护，可选";
+             }
+    }
+    rpc create-eth-connection {
+        input {
+            uses create-eth-connection-in-grouping;
+        }
+        output {
+            uses create-eth-connection-out-grouping;
+        }
+    }
+    grouping create-eth-connection-out-grouping {
+            container connection {
+                uses optel-con:connection;
+            }
+            container create-component {
+                leaf-list ftp-name {
+                    type string {
+                        length "1..64";
+                    }
+                }
+                leaf-list ctp-name {
+                    type string {
+                        length "1..64";
+                    }
+                }
+            }
+    }
+}

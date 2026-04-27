@@ -1,0 +1,197 @@
+module opt-dci-service {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:service";
+    prefix "opt-dci-service";
+
+    revision "2020-02-10" {
+        description "DCI DEVICE";
+    }
+
+    import base-types  {prefix "base-types";}
+    import optel-oc-platform-mux {prefix "opt-oc-platform-mux";}
+    import optel-oc-rpc {prefix "opt-oc-rpc";}
+    import optel-oc-platform-tff  {prefix "oc-tff";}
+    import optel-oc-platform-wss  {prefix "oc-wss";}
+    import optel-oc-terminal-device {prefix "oc-terminal";}
+
+
+    rpc set-tff-config{
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+            }
+            leaf target-voa-attenuation {
+                type decimal64 {
+                    fraction-digits 2;
+                }
+              description
+                "The target attenuation of adjustable
+                light attenuation is 0.1dB";
+            }
+        }
+    }
+
+    rpc set-pass-through-channel{
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+            }
+            uses opt-oc-platform-mux:frequency-channels-config;
+        }
+    }
+
+    rpc set-add-drop-channel{
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+            }
+            uses opt-oc-platform-mux:frequency-channels-config;
+        }
+    }
+
+    // 添加或修改 WSS 波道配置
+    rpc set-wss-frequency-channels {
+        input {
+            uses base-types:ne-common-prop;
+            leaf name {
+               type string;
+               description "components name.return all while name is blank";
+            }
+            uses opt-oc-platform-mux:frequency-channels-config;
+        }
+    }
+
+    // 批量添加或修改 WSS 波道配置
+    rpc batch-set-wss-frequency-channels {
+        input {
+            uses base-types:ne-common-prop;
+            leaf name {
+               type string;
+            }
+            uses opt-oc-platform-mux:frequency-config;
+        }
+    }
+
+    // 删除 WSS 波道配置
+    rpc delete-wss-frequency-channels{
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+               type string;
+                description "components wss name";
+            }
+            leaf index{
+                type string;
+            }
+        }
+    }
+
+
+  //rpc get oduk delay
+  rpc get-oduk-delay {
+    description
+       "Get delay of ODUk.";
+      input {
+        uses base-types:ne-common-prop;
+        uses opt-oc-rpc:get-oduk-delay-input-grouping;
+      }
+      output {
+        uses opt-oc-rpc:get-oduk-delay-output-grouping;
+      }
+  }
+
+   rpc get-terminal-device{
+        input{
+            uses base-types:ne-common-prop;
+        }
+        output{
+            uses oc-terminal:terminal-device-top;
+        }
+   }
+
+   //查询工作模式
+   rpc get-operational-modes{
+        input{
+            uses base-types:ne-common-prop;
+            leaf-list mode-id{
+                type uint16;
+            }
+        }
+        output{
+            uses oc-terminal:terminal-operational-mode-top;
+        }
+   }
+
+   //查询逻辑通道
+   rpc get-logical-channels{
+        input{
+            uses base-types:ne-common-prop;
+            leaf-list index{
+                type uint32;
+            }
+        }
+
+        output{
+            uses oc-terminal:terminal-logical-channel-top;
+            uses oc-terminal:terminal-otn-protocol-top;
+        }
+   }
+
+   //查询以太网性能
+   rpc get-ethernet-protocol{
+       input{
+           uses base-types:ne-common-prop;
+           leaf index{
+               type uint32;
+           }
+       }
+
+       output{
+           uses oc-terminal:terminal-ethernet-protocol-config;
+           uses oc-terminal:terminal-ethernet-protocol-state;
+           uses oc-terminal:lldp-logical-channel-top;
+       }
+
+  }
+
+  //查询 ODU/OTU性能
+  rpc get-otn-protocol{
+        input{
+            uses base-types:ne-common-prop;
+            leaf index{
+                type uint32;
+            }
+        }
+
+        output{
+            uses  oc-terminal:terminal-otn-protocol-config;
+            uses  oc-terminal:terminal-otn-protocol-state;
+        }
+
+   }
+
+   //修改逻辑通道
+   rpc set-logical-channel{
+        input{
+           uses base-types:ne-common-prop;
+           uses oc-terminal:terminal-logical-channel-config;
+           uses oc-terminal:sdh-j0-top;
+           uses oc-terminal:terminal-otn-protocol-top;
+       }
+   }
+
+      //修改逻辑通道
+      rpc batch-set-logical-channel{
+           input{
+              uses base-types:ne-common-prop;
+              list  logical-channel-config{
+                uses oc-terminal:terminal-logical-channel-config;
+             }
+
+          }
+      }
+
+}

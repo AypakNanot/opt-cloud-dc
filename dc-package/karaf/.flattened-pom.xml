@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright © 2019 optel and others. All rights reserved.
+This program and the accompanying materials are made available under the
+terms of the Eclipse Public License v1.0 which accompanies this distribution,
+and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
+-->
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.optel.tmaster.dc</groupId>
+    <artifactId>karaf-parent</artifactId>
+    <version>9.00-SNAPSHOT</version>
+    <relativePath>../../parent/karaf-parent</relativePath>
+  </parent>
+  <groupId>com.optel.tmaster.dc</groupId>
+  <artifactId>TMaster2000-DC</artifactId>
+  <version>9.00-SNAPSHOT</version>
+  <name>ODL :: com.optel.tmaster.dc :: ${project.artifactId}</name>
+  <licenses>
+    <license>
+      <name>Eclipse Public License v1.0</name>
+      <url>https://www.eclipse.org/legal/epl-v10.html</url>
+    </license>
+  </licenses>
+  <properties>
+    <karaf.localFeature>package-dc-features</karaf.localFeature>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>dc-artifacts</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>package-dc-features</artifactId>
+      <type>xml</type>
+      <classifier>features</classifier>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-schema-resources</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/assembly</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>../../general/otn-yang-cmcc/target/classes/META-INF/yang</directory>
+                  <targetPath>cache/schema/s-otn/yearning</targetPath>
+                </resource>
+                <resource>
+                  <directory>../../general/otn-yang-ctc/target/classes/META-INF/yang</directory>
+                  <targetPath>cache/schema/s-otn/diligent</targetPath>
+                </resource>
+                <resource>
+                  <directory>../../general/openconfig-yang-ctc/target/classes/META-INF/yang</directory>
+                  <targetPath>cache/schema/dci/diligent</targetPath>
+                </resource>
+                <resource>
+                  <directory>../../general/dci-yang-cmcc/target/classes/META-INF/yang</directory>
+                  <targetPath>cache/schema/dci/yearning</targetPath>
+                </resource>
+                <resource>
+                  <directory>../../general/otn-yang-cmcc/target/classes/META-INF/yang</directory>
+                  <targetPath>cache/schema/standard-s-otn/yearning</targetPath>
+                </resource>
+                <resource>
+                  <directory>../../general/otn-yang-ctc/target/classes/META-INF/yang</directory>
+                  <targetPath>cache/schema/standard-s-otn/diligent</targetPath>
+                </resource>
+                <resource>
+                  <directory>../../general/openconfig-yang-ctc/target/classes/META-INF/yang</directory>
+                  <targetPath>cache/schema/standard-dci/diligent</targetPath>
+                </resource>
+                <resource>
+                  <directory>../../general/dci-yang-cmcc/target/classes/META-INF/yang</directory>
+                  <targetPath>cache/schema/standard-dci/yearning</targetPath>
+                </resource>
+              </resources>
+              <overwrite>true</overwrite>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

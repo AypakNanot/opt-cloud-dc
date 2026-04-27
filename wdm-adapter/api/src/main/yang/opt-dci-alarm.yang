@@ -1,0 +1,119 @@
+module opt-dci-alarm {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:alarm";
+    prefix "opt-dci-alarm";
+
+    revision "2020-02-10" {
+        description "DCI DEVICE";
+    }
+    import base-types  {prefix "base-types";}
+    import optel-oc-alarms-mask {prefix "opt-oc-alarms-mask";}
+    import optel-oc-alarms {prefix "opt-oc-alarms";}
+    import optel-oc-yang-types { prefix yang; }
+
+    rpc get-alarm-mask{
+        description "查询告警屏蔽";
+        input {
+            uses base-types:ne-common-prop;
+        }
+        output {
+            list mask-alarms{
+                key "index";
+                uses opt-oc-alarms-mask:alarm-mask-config;
+            }
+        }
+    }
+
+    rpc delete-alarm-mask{
+        description "删除告警屏蔽";
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list index {
+                type string{
+                   length "1..64";
+                }
+                description "Name of ptp";
+            }
+        }
+    }
+
+    rpc create-alarm-mask{
+        description "创建告警屏蔽";
+        input {
+            uses base-types:ne-common-prop;
+            list mask-alarms{
+                key "index";
+                uses opt-oc-alarms-mask:alarm-mask-config;
+            }
+        }
+    }
+
+    rpc get-alarm-current{
+        description "查询告警信息";
+        input {
+            uses base-types:ne-common-prop;
+        }
+        output {
+            list alarms{
+                key "id";
+                uses opt-oc-alarms:alarm-state;
+            }
+        }
+    }
+
+    rpc query-tcas{
+        description "查询当前TCA告警";
+        input{
+            uses base-types:ne-common-prop;
+            leaf start-time {
+                type yang:date-and-time;
+                description "alarm start-time";
+            }
+            leaf end-time {
+                type yang:date-and-time;
+                description "alarm end-time";
+            }
+        }
+        output{
+           uses opt-oc-alarms:tcas-top;
+        }
+    }
+
+    rpc query-alarm-history {
+        input {
+            uses base-types:ne-common-prop;
+            leaf start-time {
+                type yang:date-and-time;
+                description "alarm start-time";
+            }
+            leaf end-time {
+                type yang:date-and-time;
+                description "alarm end-time";
+            }
+        }
+        output{
+           list alarms{
+               key "id";
+               uses opt-oc-alarms:alarm-state;
+           }
+        }
+    }
+
+    rpc query-tca-history {
+        input {
+            uses base-types:ne-common-prop;
+            leaf start-time {
+                type yang:date-and-time;
+                description "alarm start-time";
+            }
+            leaf end-time {
+                type yang:date-and-time;
+                description "alarm end-time";
+            }
+        }
+        output{
+           uses opt-oc-alarms:tcas-top;
+        }
+    }
+
+}

@@ -1,0 +1,66 @@
+module opt-obj-installation {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:obj:installation";
+    prefix "otn-obj-installation";
+    import base-types  {prefix "base-types";}
+    import optel-otn-ext-api { prefix optel-otn-ext-api; }
+
+    
+    revision "2021-01-16" {
+        description "Initial revision";
+    }
+    
+    rpc query-eh-installation{
+    	input{
+    		uses base-types:ne-common-prop;
+    		leaf name{
+                type string {
+                    length "1..64";
+                }
+    		}
+    	}
+    	output{
+    	    uses optel-otn-ext-api:eh-installation-capabilitys-grouping;
+    	}
+    }
+
+     //单板安装
+    rpc install-eq-type {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:set-eq-type-in-parameter-grouping;
+        }
+        output {
+            uses optel-otn-ext-api:set-eq-type-out-parameter-grouping;
+        }
+    }
+
+    rpc query-eq-installation{
+        input{
+            uses base-types:ne-common-prop;
+            leaf eq-name {
+                type string{
+                    length "1..64";
+                }
+                description "name";
+            }
+        }
+        output{
+            uses optel-otn-ext-api:eq-installation-capabilitys-grouping;
+        }
+    }
+
+
+    // 端口安装
+    rpc install-ptp-type {
+        input {
+            uses base-types:ne-common-prop;
+            uses optel-otn-ext-api:set-ptp-type-in-parameter-grouping;
+        }
+        output{
+            uses optel-otn-ext-api:set-ptp-type-out-parameter-grouping;
+        }
+    }
+
+    
+}

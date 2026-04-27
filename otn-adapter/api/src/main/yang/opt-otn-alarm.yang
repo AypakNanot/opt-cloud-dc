@@ -1,0 +1,320 @@
+module opt-otn-alarm {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:otn:alarm";
+    prefix "otn-alarm";
+
+    import yang-ext {prefix ext;}
+    import base-types  {prefix "base-types";}
+    import optel-alarms {prefix "optel-alm";}
+    import optel-otn-ext-api { prefix optel-otn-ext-api;}
+    import ietf-yang-types {
+        prefix yang;
+    }
+
+    revision "2020-04-27" {
+        description "Initial revision";
+    }
+
+    rpc query-alarm{
+        input{
+            uses base-types:ne-common-prop;
+            leaf perceived-severity {
+                type optel-alm:perceived-severity;
+                description "alarm perceived-severity";
+            }
+            leaf start-time {
+                type yang:date-and-time;
+                description "alarm start-time";
+            }
+            leaf end-time {
+                type yang:date-and-time;
+                description "alarm end-time";
+            }
+        }
+        output{
+           uses optel-alm:alarms-grouping;
+        }
+    }
+
+    rpc query-alarm-attr-ne{
+         input{
+            uses base-types:ne-common-prop;
+            leaf object-name {
+                type string {
+                    length "1..64";
+                }
+                description "alarm object name";
+            }
+            leaf alarm-code {
+                type string {
+                    length "1..64";
+                }
+                description "alarm code";
+            }
+         }
+         output{
+            uses optel-otn-ext-api:alarm-attrs-grouping;
+         }
+    }
+
+    rpc modify-alarm-attr-ne{
+        input{
+            uses base-types:ne-common-prop;
+            leaf object-name {
+                type string {
+                    length "1..64";
+                }
+                description "alarm object name";
+            }
+            leaf alarm-code {
+                type string {
+                    length "1..64";
+                }
+                description "alarm code";
+            }
+            leaf perceived-severity {
+                type optel-alm:perceived-severity;
+                description "alarm perceived severity";
+            }
+            leaf appear-delay-time {
+                type uint16{
+                    range "0..2500";
+                }
+                description "alarm appear delay time";
+            }
+            leaf disappear-delay-time {
+                type uint16{
+                     range "0..10000";
+                }
+                description "alarm disappear delay time";
+            }
+        }
+    }
+
+    rpc query-tcas{
+        input{
+            uses base-types:ne-common-prop;
+            leaf start-time {
+                type yang:date-and-time;
+                description "alarm start-time";
+            }
+            leaf end-time {
+                type yang:date-and-time;
+                description "alarm end-time";
+            }
+        }
+        output{
+           uses optel-alm:tcas-grouping;
+        }
+    }
+
+    rpc get-history-alarms-ne{
+        description "get-history-alarms";
+        input {
+            uses base-types:ne-common-prop;
+            leaf start-time {
+                type yang:date-and-time;
+                description "start-time";
+            }
+            leaf end-time {
+                type yang:date-and-time;
+                description "end-time";
+            }
+            leaf perceived-severity {
+                type optel-alm:perceived-severity;
+                description "alarm perceived-severity";
+            }
+        }
+        output {
+            uses optel-alm:alarms-grouping;
+        }
+    }
+
+    rpc get-history-tca-ne{
+        description "get-history-tca";
+        input {
+            uses base-types:ne-common-prop;
+            leaf start-time {
+                type yang:date-and-time;
+                description "start-time";
+            }
+            leaf end-time {
+                type yang:date-and-time;
+                description "end-time";
+            }
+        }
+        output {
+            uses optel-alm:tcas-grouping;
+        }
+    }
+
+    rpc report-alarm-test{
+       input {
+            uses base-types:ne-common-prop;
+            leaf object-name {
+               type string {
+                   length "1..64";
+               }
+               description "object-name";
+           }
+       }
+    }
+
+    rpc report-even-test{
+        input{
+            uses base-types:ne-common-prop;
+            leaf object-name {
+               type string {
+                   length "1..64";
+               }
+               description "object-name";
+           }
+           leaf object-type {
+              type string {
+                  length "1..64";
+              }
+              description "object-type";
+          }
+          leaf even-type {
+             type string {
+                 length "1..64";
+             }
+             description "even-type";
+          }
+          leaf attribute-name {
+               type string {
+                   length "1..64";
+               }
+               description "attribute-name";
+            }
+            leaf new-value {
+               type string {
+                   length "1..64";
+               }
+               description "new-value";
+            }
+            leaf old-value {
+               type string {
+                   length "1..64";
+               }
+               description "old-value";
+            }
+
+        }
+    }
+
+    rpc report-tca-test{
+        input {
+            uses base-types:ne-common-prop;
+            leaf object-name {
+               type string {
+                   length "1..64";
+               }
+               description "object-name";
+           }
+       }
+    }
+
+    rpc get-alarm-mask-status{
+        description "get-alarm-mask-status";
+        input {
+            uses base-types:ne-common-prop;
+            leaf mask-state {
+               type boolean;
+               description "true is mask";
+           }
+           leaf object-type {
+               type string {
+                   length "1..64";
+               }
+               description "alarm object-type";
+           }
+           leaf object-name {
+               type string {
+                   length "1..64";
+               }
+               description "alarm-mask-state object-name";
+           }
+           leaf alarm-code {
+               type string {
+                   length "1..64";
+               }
+               description "alarm-mask-state alarm-code";
+           }
+        }
+        output{
+            uses optel-alm:alarms-mask-state-grouping;
+        }
+    }
+
+    rpc set-alarm-mask-status{
+        description "set-alarm-mask-status";
+        input {
+            uses base-types:ne-common-prop;
+            list set-alarms-mask-status{
+                key "object-name alarm-code";
+                leaf object-name {
+                    type string {
+                        length "1..64";
+                    }
+                    mandatory true;
+                    description "alarm-mask-state object-name";
+                }
+                leaf object-type {
+                   type string {
+                       length "1..64";
+                   }
+                   description "alarm object-type";
+               }
+                leaf alarm-code {
+                    type string {
+                        length "1..64";
+                    }
+                    mandatory true;
+                    description "alarm-mask-state alarm-code";
+                }
+                leaf mask-state {
+                    type boolean;
+                    mandatory true;
+                    description "true is mask";
+                }
+            }
+
+        }
+    }
+
+    rpc set-alarm-mask-batch{
+        description "set-alarm-mask-status";
+        input{
+            uses base-types:ne-common-prop;
+            leaf object-name {
+                type string {
+                    length "1..64";
+                }
+                description "alarm-mask-state object-name";
+            }
+            leaf object-type {
+                type string {
+                    length "1..64";
+                }
+                description "alarm object-type";
+            }
+            leaf perceived-severity {
+                type optel-alm:perceived-severity;
+                description "alarm perceived-severity";
+            }
+            leaf alarm-code {
+                type string {
+                    length "1..64";
+                }
+                description "alarm-mask-state alarm-code";
+            }
+            leaf mask-state {
+                type boolean;
+                mandatory true;
+                description "true is mask";
+            }
+        }
+    }
+
+}

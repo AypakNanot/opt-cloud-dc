@@ -1,0 +1,185 @@
+module opt-otn-ftp {
+    yang-version 1;
+    namespace "com:optel:devconf:opt:otn:ftp";
+    prefix "otn-ftp";
+    import ietf-yang-types {prefix yang;}
+    import yang-ext {prefix ext;}
+    import base-types  {prefix "base-types";}
+    import ietf-inet-types { prefix inet; }
+    import optel-devm {prefix "optel-devm";}
+    import optel-sdh {prefix "optel-sdh";}
+    import optel-otn {prefix "optel-otn";}
+    import optel-eth {prefix "optel-eth";}
+    import optel-otn-types { prefix optel-otn-types; }
+    import optel-yang-types {prefix optel-type; }
+    import optel-otn-ext-api {prefix "optel-otn-ext-api"; }
+    import optel-osu { prefix optel-osu; }
+
+    revision "2020-04-25" {
+        description "Initial revision";
+    }
+
+    rpc query-ftps{
+        input{
+            uses base-types:ne-common-prop;
+            leaf-list ftp-name{
+                type string{
+                    length "1..64";
+                }
+                description "name";
+            }
+        }
+        output{
+            uses optel-devm:ftps-grouping;
+        }
+    }
+
+    rpc query-gfpf-parameter{
+        input{
+            uses base-types:ne-common-prop;
+            leaf-list ftp-name{
+                type string{
+                    length "1..64";
+                }
+                description "name";
+            }
+        }
+        output{
+            uses optel-otn-ext-api:gfpf-parameter-grouping;
+        }
+    }
+
+    rpc modify-sdh-ftp-pac{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ftp-name {
+               mandatory true;
+               type string{
+                   length "1..64";
+               }
+               description "Name of ftp";
+            }
+            leaf sdh-signal-type {
+                type optel-otn-types:client-signal-type;
+                description "none";
+            }
+            leaf j0-actual-tx {
+                type string {
+                    length "1..64";
+                }
+                description "none";
+            }
+            leaf j0-expected-rx {
+                type string {
+                    length "1..64";
+                }
+                description "none";
+            }
+        }
+    }
+
+   rpc modify-eth-ftp-pac{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ftp-name {
+               mandatory true;
+               type string{
+                   length "1..64";
+               }
+               description "Name of ftp";
+            }
+            leaf current-mtu {
+                type uint64;
+                description "none";
+            }
+            leaf service-mapping-mode {
+                type optel-otn-types:adaptation-type;
+                description "none";
+            }
+            leaf mapping-type {
+                type optel-eth:eth-mapping-type;
+                description "none";
+            }
+            leaf scrambler {
+                type boolean;
+                default true;
+                description "The scrambler enable,true:enable false:disable";
+            }
+            leaf payload-fcs {
+                type boolean;
+                default true;
+                description "The scrambler enable,true:enable false:disable";
+            }
+        }
+   }
+
+   rpc modify-eth-vcg{
+        input{
+            uses base-types:ne-common-prop;
+            leaf ftp-name {
+                mandatory true;
+                type string{
+                  length "1..64";
+                }
+                description "Name of ftp";
+            }
+            leaf lcas {
+                type boolean;
+            }
+            leaf hold-off {
+                type uint32;
+                description "unit: ms";
+            }
+            leaf wtr {
+                type uint32;
+                description "unit: s";
+            }
+            leaf tsd {
+                type boolean;
+            }
+            leaf vc-type {
+                type optel-otn-types:switch-type;
+            }
+        }
+   }
+
+    augment "/query-ftps/output/ftp" {
+        when "layer-protocol-name = optel-sdh:SDH";
+        ext:augment-identifier "sdh-ftp-pac-ext";
+        container sdh-ftp-pac-output {
+            uses optel-sdh:sdh-ftp-pac-grouping;
+        }
+    }
+
+    augment "/query-ftps/output/ftp" {
+        when "layer-protocol-name = 'optel-eth:ETH'";
+        ext:augment-identifier "eth-ftp-pac-ext";
+        container eth-ftp-pac-output {
+            uses optel-eth:eth-ftp-pac;
+            container vcg-parameters-out {
+                uses optel-sdh:vcg-pac;
+            }
+            description "none";
+        }
+    }
+
+    augment "/query-ftps/output/ftp/eth-ftp-pac-output" {
+        when "optel-eth:mapping-type = 'optel-eth:EoS'";
+        ext:augment-identifier "vcg-eth-ftp-pac-ext";
+        container vcg-eth-ftp-pac-output {
+            uses optel-sdh:vcg-pac;
+            description "Virtual concatenation group";
+        }
+        description "none";
+    }
+
+    augment "/query-ftps/output/ftp" {
+        ext:augment-identifier "osu-ftp-pac-ext";
+        when "layer-protocol-name = optel-osu:OSU";
+        container osu-ftp-pac-output {
+            uses optel-osu:osu-ftp-pac-grouping;
+        }
+    }
+
+
+}

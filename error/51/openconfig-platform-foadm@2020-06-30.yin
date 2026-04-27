@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:oc-foadm="http://openconfig.net/yang/platform/foadm" xmlns:oc-platform="http://openconfig.net/yang/platform" xmlns:oc-ext="http://openconfig.net/yang/openconfig-ext" xmlns:oc-platform-types="http://openconfig.net/yang/platform-types" xmlns:oc-opt-types="http://openconfig.net/yang/transport-types" name="openconfig-platform-foadm">
+    <yang-version value="1"/>
+    <namespace uri="http://openconfig.net/yang/platform/foadm"/>
+    <prefix value="oc-foadm"/>
+    <import module="openconfig-platform">
+        <prefix value="oc-platform"/>
+    </import>
+    <import module="openconfig-extensions">
+        <prefix value="oc-ext"/>
+    </import>
+    <import module="openconfig-platform-types">
+        <prefix value="oc-platform-types"/>
+    </import>
+    <import module="openconfig-transport-types">
+        <prefix value="oc-opt-types"/>
+    </import>
+    <organization>
+        <text>OpenConfig working group</text>
+    </organization>
+    <contact>
+        <text>OpenConfig working group
+www.openconfig.net</text>
+    </contact>
+    <description>
+        <text>This module defines data related to foadm components in the
+OpenConfig platform model.</text>
+    </description>
+    <oc-ext:openconfig-version semver="0.1.1"/>
+    <revision date="2020-06-30">
+        <description>
+            <text>Initial revision</text>
+        </description>
+        <reference>
+            <text>0.1.0</text>
+        </reference>
+    </revision>
+    <oc-ext:regexp-posix/>
+    <oc-ext:catalog-organization org="openconfig"/>
+    <oc-ext:origin origin="openconfig"/>
+    <grouping name="media-channel-spectrum-state">
+        <description>
+            <text>Operational state data for the media channel</text>
+        </description>
+        <leaf name="lower-frequency">
+            <type name="oc-opt-types:frequency-type"/>
+            <description>
+                <text>Lower frequency of the specified spectrum power</text>
+            </description>
+        </leaf>
+        <leaf name="upper-frequency">
+            <type name="oc-opt-types:frequency-type"/>
+            <description>
+                <text>Upper frequency of the specified spectrum power</text>
+            </description>
+        </leaf>
+    </grouping>
+    <grouping name="add-drop-pac">
+        <description>
+            <text>Add/drop information for foadm components</text>
+        </description>
+        <leaf name="add-drop-port">
+            <type name="leafref">
+                <path value="/oc-platform:components/oc-platform:component/oc-platform:name"/>
+            </type>
+            <description>
+                <text>Reference to system-supplied name of the wavelength-router
+port component.</text>
+            </description>
+        </leaf>
+    </grouping>
+    <grouping name="foadm-config">
+        <description>
+            <text>Operational config data for foadm components</text>
+        </description>
+    </grouping>
+    <grouping name="foadm-state">
+        <description>
+            <text>Operational state data for foadm components</text>
+        </description>
+        <leaf name="channel-interval">
+            <type name="oc-platform-types:channel-interval-type"/>
+            <description>
+                <text>Sets foadm mode</text>
+            </description>
+        </leaf>
+        <leaf name="add-drop-channel-num">
+            <type name="uint32"/>
+            <description>
+                <text>Add drop channel number, currently add number should equals 
+drop number, default value is 4</text>
+            </description>
+        </leaf>
+        <container name="frequence-channels">
+            <config value="false"/>
+            <list name="frequence-channel">
+                <key value="lower-frequency upper-frequency"/>
+                <uses name="media-channel-spectrum-state"/>
+                <container name="add-drop-pac">
+                    <uses name="add-drop-pac"/>
+                </container>
+            </list>
+        </container>
+    </grouping>
+    <augment target-node="/oc-platform:components/oc-platform:component/oc-platform:foadm/oc-platform:state">
+        <description>
+            <text>Adding foadm data to component model</text>
+        </description>
+        <uses name="foadm-config"/>
+        <uses name="foadm-state"/>
+    </augment>
+</module>

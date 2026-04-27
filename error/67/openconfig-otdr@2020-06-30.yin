@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:oc-otdr="http://openconfig.net/yang/otdr" xmlns:oc-yang="http://openconfig.net/yang/types/yang" xmlns:oc-platform="http://openconfig.net/yang/platform" xmlns:oc-ext="http://openconfig.net/yang/openconfig-ext" xmlns:yang="urn:ietf:params:xml:ns:yang:ietf-yang-types" name="openconfig-otdr">
+    <yang-version value="1"/>
+    <namespace uri="http://openconfig.net/yang/otdr"/>
+    <prefix value="oc-otdr"/>
+    <import module="openconfig-yang-types">
+        <prefix value="oc-yang"/>
+    </import>
+    <import module="openconfig-platform">
+        <prefix value="oc-platform"/>
+    </import>
+    <import module="openconfig-extensions">
+        <prefix value="oc-ext"/>
+    </import>
+    <import module="ietf-yang-types">
+        <prefix value="yang"/>
+    </import>
+    <organization>
+        <text>private</text>
+    </organization>
+    <description>
+        <text>This model is used for OTDR.</text>
+    </description>
+    <oc-ext:openconfig-version semver="0.12.2"/>
+    <revision date="2020-06-30">
+        <description>
+            <text>Initial release version</text>
+        </description>
+        <reference>
+            <text>0.1.0</text>
+        </reference>
+    </revision>
+    <typedef name="action-result">
+        <type name="enumeration">
+            <enum name="SUCCESS">
+                <description>
+                    <text>The RPC action is success</text>
+                </description>
+            </enum>
+            <enum name="FAIL">
+                <description>
+                    <text>The RPC action is fail</text>
+                </description>
+            </enum>
+        </type>
+    </typedef>
+    <typedef name="otdr-file-format-type">
+        <type name="enumeration">
+            <enum name="SR-4731">
+                <description>
+                    <text>OTDR file format is SR-4731</text>
+                </description>
+            </enum>
+            <enum name="GR-196">
+                <description>
+                    <text>OTDR file format is GR-196</text>
+                </description>
+            </enum>
+            <enum name="OTHER">
+                <description>
+                    <text>OTDR file format in other format</text>
+                </description>
+            </enum>
+        </type>
+        <description>
+            <text>otdr trace data saved in the specific format file</text>
+        </description>
+    </typedef>
+    <grouping name="otdr-result-event">
+        <description>
+            <text>Top-level grouping for OTDR result event</text>
+        </description>
+        <container name="events">
+            <description>
+                <text>Enclosing container for otdr result event list</text>
+            </description>
+            <list name="event">
+                <min-elements value="1"/>
+                <key value="event-index"/>
+                <description>
+                    <text>List of otdr result</text>
+                </description>
+                <leaf name="event-index">
+                    <type name="uint32"/>
+                    <description>
+                        <text>Index of event</text>
+                    </description>
+                </leaf>
+                <leaf name="distance">
+                    <type name="decimal64">
+                        <fraction-digits value="2"/>
+                    </type>
+                    <units name="km"/>
+                    <description>
+                        <text>the distance of the event</text>
+                    </description>
+                </leaf>
+                <leaf name="splice-loss">
+                    <type name="decimal64">
+                        <fraction-digits value="2"/>
+                    </type>
+                    <units name="dB"/>
+                    <description>
+                        <text>splice loss of the odtr event</text>
+                    </description>
+                </leaf>
+                <leaf name="return-loss">
+                    <type name="decimal64">
+                        <fraction-digits value="2"/>
+                    </type>
+                    <units name="dB"/>
+                    <description>
+                        <text>return loss of the odtr event</text>
+                    </description>
+                </leaf>
+                <leaf name="cumulate-loss">
+                    <type name="decimal64">
+                        <fraction-digits value="2"/>
+                    </type>
+                    <units name="dB"/>
+                    <description>
+                        <text>cumulate loss of the current odtr event</text>
+                    </description>
+                </leaf>
+                <leaf name="event-type">
+                    <type name="enumeration">
+                        <enum name="POSITIVE-SPLICE-LOSS">
+                            <description>
+                                <text>event is positive splice loss</text>
+                            </description>
+                        </enum>
+                        <enum name="NEGATIVE-SPLICE-LOSS">
+                            <description>
+                                <text>event is negative splice los</text>
+                            </description>
+                        </enum>
+                        <enum name="REFLECTION">
+                            <description>
+                                <text>event is reflection</text>
+                            </description>
+                        </enum>
+                        <enum name="BENDING-LOSS">
+                            <description>
+                                <text>event is bending loss</text>
+                            </description>
+                        </enum>
+                        <enum name="END-OF-FIBER">
+                            <description>
+                                <text>event is fiber end</text>
+                            </description>
+                        </enum>
+                    </type>
+                    <description>
+                        <text>event type of the odtr event</text>
+                    </description>
+                </leaf>
+            </list>
+        </container>
+    </grouping>
+    <grouping name="otdr-result-top">
+        <description>
+            <text>Top-level grouping for OTDR result</text>
+        </description>
+        <container name="results">
+            <config value="false"/>
+            <description>
+                <text>Enclosing container for otdr result list</text>
+            </description>
+            <list name="result">
+                <key value="monitor-port index"/>
+                <min-elements value="1"/>
+                <description>
+                    <text>List of otdr result, keyed by monitor-port and index</text>
+                </description>
+                <leaf name="monitor-port">
+                    <type name="leafref">
+                        <path value="/oc-platform:components/oc-platform:component/oc-platform:name"/>
+                    </type>
+                    <description>
+                        <text>Reference to system-supplied name of the port that the
+otdr is physically connected to. This port is a tap off of the
+monitored-port and would be in the same card as the
+monitored port. If this port is embedded in another card
+(i.e. an amplifier card) the device should still define
+a port representing the monitor port if it is internal
+and not physically present on the faceplate of the card</text>
+                    </description>
+                </leaf>
+                <leaf name="index">
+                    <type name="uint32"/>
+                    <description>
+                        <text>Index of odtr results, 0 represent the latest OTDR measurement,
+index of other results are increased by 1 at each detection action</text>
+                    </description>
+                </leaf>
+                <leaf name="detect-time">
+                    <type name="yang:date-and-time"/>
+                    <description>
+                        <text>the detect time for the specific result</text>
+                    </description>
+                </leaf>
+                <leaf name="measure-mode">
+                    <type name="enumeration">
+                        <enum name="MANUAL">
+                            <description>
+                                <text>OTDR is set to manual mode</text>
+                            </description>
+                        </enum>
+                        <enum name="AUTO">
+                            <description>
+                                <text>System will automatically detect the fiber with the default configuration</text>
+                            </description>
+                        </enum>
+                        <enum name="OFFLINE">
+                            <description>
+                                <text>OTDR is set to offline mode</text>
+                            </description>
+                        </enum>
+                    </type>
+                    <default value="AUTO"/>
+                    <description>
+                        <text>generally, otdr support auto and manual mode</text>
+                    </description>
+                </leaf>
+                <leaf name="pulse-width">
+                    <type name="uint32"/>
+                    <units name="nanoseconds"/>
+                    <description>
+                        <text>pulse width of otdr laser 
+default 20000</text>
+                    </description>
+                </leaf>
+                <leaf name="measuring-range">
+                    <type name="uint32"/>
+                    <units name="kilometers"/>
+                    <default value="100"/>
+                    <description>
+                        <text>measuring range</text>
+                    </description>
+                </leaf>
+                <leaf name="measuring-time">
+                    <type name="uint32"/>
+                    <units name="seconds"/>
+                    <default value="120"/>
+                    <description>
+                        <text>measuring time</text>
+                    </description>
+                </leaf>
+                <leaf name="measuring-resolution">
+                    <type name="decimal64">
+                        <fraction-digits value="2"/>
+                    </type>
+                    <units name="m"/>
+                    <description>
+                        <text>measuring resolution is generally decided by pulse-width</text>
+                    </description>
+                </leaf>
+                <leaf name="fiber-length">
+                    <type name="decimal64">
+                        <fraction-digits value="2"/>
+                    </type>
+                    <units name="km"/>
+                    <description>
+                        <text>overall length of the measured fiber</text>
+                    </description>
+                </leaf>
+                <leaf name="total-loss">
+                    <type name="decimal64">
+                        <fraction-digits value="2"/>
+                    </type>
+                    <units name="dB"/>
+                    <description>
+                        <text>total loss of the measured fiber</text>
+                    </description>
+                </leaf>
+                <leaf name="fiber-attenuation">
+                    <type name="decimal64">
+                        <fraction-digits value="2"/>
+                    </type>
+                    <units name="dB/km"/>
+                    <description>
+                        <text>attenuation of the measured fiber</text>
+                    </description>
+                </leaf>
+                <leaf name="trace-data">
+                    <type name="binary"/>
+                    <description>
+                        <text>the trace data for the otdr measurement result</text>
+                    </description>
+                </leaf>
+                <leaf name="otdr-file-type">
+                    <type name="otdr-file-format-type"/>
+                    <description>
+                        <text>otdr trace data saved in the specific format file</text>
+                    </description>
+                </leaf>
+                <uses name="otdr-result-event"/>
+            </list>
+        </container>
+    </grouping>
+    <grouping name="otdr-config">
+        <description>
+            <text>Configuration data for otdr monitor definitions</text>
+        </description>
+        <leaf name="name">
+            <mandatory value="true"/>
+            <type name="leafref">
+                <path value="/oc-platform:components/oc-platform:component/oc-platform:name"/>
+            </type>
+            <description>
+                <text>OTDR name</text>
+            </description>
+        </leaf>
+        <leaf name="monitor-port">
+            <mandatory value="true"/>
+            <type name="leafref">
+                <path value="/oc-platform:components/oc-platform:component/oc-platform:name"/>
+            </type>
+            <description>
+                <text>monitor(Line) port</text>
+            </description>
+        </leaf>
+        <leaf name="fiber-refractive-index">
+            <mandatory value="true"/>
+            <type name="decimal64">
+                <fraction-digits value="4"/>
+            </type>
+            <description>
+                <text>depend on the type of fiber, default is G.652</text>
+            </description>
+        </leaf>
+    </grouping>
+    <grouping name="otdr-state">
+        <description>
+            <text>Operational state data for media channels</text>
+        </description>
+        <leaf name="measuring-state">
+            <mandatory value="true"/>
+            <type name="enumeration">
+                <enum name="RUNNING">
+                    <description>
+                        <text>OTDR is on running</text>
+                    </description>
+                </enum>
+                <enum name="FINISHED">
+                    <description>
+                        <text>OTDR measurement has completed</text>
+                    </description>
+                </enum>
+                <enum name="FAIL">
+                    <description>
+                        <text>OTDR measurement has failed</text>
+                    </description>
+                </enum>
+            </type>
+        </leaf>
+        <leaf name="otdr-wavelength">
+            <mandatory value="true"/>
+            <type name="string"/>
+            <description>
+                <text>the wavelength of the OTDR laser, example 1610nm</text>
+            </description>
+        </leaf>
+    </grouping>
+    <grouping name="otdr-top">
+        <description>
+            <text>Top-level grouping</text>
+        </description>
+        <container name="otdrs">
+            <description>
+                <text>Top-level container for optical time domain reflectometry(i.e. OTDR) monitors</text>
+            </description>
+            <list name="otdr">
+                <key value="name"/>
+                <description>
+                    <text>List of otdrs, keyed by otdr monitor name</text>
+                </description>
+                <leaf name="name">
+                    <type name="leafref">
+                        <path value="../config/name"/>
+                    </type>
+                    <description>
+                        <text>Reference to otdr monitor name</text>
+                    </description>
+                </leaf>
+                <container name="config">
+                    <description>
+                        <text>Configuration data</text>
+                    </description>
+                    <uses name="otdr-config"/>
+                </container>
+                <container name="state">
+                    <config value="false"/>
+                    <description>
+                        <text>Operational state data</text>
+                    </description>
+                    <uses name="otdr-config"/>
+                    <uses name="otdr-state"/>
+                </container>
+                <uses name="otdr-result-top"/>
+            </list>
+        </container>
+    </grouping>
+    <uses name="otdr-top"/>
+    <rpc name="start-otdr">
+        <description>
+            <text>start the specific otdr and get the result file</text>
+        </description>
+        <input>
+            <leaf name="name">
+                <type name="leafref">
+                    <path value="/oc-platform:components/oc-platform:component/oc-platform:name"/>
+                </type>
+                <description>
+                    <text>target otdr name</text>
+                </description>
+            </leaf>
+            <leaf name="measure-mode">
+                <type name="enumeration">
+                    <enum name="MANUAL">
+                        <description>
+                            <text>OTDR is set to manual mode</text>
+                        </description>
+                    </enum>
+                    <enum name="AUTO">
+                        <description>
+                            <text>System will automatically detect the fiber with the default configuration</text>
+                        </description>
+                    </enum>
+                </type>
+                <default value="AUTO"/>
+                <description>
+                    <text>generally, otdr support auto and manual mode</text>
+                </description>
+            </leaf>
+            <leaf name="pulse-width">
+                <type name="uint32"/>
+                <units name="nanoseconds"/>
+                <default value="20000"/>
+                <description>
+                    <text>pulse width of otdr laser</text>
+                </description>
+            </leaf>
+            <leaf name="measuring-range">
+                <type name="uint32"/>
+                <units name="kilometers"/>
+                <default value="100"/>
+                <description>
+                    <text>measuring range</text>
+                </description>
+            </leaf>
+            <leaf name="measuring-time">
+                <type name="uint32"/>
+                <units name="seconds"/>
+                <default value="120"/>
+                <description>
+                    <text>measuring time</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="start-otdr-result">
+                <type name="action-result"/>
+                <description>
+                    <text>Result of the start otdr operation</text>
+                </description>
+            </leaf>
+            <leaf name="otdr-file-type">
+                <type name="otdr-file-format-type"/>
+                <description>
+                    <text>Otdr trace data saved in the specific format file</text>
+                </description>
+            </leaf>
+            <leaf name="index">
+                <type name="uint32"/>
+                <description>
+                    <text>Otdr trace result index. Reference to results/result</text>
+                </description>
+            </leaf>
+        </output>
+    </rpc>
+    <rpc name="stop-otdr">
+        <description>
+            <text>stop the specific otdr and get the result file</text>
+        </description>
+        <input>
+            <leaf name="name">
+                <type name="leafref">
+                    <path value="/oc-platform:components/oc-platform:component/oc-platform:name"/>
+                </type>
+                <description>
+                    <text>target otdr name</text>
+                </description>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="stop-otdr-result">
+                <type name="action-result"/>
+                <description>
+                    <text>Result of the stop otdr operation</text>
+                </description>
+            </leaf>
+        </output>
+    </rpc>
+</module>

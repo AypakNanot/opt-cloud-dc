@@ -1,0 +1,83 @@
+module opt-dci-com-device {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:com:device";
+    prefix "opt-dci-com-device";
+
+    revision "2020-02-10" {
+        description "DCI DEVICE";
+    }
+
+    import base-types  {prefix "base-types";}
+    import optel-oc-platform {prefix "opt-oc-platform";}
+    import optel-oc-transport-types { prefix oc-opt-types; }
+    import optel-oc-yang-types { prefix oc-yang; }
+    import optel-oc-platform-types { prefix oc-platform-types; }
+
+    rpc update-common-resource{
+        description "修改设备通用属性";
+        input {
+            uses base-types:ne-common-prop;
+            leaf name{
+                type string;
+            }
+            leaf admin-state {
+              type oc-opt-types:admin-state-type;
+              description
+                  "Sets the admin state of the component";
+            }
+            leaf description {
+                type string;
+            }
+            leaf vendor-type-preconf {
+                type string;
+            }
+            leaf power-admin-state {
+                type oc-platform-types:component-power-type;
+            }
+        }
+    }
+
+    rpc get-common-resource{
+        description "查询设备通用属性";
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list name {
+                type string {
+                    length "1..32";
+                }
+            }
+            leaf-list type {
+                type identityref {
+                    base oc-platform-types:OPENCONFIG_COMPONENT;
+                }
+            }
+
+        }
+        output {
+            uses opt-oc-platform:platform-component-top;
+        }
+    }
+
+    rpc delete-common-resource{
+       description "删除component";
+            input {
+              uses base-types:ne-common-prop;
+              leaf name{
+                  type string;
+              }
+             }
+    }
+
+    rpc modify-psu {
+        input {
+            uses base-types:ne-common-prop;
+            leaf name {
+                type string;
+            }
+            leaf power-load-high-threshold {
+                type uint32;
+            }
+        }
+    }
+
+}

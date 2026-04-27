@@ -1,0 +1,149 @@
+module opt-dci-ne {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:ne";
+    prefix "opt-dci-ne";
+
+    revision "2020-02-10" {
+        description "DCI DEVICE";
+    }
+
+    import base-types  {prefix "base-types";}
+    import optel-oc-platform {prefix "opt-oc-platform";}
+    import optel-oc-rpc {prefix "opt-oc-rpc";}
+    import optel-oc-platform-chassis {prefix "opt-oc-chassis";}
+    import optel-oc-yang-types { prefix oc-yang; }
+    import optel-oc-transport-types { prefix oc-opt-types; }
+    import optel-oc-lldp  {prefix opt-oc-lldp;}
+    import optel-oc-system  {prefix opt-oc-sys;}
+
+    rpc update-ne {
+        description "修改设备基本信息";
+        input {
+            uses base-types:ne-common-prop;
+            leaf ntp-enabled {
+                type boolean;
+            }
+            leaf lldp-enabled {
+                type boolean;
+            }
+        }
+    }
+
+    rpc get-ne-info {
+        description "查询设备基本信息";
+        input {
+            uses base-types:ne-common-prop;
+        }
+        output {
+            leaf hardware-version {
+                type string;
+            }
+            leaf firmware-version {
+                type string;
+            }
+            leaf software-version {
+                type string;
+            }
+            leaf ntp-enabled {
+                type boolean;
+            }
+            leaf lldp-enabled {
+                type boolean;
+            }
+            leaf description {
+                type string;
+            }
+            leaf mfg-name {
+                type string;
+            }
+            leaf mfg-date {
+                type oc-yang:date;
+            }
+            leaf serial-no {
+                type string;
+            }
+            leaf part-no {
+                type string;
+            }
+            leaf production-num {
+              type string;
+              description
+                "real device part no";
+            }
+            leaf admin-state {
+                type oc-opt-types:admin-state-type;
+            }
+            leaf rated-power {
+                type uint32;
+            }
+            uses opt-oc-rpc:get-ne-info-output-grouping;
+        }
+    }
+
+    rpc query-component{
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list name{
+                type string;
+            }
+        }
+        output{
+            list component {
+                key "name";
+                description
+                  "List of components, keyed by component name.";
+                leaf name {
+                  type string;
+                  description
+                    "References the component name";
+                }
+                container config {
+                  description "Configuration data for each component";
+                  uses opt-oc-platform:platform-component-config;
+                }
+            }
+        }
+    }
+    rpc reboot {
+      description
+      "Reboot the specific component, i.e. card, transceiver";
+      input {
+        uses base-types:ne-common-prop;
+        uses opt-oc-rpc:reboot-input-grouping;
+      }
+  }
+
+     rpc set-datetime {
+        input {
+          uses base-types:ne-common-prop;
+          uses opt-oc-rpc:set-datetime-input-grouping;
+        }
+    }
+
+    rpc get-chassis-config{
+        input {
+            uses base-types:ne-common-prop;
+
+        }
+        output{
+        list chassis{
+            leaf name{
+                type string;
+            }
+            uses opt-oc-chassis:chassis-config;
+            uses opt-oc-chassis:chassis-state;
+        }
+
+        }
+    }
+
+    rpc set-chassis-config{
+        input {
+            uses base-types:ne-common-prop;
+            uses opt-oc-chassis:chassis-config;
+            leaf name{
+                type string;
+            }
+        }
+    }
+}

@@ -1,0 +1,48 @@
+module optel-oc-alarm-mask-types {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://alarms/mask/types";
+
+  prefix "oc-alarm-mask-types";
+
+
+  // meta
+  organization "optel working group";
+
+  contact
+    "optel working group www.optel.net";
+
+  description
+    "This module";
+
+  revision "2022-02-08" {
+    description "Initial revision";
+  }
+
+  // optel specific extensions for module metadata.
+
+  typedef alarm-object-type {
+    type enumeration {
+      enum CHASSIS {
+        value 0;
+        description
+        "range of alarm mask is a chassis";
+      }
+      enum CARD {
+        value 1;
+        description
+        "range of alarm mask is a card";
+      }
+      enum PORT {
+        value 2;
+        description
+        "range of alarm mask is a port";
+      }
+    }
+    description
+      "the range of alarm mask";
+    reference "0.1.0";
+  }
+}

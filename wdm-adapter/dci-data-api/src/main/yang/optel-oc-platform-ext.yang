@@ -1,0 +1,59 @@
+module optel-oc-platform-ext {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://platform/extension";
+
+  prefix "oc-platform-ext";
+
+
+  // meta
+  organization "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+    www.openconfig.net";
+
+  description
+    "This module defines optional extensions to the OpenConfig
+    platform model.";
+
+  revision "2022-02-08" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+
+  // identity statements
+
+  // typedef statements
+
+  // grouping statements
+
+
+  grouping platform-component-ext-state {
+    description
+      "Operational state data for platform components";
+
+    leaf entity-id {
+      type uint32;
+      description
+        "A unique numeric identifier assigned by the system to the
+        component. This identifier may be used to represent the
+        corresponding SNMP Entity MIB identifier.";
+    }
+  }
+
+
+  // data definition statements
+
+  // augment statements
+
+  // rpc statements
+
+  // notification statements
+
+}
+

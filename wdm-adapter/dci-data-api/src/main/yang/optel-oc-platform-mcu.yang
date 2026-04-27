@@ -1,0 +1,90 @@
+
+ module optel-oc-platform-mcu {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://platform/mcu";
+
+  prefix "oc-mcu";
+
+  import optel-oc-platform-types { prefix oc-platform-types; }
+
+
+  // meta
+  organization " working group";
+
+  contact
+    "  working group";
+
+  description
+    "This module defines data related to mcu components in
+    the optel-oc-platform model";
+ 
+  revision "2022-02-08" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+  // extension statements
+
+  // feature statements
+
+  // identity statements
+
+  // typedef statements
+	
+  // grouping statements
+
+  grouping mcu-config {
+    description
+      "Configuration data for mcu components";    
+    
+  }
+
+  grouping mcu-state {
+    description
+      "Operational state data for mcu components"; 
+                
+    leaf mcu-total-memory  {
+      //TODO: mandatory true;
+      type uint32;
+      units MB; 
+      description
+         "total memory for mcu components";
+    }     
+    
+    leaf mcu-available-memory  {
+      //TODO: mandatory true;
+      type uint32;
+      units MB;
+      description
+         "Available memory for mcu components";
+    }
+    leaf mcu-cpu-utilization  {
+      type uint64;
+      description
+          "The utilization of Current CPU";
+    }
+    
+    leaf active  {
+      //TODO: mandatory true;
+      type boolean;
+      description
+         "Active status for mcu components";
+    }
+  }
+
+  
+
+  // data definition statements
+
+  // augment statements
+
+  // rpc statements
+  
+  // notification statements
+
+}
+

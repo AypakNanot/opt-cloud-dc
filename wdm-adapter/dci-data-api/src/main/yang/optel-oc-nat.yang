@@ -1,0 +1,100 @@
+module optel-oc-nat {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://nat";
+  prefix "oc-nat";
+
+  // import some basic types
+  import optel-oc-inet-types { prefix oc-inet; }
+  import optel-oc-nat-types { prefix oc-nat-types; }
+  
+
+  // meta
+  organization "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+    www.openconfig.net";
+
+  description
+    "This module defines configuration and operational state data
+    for the nat.";
+
+  revision "2022-06-27" {
+    description
+    "Initial revision";
+    reference "1.0.0";
+  }
+
+  // grouping statements
+
+    grouping nat-config {
+        description
+            "Configuration data for device nat";
+            
+        leaf index {
+            type uint32;
+            description
+            "Unique ID for an nat rule";
+        }
+        
+        leaf src-ip {
+            mandatory true;
+            type oc-inet:ipv4-address;
+            description
+                "src ip";
+        }
+        
+        leaf src-port {
+            mandatory true;
+            type uint16;
+            description
+                "src port";
+        }
+		
+		leaf dst-ip {
+            mandatory true;
+            type oc-inet:ipv4-address;
+            description
+                "dst ip";
+        }
+        
+        leaf dst-port {
+            mandatory true;
+            type uint16;
+            description
+                "dst port";
+        }
+		
+        leaf protocol {
+            mandatory true;
+			type oc-nat-types:protocol-type;
+            description
+                "protocol can be UDP or TCP";
+        }
+
+    }
+
+    grouping nat-state {
+        description
+            "Operational state data for device nat";
+		uses nat-config;
+    }
+    
+    grouping nats-top {
+
+            description
+                "Top-level container for device nat";
+            list nat {
+                key "index";
+                description
+                    "List of nat, keyed by a unique id";
+                 uses nat-state;
+            }
+    }
+    
+
+
+}

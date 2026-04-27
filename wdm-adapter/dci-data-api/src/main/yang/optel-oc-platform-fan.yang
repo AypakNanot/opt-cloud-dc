@@ -1,0 +1,73 @@
+module optel-oc-platform-fan {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://platform/fan";
+
+  prefix "oc-fan";
+
+  import optel-oc-platform-types { prefix oc-platform-types; }
+
+
+  // meta
+  organization "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+    www.openconfig.net";
+
+  description
+    "This module defines data related to FAN components in the
+    OpenConfig platform model.";
+
+  revision "2022-02-08" {
+    description
+      "Initial revision";
+    reference "0.1.0";
+  }
+
+  // identity statements
+
+  // typedef statements
+
+  // grouping statements
+
+  grouping fan-config {
+    description
+      "Operational config data for fan components";
+
+    leaf fan-mode {
+      //TODO: mandatory true;
+      type oc-platform-types:fan-mode-type;
+      description
+        "Sets fan mode";
+    }
+    
+    leaf fan-speed {
+      //TODO: mandatory true;
+      type oc-platform-types:fan-speed-type;
+      description
+        "Sets fan speed";
+    }
+    leaf fan-speed-high-threshold{
+        type uint32;
+        units rpm;
+        description
+        "Sets fan speed high threshold";
+    }
+  }
+  
+  grouping fan-state {
+    description
+      "Operational state data for fan components";
+    
+  }
+
+
+  // data definition statements
+
+  // augment statements
+
+}
+

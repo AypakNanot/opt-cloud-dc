@@ -1,0 +1,78 @@
+/*
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
+
+import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerLike;
+
+public class ImmutableContainerNodeBuilder
+        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ContainerNode> {
+    protected ImmutableContainerNodeBuilder() {
+
+    }
+
+    protected ImmutableContainerNodeBuilder(final int sizeHint) {
+        super(sizeHint);
+    }
+
+    protected ImmutableContainerNodeBuilder(final ImmutableContainerNode node) {
+        super(node);
+    }
+
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create() {
+        return new ImmutableContainerNodeBuilder();
+    }
+
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(final int sizeHint) {
+        return new ImmutableContainerNodeBuilder(sizeHint);
+    }
+
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(final ContainerNode node) {
+        if (!(node instanceof ImmutableContainerNode)) {
+            throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
+        }
+        return new ImmutableContainerNodeBuilder((ImmutableContainerNode) node);
+    }
+
+    @Deprecated(since = "6.0.7", forRemoval = true)
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(final ContainerLike schema) {
+        return new SchemaAwareImmutableContainerNodeBuilder(schema);
+    }
+
+    @Deprecated(since = "6.0.7", forRemoval = true)
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ContainerNode> create(final ContainerLike schema,
+            final ContainerNode node) {
+        if (!(node instanceof ImmutableContainerNode)) {
+            throw new UnsupportedOperationException("Cannot initialize from class " + node.getClass());
+        }
+        return new SchemaAwareImmutableContainerNodeBuilder(schema, (ImmutableContainerNode)node);
+    }
+
+    @Override
+    public ContainerNode build() {
+        return new ImmutableContainerNode(getNodeIdentifier(), buildValue());
+    }
+
+    protected static final class ImmutableContainerNode
+            extends AbstractImmutableDataContainerNode<NodeIdentifier, ContainerNode> implements ContainerNode {
+        ImmutableContainerNode(final NodeIdentifier nodeIdentifier, final Map<PathArgument, Object> children) {
+            super(children, nodeIdentifier);
+        }
+
+        @Override
+        protected Class<ContainerNode> implementedType() {
+            return ContainerNode.class;
+        }
+    }
+}

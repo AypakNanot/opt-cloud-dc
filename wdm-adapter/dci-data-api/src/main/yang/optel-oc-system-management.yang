@@ -1,0 +1,131 @@
+module optel-oc-system-management {
+
+  yang-version "1";
+
+  // namespace
+  namespace "com:optel:dci:yang://system/management";
+
+  prefix "oc-sys-mgmt";
+
+  // import some basic types
+  import optel-oc-extensions { prefix oc-ext; }
+  import optel-oc-inet-types { prefix oc-inet; }
+
+  // meta
+  organization "OpenConfig working group";
+
+  contact
+    "OpenConfig working group
+    www.openconfig.net";
+
+  description
+    "This module defines configuration and operational state data
+    related to management services.";
+
+  revision "2022-02-08" {
+    description
+      "Initial public release";
+    reference "0.1.0";
+  }
+
+  // OpenConfig specific extensions for module metadata.
+  oc-ext:regexp-posix;
+  oc-ext:catalog-organization "openconfig";
+  oc-ext:origin "openconfig";
+
+  // identity statements
+
+  // typedef statements
+
+  // grouping statements
+
+  grouping system-grpc-server-config {
+    description
+      "Configuration data for the gRPC server";
+
+    leaf enable {
+      type boolean;
+      description
+        "Enables the gRPC server. The gRPC server is enabled by";
+    }
+
+    leaf port {
+      type oc-inet:port-number;
+      description
+        "TCP port on which the gRPC server should listen";
+    }
+
+    leaf transport-security {
+      type boolean;
+      description
+        "Use gRPC transport security (e.g., TLS or SSL). Enabled by default.
+         This allows disabling transport security for use cases where it is not
+         needed like lab testing.";
+    }
+
+    leaf certificate-id {
+      type string;
+      description
+        "The certificate ID to be used for authentication";
+    }
+
+    leaf metadata-authentication {
+      type boolean;
+      description
+        "Enables gRPC METADATA authentication. See
+	 https://github.com/openconfig/reference/blob/master/rpc/gnmi/gnmi-authentication.md#credentials-and-authentication
+	 for more info.";
+    }
+
+    leaf-list listen-addresses {
+      type union {
+        type oc-inet:ip-address;
+        type enumeration {
+          enum ANY {
+            description
+             "The gRPC daemon should listen on any address
+              bound to an interface on the system.";
+          }
+        }
+      }
+      description
+        "The IP addresses that the gRPC server should listen
+        on. This may be an IPv4 or an IPv6 address";
+    }
+  }
+
+  grouping system-grpc-server-top {
+    description
+      "Top-level grouping for system gRPC server data";
+
+      container grpc-server {
+        description
+          "Top-level container for the gRPC server";
+
+      container config {
+        description
+          "Configuration data for the system gRPC server";
+
+        uses system-grpc-server-config;
+      }
+
+      container state {
+        config false;
+
+        description
+          "Operational state data for the system gRPC server";
+
+        uses system-grpc-server-config;
+      }
+    }
+  }
+
+  // data definition statements
+
+  // augment statements
+
+  // rpc statements
+
+  // notification statements
+
+}

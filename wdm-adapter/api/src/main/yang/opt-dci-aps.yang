@@ -1,0 +1,53 @@
+module opt-dci-aps {
+    yang-version 1;
+    namespace "com:optel:device:opt:dci:aps";
+    prefix "opt-dci-aps";
+
+    revision "2020-02-10" {
+        description "DCI APS";
+    }
+    import base-types  {prefix "base-types";}
+    import optel-oc-transport-line-protection {prefix "oc-aps";}
+    import optel-oc-rpc {prefix "opt-oc-rpc";}
+    rpc get-aps-configs{
+        input {
+            uses base-types:ne-common-prop;
+            leaf-list name{
+                type string;
+            }
+        }
+
+        output{
+            list aps-configs{
+                key "name";
+                uses oc-aps:aps-config;
+                uses oc-aps:aps-state;
+                container port{
+                    uses oc-aps:aps-input-port-config;
+                    uses oc-aps:aps-input-port-state;
+                }
+            }
+
+        }
+    }
+
+    rpc set-aps-config{
+        input {
+            uses base-types:ne-common-prop;
+            uses oc-aps:aps-config;
+        }
+    }
+
+  //rpc switch olp
+  rpc switch-olp {
+    description
+       "Manual switch the aps to the desired port";
+      input {
+        uses base-types:ne-common-prop;
+        uses opt-oc-rpc:switch-olp-input-grouping;
+      }
+    }
+
+
+
+  }

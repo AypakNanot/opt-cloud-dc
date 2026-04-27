@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.optel.tmaster.dc</groupId>
+    <artifactId>api-parent</artifactId>
+    <version>9.00-SNAPSHOT</version>
+    <relativePath>../api-parent/pom.xml</relativePath>
+  </parent>
+  <groupId>com.optel.tmaster.dc</groupId>
+  <artifactId>impl-parent</artifactId>
+  <version>9.00-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>ODL :: ${project.groupId} :: ${project.artifactId}</name>
+  <licenses>
+    <license>
+      <name>Eclipse Public License v1.0</name>
+      <url>https://www.eclipse.org/legal/epl-v10.html</url>
+    </license>
+  </licenses>
+  <properties>
+    <odlparent.modernizer.enforce>false</odlparent.modernizer.enforce>
+    <odlparent.checkstyle.skip>true</odlparent.checkstyle.skip>
+    <netconf.version>4.0.9</netconf.version>
+    <odlparent.checkstyle.enforce>false</odlparent.checkstyle.enforce>
+    <odlparent.spotbugs.enforce>false</odlparent.spotbugs.enforce>
+    <opt-tools.version>1.0.2</opt-tools.version>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <propertyExpansion>checkstyle.violationSeverity=error</propertyExpansion>
+          <failsOnError>false</failsOnError>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

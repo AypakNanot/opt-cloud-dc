@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!--
+Copyright © 2017 optel and others. All rights reserved.
+
+This program and the accompanying materials are made available under the
+terms of the Eclipse Public License v1.0 which accompanies this distribution,
+and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:odl="http://opendaylight.org/xmlns/blueprint/v1.0.0"
+           odl:use-default-for-reference-types="true">
+
+    <reference id="dataBroker"
+               interface="org.opendaylight.mdsal.binding.api.DataBroker"
+               odl:type="default"/>
+
+    <bean id="provider"
+          class="com.optel.tmaster.dc.universal.impl.UniversalProvider"
+          init-method="init" destroy-method="close">
+        <argument ref="dataBroker"/>
+    </bean>
+
+    <bean id="cliImpl" class="com.optel.tmaster.dc.universal.impl.client.ClientManger"/>
+    <odl:rpc-implementation ref="cliImpl"/>
+
+    <bean id="routeOperationImpl" class="com.optel.tmaster.dc.universal.impl.RouteOperationImpl">
+    </bean>
+    <odl:rpc-implementation ref="routeOperationImpl"/>
+
+</blueprint>
