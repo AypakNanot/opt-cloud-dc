@@ -32,11 +32,25 @@ import org.slf4j.LoggerFactory;
  * @param <T> DataObject type
  */
 @Beta
-public abstract class DataObjectStreamer<T extends DataObject> implements DataObjectSerializerImplementation {
+public abstract class DataObjectStreamer <T extends DataObject> implements DataObjectSerializerImplementation {
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectStreamer.class);
+
+    private static final ThreadLocal<Boolean> EMIT_ALL_FIELDS = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
     protected DataObjectStreamer() {
 
+    }
+
+    public static void setEmitAllFields(final boolean emit) {
+        EMIT_ALL_FIELDS.set(emit);
+    }
+
+    public static boolean isEmitAllFields() {
+        return EMIT_ALL_FIELDS.get();
+    }
+
+    public static void clearEmitAllFields() {
+        EMIT_ALL_FIELDS.remove();
     }
 
     protected static final void streamAnydata(final BindingStreamEventWriter writer, final String localName,
@@ -77,14 +91,20 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
             }
 
             writer.endNode();
+        } else if (isEmitAllFields()) {
+            writer.startChoiceNode(choiceClass, BindingStreamEventWriter.UNKNOWN_SIZE);
+            writer.endNode();
         }
     }
 
-    protected static final <C extends DataObject> void streamContainer(final DataObjectStreamer<C> childStreamer,
-            final DataObjectSerializerRegistry registry, final BindingStreamEventWriter writer, final C value)
-                    throws IOException {
+    protected static final <C extends DataObject> void streamContainer(final Class<C> childClass,
+            final DataObjectStreamer<C> childStreamer, final DataObjectSerializerRegistry registry,
+            final BindingStreamEventWriter writer, final C value) throws IOException {
         if (value != null && tryCache(writer, value)) {
             childStreamer.serialize(registry, value, writer);
+        } else if (value == null && isEmitAllFields()) {
+            writer.startContainerNode(childClass, BindingStreamEventWriter.UNKNOWN_SIZE);
+            writer.endNode();
         }
     }
 
@@ -92,6 +112,8 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
             final Object value) throws IOException {
         if (value != null) {
             writer.leafNode(localName, value);
+        } else if (isEmitAllFields()) {
+            writer.leafNode(localName, null);
         }
     }
 
@@ -100,6 +122,9 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
         if (value != null) {
             writer.startLeafSet(localName, value.size());
             commonStreamLeafset(writer, value);
+        } else if (isEmitAllFields()) {
+            writer.startLeafSet(localName, 0);
+            writer.endNode();
         }
     }
 
@@ -108,6 +133,9 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
         if (value != null) {
             writer.startOrderedLeafSet(localName, value.size());
             commonStreamLeafset(writer, value);
+        } else if (isEmitAllFields()) {
+            writer.startOrderedLeafSet(localName, 0);
+            writer.endNode();
         }
     }
 
@@ -118,6 +146,9 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
         if (size != 0) {
             writer.startUnkeyedList(childClass, size);
             commonStreamList(registry, writer, childStreamer, value);
+        } else if (isEmitAllFields()) {
+            writer.startUnkeyedList(childClass, 0);
+            writer.endNode();
         }
     }
 
@@ -128,6 +159,9 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
         if (size != 0) {
             writer.startMapNode(childClass, size);
             commonStreamList(registry, writer, childStreamer, value.values());
+        } else if (isEmitAllFields()) {
+            writer.startMapNode(childClass, 0);
+            writer.endNode();
         }
     }
 
@@ -138,6 +172,9 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
         if (size != 0) {
             writer.startOrderedMapNode(childClass, size);
             commonStreamList(registry, writer, childStreamer, value);
+        } else if (isEmitAllFields()) {
+            writer.startOrderedMapNode(childClass, 0);
+            writer.endNode();
         }
     }
 

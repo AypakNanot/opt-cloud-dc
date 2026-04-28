@@ -12,6 +12,7 @@ import com.optel.tmaster.dc.general.base.exception.device.DeviceCommicationExcep
 import com.optel.tmaster.dc.general.base.exception.device.DeviceOperaFailException;
 import com.optel.tmaster.dc.general.base.util.MdsalUtil;
 import org.opendaylight.mdsal.binding.api.*;
+import org.opendaylight.mdsal.binding.dom.codec.impl.DataObjectStreamer;
 import org.opendaylight.mdsal.common.api.LogicalDatastoreType;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.netconf.notification._1._0.rev080714.CreateSubscriptionInputBuilder;
 import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.netconf.notification._1._0.rev080714.NotificationsService;
@@ -267,6 +268,38 @@ public class MountTools {
             deleteFromConfig(netconfId, resourcePath);
         } finally {
             System.setProperty(FILTER_LOCK_RPC, "false");
+        }
+    }
+
+    /**
+     * 修改设备config库配置（全字段输出，null值的leaf字段也会生成XML标签）
+     *
+     * @param netconfId    设备netconfId
+     * @param resourcePath 操作路径
+     * @param resource     修改数据
+     */
+    public static <D extends DataObject> void doMergeToConfigWithAllFields(String netconfId, InstanceIdentifier<D> resourcePath, D resource) {
+        try {
+            DataObjectStreamer.setEmitAllFields(true);
+            doMergeToConfig(netconfId, resourcePath, resource);
+        } finally {
+            DataObjectStreamer.clearEmitAllFields();
+        }
+    }
+
+    /**
+     * 修改设备config配置（全字段输出，null值的leaf字段也会生成XML标签）
+     *
+     * @param netconfId    设备netconfId
+     * @param resourcePath 修改数据路径
+     * @param resource     修改数据
+     */
+    public static <D extends DataObject> void putConfigWithAllFields(String netconfId, InstanceIdentifier<D> resourcePath, D resource) {
+        try {
+            DataObjectStreamer.setEmitAllFields(true);
+            putConfig(netconfId, resourcePath, resource);
+        } finally {
+            DataObjectStreamer.clearEmitAllFields();
         }
     }
 }

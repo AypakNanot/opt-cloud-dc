@@ -122,9 +122,17 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
 
     @Override
     public void leafNode(final String localName, final Object value) throws IOException {
-        final Entry<NodeIdentifier, Object> dom = serializeLeaf(localName, value);
-        delegate.startLeafNode(dom.getKey());
-        delegate.scalarValue(dom.getValue());
+        checkArgument(current() instanceof DataObjectCodecContext);
+        DataObjectCodecContext<?,?> currentCasted = (DataObjectCodecContext<?,?>) current();
+        ValueNodeCodecContext leafContext = currentCasted.getLeafChild(localName);
+        NodeIdentifier domArg = leafContext.getDomPathArgument();
+        emitSchema(leafContext.getSchema());
+
+        delegate.startLeafNode(domArg);
+        if (value != null) {
+            Object domValue = leafContext.getValueCodec().serialize(value);
+            delegate.scalarValue(domValue);
+        }
         delegate.endNode();
     }
 

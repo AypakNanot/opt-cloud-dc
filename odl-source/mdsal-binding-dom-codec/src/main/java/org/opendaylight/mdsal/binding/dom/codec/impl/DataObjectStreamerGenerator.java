@@ -131,8 +131,8 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         "streamChoice", Class.class, DataObjectSerializerRegistry.class, BindingStreamEventWriter.class,
         DataContainer.class);
     private static final StackManipulation STREAM_CONTAINER = invokeMethod(DataObjectStreamer.class,
-        "streamContainer", DataObjectStreamer.class, DataObjectSerializerRegistry.class, BindingStreamEventWriter.class,
-        DataObject.class);
+        "streamContainer", Class.class, DataObjectStreamer.class, DataObjectSerializerRegistry.class,
+        BindingStreamEventWriter.class, DataObject.class);
     private static final StackManipulation STREAM_LEAF = invokeMethod(DataObjectStreamer.class,
         "streamLeaf", BindingStreamEventWriter.class, String.class, Object.class);
     private static final StackManipulation STREAM_LEAF_LIST = invokeMethod(DataObjectStreamer.class,
@@ -304,8 +304,9 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         final Class<? extends DataObject> itemClass = getter.getReturnType().asSubclass(DataObject.class);
         final DataObjectStreamer<?> streamer = registry.getDataObjectSerializer(itemClass);
 
-        // streamContainer(FooStreamer.INSTANCE, reg, stream, obj.getFoo())
+        // streamContainer(Foo.class, FooStreamer.INSTANCE, reg, stream, obj.getFoo())
         return new ChildStream(streamer,
+            ClassConstant.of(Sort.describe(itemClass).asErasure()),
             streamerInstance(streamer),
             REG,
             STREAM,
