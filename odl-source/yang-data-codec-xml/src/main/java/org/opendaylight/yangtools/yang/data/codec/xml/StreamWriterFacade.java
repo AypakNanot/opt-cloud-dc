@@ -111,8 +111,10 @@ final class StreamWriterFacade extends ValueWriter {
 
     void writeEndElement() throws XMLStreamException {
         if (openElement != null) {
-            writer.writeEmptyElement(XMLConstants.DEFAULT_NS_PREFIX, openElement.getLocalName(),
-                openElement.getNamespace().toString());
+            // Use <tag></tag> instead of <tag/> to ensure compatibility with NETCONF devices
+            // that do not accept self-closing empty element tags.
+            flushElement();
+            writer.writeEndElement();
             openElement = null;
         } else {
             writer.writeEndElement();
