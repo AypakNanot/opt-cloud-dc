@@ -25,7 +25,6 @@ import java.util.Set;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.method.MethodDescription;
-import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDefinition.Sort;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeDescription.Generic;
@@ -38,6 +37,7 @@ import net.bytebuddy.implementation.bytecode.Duplication;
 import net.bytebuddy.implementation.bytecode.StackManipulation;
 import net.bytebuddy.implementation.bytecode.TypeCreation;
 import net.bytebuddy.implementation.bytecode.constant.ClassConstant;
+import net.bytebuddy.implementation.bytecode.constant.DefaultValue;
 import net.bytebuddy.implementation.bytecode.constant.IntegerConstant;
 import net.bytebuddy.implementation.bytecode.constant.TextConstant;
 import net.bytebuddy.implementation.bytecode.member.MethodInvocation;
@@ -241,7 +241,12 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             .defineMethod("serialize", BB_VOID, PUB_FINAL)
                 .withParameters(BB_DOSR, BB_DATAOBJECT, BB_BESV)
                 .throwing(BB_IOX)
-            .intercept(new SerializeImplementation(bindingInterface, startEvent, children)).make(), depBuilder.build());
+            .intercept(new SerializeImplementation(bindingInterface, startEvent, children))
+            .defineMethod("serializeEmpty", BB_VOID, PUB_FINAL)
+                .withParameters(BB_DOSR, BB_BESV)
+                .throwing(BB_IOX)
+            .intercept(new EmptySerializeImplementation(children))
+            .make(), depBuilder.build());
 
         LOG.trace("Definition of {} done", fqcn);
         return result;
@@ -275,9 +280,11 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             return choiceChildStream(getter);
         }
         if (childSchema instanceof AnydataSchemaNode) {
+            // anydata with null value is skipped, no empty tag needed
             return qnameChildStream(STREAM_ANYDATA, getter, childSchema);
         }
         if (childSchema instanceof AnyxmlSchemaNode) {
+            // anyxml with null value is skipped, no empty tag needed
             return qnameChildStream(STREAM_ANYXML, getter, childSchema);
         }
         if (childSchema instanceof LeafListSchemaNode) {
@@ -290,22 +297,30 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
     }
 
     private static ChildStream choiceChildStream(final Method getter) {
-        // streamChoice(Foo.class, reg, stream, obj.getFoo())
-        return new ChildStream(
+        // Normal: streamChoice(Foo.class, reg, stream, obj.getFoo())
+        final StackManipulation normal = new StackManipulation.Compound(
             ClassConstant.of(Sort.describe(getter.getReturnType()).asErasure()),
             REG,
             STREAM,
             OBJ,
             invokeMethod(getter),
             STREAM_CHOICE);
+        // Empty: streamChoice(Foo.class, reg, stream, null)
+        final EmptyChildFactory emptyFactory = (reg, stream) -> new StackManipulation.Compound(
+            ClassConstant.of(Sort.describe(getter.getReturnType()).asErasure()),
+            reg,
+            stream,
+            DefaultValue.REFERENCE,
+            STREAM_CHOICE);
+        return new ChildStream(normal, emptyFactory);
     }
 
     private ChildStream containerChildStream(final Method getter) {
         final Class<? extends DataObject> itemClass = getter.getReturnType().asSubclass(DataObject.class);
         final DataObjectStreamer<?> streamer = registry.getDataObjectSerializer(itemClass);
 
-        // streamContainer(Foo.class, FooStreamer.INSTANCE, reg, stream, obj.getFoo())
-        return new ChildStream(streamer,
+        // Normal: streamContainer(Foo.class, FooStreamer.INSTANCE, reg, stream, obj.getFoo())
+        final StackManipulation normal = new StackManipulation.Compound(
             ClassConstant.of(Sort.describe(itemClass).asErasure()),
             streamerInstance(streamer),
             REG,
@@ -313,6 +328,16 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             OBJ,
             invokeMethod(getter),
             STREAM_CONTAINER);
+        // Empty: streamContainer(Foo.class, FooStreamer.INSTANCE, reg, stream, null)
+        final StackManipulation streamerInst = streamerInstance(streamer);
+        final EmptyChildFactory emptyFactory = (reg, stream) -> new StackManipulation.Compound(
+            ClassConstant.of(Sort.describe(itemClass).asErasure()),
+            streamerInst,
+            reg,
+            stream,
+            DefaultValue.REFERENCE,
+            STREAM_CONTAINER);
+        return new ChildStream(streamer, normal, emptyFactory);
     }
 
     private ChildStream listChildStream(final Method getter, final Class<? extends DataObject> itemClass,
@@ -325,8 +350,8 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             method = childSchema.isUserOrdered() ? STREAM_ORDERED_MAP : STREAM_MAP;
         }
 
-        // <METHOD>(Foo.class, FooStreamer.INSTACE, reg, stream, obj.getFoo())
-        return new ChildStream(streamer,
+        // Normal: <METHOD>(Foo.class, FooStreamer.INSTANCE, reg, stream, obj.getFoo())
+        final StackManipulation normal = new StackManipulation.Compound(
             ClassConstant.of(Sort.describe(itemClass).asErasure()),
             streamerInstance(streamer),
             REG,
@@ -334,17 +359,39 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
             OBJ,
             invokeMethod(getter),
             method);
+        // Empty: <METHOD>(Foo.class, FooStreamer.INSTANCE, reg, stream, null)
+        final StackManipulation streamerInst = streamerInstance(streamer);
+        final EmptyChildFactory emptyFactory = (reg, stream) -> new StackManipulation.Compound(
+            ClassConstant.of(Sort.describe(itemClass).asErasure()),
+            streamerInst,
+            reg,
+            stream,
+            DefaultValue.REFERENCE,
+            method);
+        return new ChildStream(streamer, normal, emptyFactory);
     }
 
     private static ChildStream qnameChildStream(final StackManipulation method, final Method getter,
             final DataSchemaNode schema) {
-        // <METHOD>(stream, "foo", obj.getFoo())
-        return new ChildStream(
+        // Normal: <METHOD>(stream, "foo", obj.getFoo())
+        final StackManipulation normal = new StackManipulation.Compound(
             STREAM,
             new TextConstant(schema.getQName().getLocalName()),
             OBJ,
             invokeMethod(getter),
             method);
+        // For anydata/anyxml: null values are always skipped, so empty stream is no-op
+        if (method == STREAM_ANYDATA || method == STREAM_ANYXML) {
+            return new ChildStream(normal);
+        }
+        // Empty: <METHOD>(stream, "foo", null)
+        final TextConstant nameConst = new TextConstant(schema.getQName().getLocalName());
+        final EmptyChildFactory emptyFactory = (reg, stream) -> new StackManipulation.Compound(
+            stream,
+            nameConst,
+            DefaultValue.REFERENCE,
+            method);
+        return new ChildStream(normal, emptyFactory);
     }
 
     private static StackManipulation streamerInstance(final DataObjectStreamer<?> streamer) {
@@ -434,22 +481,84 @@ final class DataObjectStreamerGenerator<T extends DataObjectStreamer<?>> impleme
         }
     }
 
+    // Implementation of serializeEmpty(DataObjectSerializerRegistry, BindingStreamEventWriter)
+    // Emits empty tags for all child fields (no startEvent/endNode - caller handles those).
+    // Method args: reg=1, writer=2 (no obj)
+    private static final class EmptySerializeImplementation implements Implementation {
+        private final List<ChildStream> children;
+
+        // Local variable access for serializeEmpty(reg=1, writer=2)
+        private static final StackManipulation EMPTY_REG = MethodVariableAccess.REFERENCE.loadFrom(1);
+        private static final StackManipulation EMPTY_STREAM = MethodVariableAccess.REFERENCE.loadFrom(2);
+
+        EmptySerializeImplementation(final List<ChildStream> children) {
+            this.children = requireNonNull(children);
+        }
+
+        @Override
+        public InstrumentedType prepare(final InstrumentedType instrumentedType) {
+            return instrumentedType;
+        }
+
+        @Override
+        public ByteCodeAppender appender(final Target implementationTarget) {
+            final List<StackManipulation> manipulations = new ArrayList<>(children.size() + 2);
+
+            // emit empty children using EMPTY_REG and EMPTY_STREAM
+            for (ChildStream child : children) {
+                manipulations.add(child.getEmptyManipulation(EMPTY_REG, EMPTY_STREAM));
+            }
+
+            // return
+            manipulations.add(MethodReturn.VOID);
+
+            return new ByteCodeAppender.Simple(manipulations);
+        }
+    }
+
     private static final class ChildStream extends StackManipulation.Compound {
         private final @Nullable Class<?> dependency;
+        // Factory to build empty-serialization StackManipulation with correct variable indices
+        private final EmptyChildFactory emptyFactory;
 
         ChildStream(final StackManipulation... stackManipulation) {
             super(stackManipulation);
             dependency = null;
+            emptyFactory = null;
         }
 
         ChildStream(final DataObjectStreamer<?> streamer, final StackManipulation... stackManipulation) {
             super(stackManipulation);
             dependency = streamer.getClass();
+            emptyFactory = null;
+        }
+
+        ChildStream(final DataObjectStreamer<?> streamer, final StackManipulation normalStream,
+                final EmptyChildFactory emptyFactory) {
+            super(normalStream);
+            dependency = streamer != null ? streamer.getClass() : null;
+            this.emptyFactory = emptyFactory;
+        }
+
+        ChildStream(final StackManipulation normalStream, final EmptyChildFactory emptyFactory) {
+            super(normalStream);
+            dependency = null;
+            this.emptyFactory = emptyFactory;
         }
 
         @Nullable Class<?> getDependency() {
             return dependency;
         }
+
+        StackManipulation getEmptyManipulation(final StackManipulation reg, final StackManipulation stream) {
+            return emptyFactory != null ? emptyFactory.build(reg, stream) : StackManipulation.Trivial.INSTANCE;
+        }
+    }
+
+    // Factory interface to build empty-serialization StackManipulation with given variable references
+    @FunctionalInterface
+    private interface EmptyChildFactory {
+        StackManipulation build(StackManipulation reg, StackManipulation stream);
     }
 
     private enum InitializeInstanceField implements ByteCodeAppender {

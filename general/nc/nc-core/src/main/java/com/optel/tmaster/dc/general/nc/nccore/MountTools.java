@@ -8,6 +8,7 @@
 package com.optel.tmaster.dc.general.nc.nccore;
 
 import com.optel.tmaster.dc.common.OptelDcException;
+import com.optel.tmaster.dc.general.base.action.YangMode;
 import com.optel.tmaster.dc.general.base.exception.device.DeviceCommicationException;
 import com.optel.tmaster.dc.general.base.exception.device.DeviceOperaFailException;
 import com.optel.tmaster.dc.general.base.util.MdsalUtil;
@@ -29,8 +30,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +50,69 @@ public class MountTools {
     private static final String FILTER_LOCK_RPC = "filter_lock_rpc";
     private static final Logger LOG = LoggerFactory.getLogger(MountTools.class);
     private static MountPointService mountPointService;
+
+    /**
+     * 需要全字段输出的YangMode集合，配置后对集合中的设备类型自动启用全字段输出
+     */
+    private static final Set<YangMode> EMIT_ALL_FIELDS_MODES = Collections.synchronizedSet(new HashSet<>());
+
+    /**
+     * 需要递归空字段输出的YangMode集合，配置后对集合中的设备类型自动启用递归空字段输出
+     * 当容器对象为null时，递归输出该容器下所有子字段的空标签
+     */
+    private static final Set<YangMode> EMIT_RECURSIVE_FIELDS_MODES = Collections.synchronizedSet(new HashSet<>());
+
+    /**
+     * 添加需要全字段输出的YangMode
+     */
+    public static void addEmitAllFieldsMode(YangMode yangMode) {
+        EMIT_ALL_FIELDS_MODES.add(yangMode);
+    }
+
+    /**
+     * 移除全字段输出的YangMode
+     */
+    public static void removeEmitAllFieldsMode(YangMode yangMode) {
+        EMIT_ALL_FIELDS_MODES.remove(yangMode);
+    }
+
+    /**
+     * 添加需要递归空字段输出的YangMode
+     * 注意：递归空字段输出依赖于全字段输出，此方法会自动将YangMode也添加到全字段输出集合中
+     */
+    public static void addEmitRecursiveFieldsMode(YangMode yangMode) {
+        EMIT_ALL_FIELDS_MODES.add(yangMode);
+        EMIT_RECURSIVE_FIELDS_MODES.add(yangMode);
+    }
+
+    /**
+     * 移除递归空字段输出的YangMode
+     */
+    public static void removeEmitRecursiveFieldsMode(YangMode yangMode) {
+        EMIT_RECURSIVE_FIELDS_MODES.remove(yangMode);
+    }
+
+    /**
+     * 判断该设备是否需要全字段输出
+     */
+    private static boolean needEmitAllFields(String netconfId) {
+        if (EMIT_ALL_FIELDS_MODES.isEmpty()) {
+            return false;
+        }
+        YangMode yangMode = NcTools.getYangMode(netconfId);
+        return yangMode != null && EMIT_ALL_FIELDS_MODES.contains(yangMode);
+    }
+
+    /**
+     * 判断该设备是否需要递归空字段输出
+     */
+    private static boolean needEmitRecursiveFields(String netconfId) {
+        if (EMIT_RECURSIVE_FIELDS_MODES.isEmpty()) {
+            return false;
+        }
+        YangMode yangMode = NcTools.getYangMode(netconfId);
+        return yangMode != null && EMIT_RECURSIVE_FIELDS_MODES.contains(yangMode);
+    }
 
     public static void init(final MountPointService mountService) {
         MountTools.mountPointService = mountService;
@@ -193,11 +260,26 @@ public class MountTools {
      * @param resource     修改数据
      */
     public static <D extends DataObject> void doMergeToConfig(String netconfId, InstanceIdentifier<D> resourcePath, D resource) {
-        DataBroker nodeDataBroker = getNodeDataBroker(netconfId);
+        boolean emitAll = needEmitAllFields(netconfId);
+        boolean emitRecursive = emitAll && needEmitRecursiveFields(netconfId);
         try {
+            if (emitAll) {
+                DataObjectStreamer.setEmitAllFields(true);
+            }
+            if (emitRecursive) {
+                DataObjectStreamer.setEmitRecursiveFields(true);
+            }
+            DataBroker nodeDataBroker = getNodeDataBroker(netconfId);
             MdsalUtil.doMerge(nodeDataBroker, resourcePath, resource, LogicalDatastoreType.CONFIGURATION);
         } catch (OptelDcException e) {
             throw buildDeviceFailException(e);
+        } finally {
+            if (emitRecursive) {
+                DataObjectStreamer.clearEmitRecursiveFields();
+            }
+            if (emitAll) {
+                DataObjectStreamer.clearEmitAllFields();
+            }
         }
     }
 
@@ -209,11 +291,26 @@ public class MountTools {
      * @param resource     修改数据
      */
     public static <D extends DataObject> void putConfig(String netconfId, InstanceIdentifier<D> resourcePath, D resource) {
-        DataBroker nodeDataBroker = getNodeDataBroker(netconfId);
+        boolean emitAll = needEmitAllFields(netconfId);
+        boolean emitRecursive = emitAll && needEmitRecursiveFields(netconfId);
         try {
+            if (emitAll) {
+                DataObjectStreamer.setEmitAllFields(true);
+            }
+            if (emitRecursive) {
+                DataObjectStreamer.setEmitRecursiveFields(true);
+            }
+            DataBroker nodeDataBroker = getNodeDataBroker(netconfId);
             MdsalUtil.put(nodeDataBroker, resourcePath, resource, LogicalDatastoreType.CONFIGURATION);
         } catch (OptelDcException e) {
             throw buildDeviceFailException(e);
+        } finally {
+            if (emitRecursive) {
+                DataObjectStreamer.clearEmitRecursiveFields();
+            }
+            if (emitAll) {
+                DataObjectStreamer.clearEmitAllFields();
+            }
         }
     }
 
@@ -268,38 +365,6 @@ public class MountTools {
             deleteFromConfig(netconfId, resourcePath);
         } finally {
             System.setProperty(FILTER_LOCK_RPC, "false");
-        }
-    }
-
-    /**
-     * 修改设备config库配置（全字段输出，null值的leaf字段也会生成XML标签）
-     *
-     * @param netconfId    设备netconfId
-     * @param resourcePath 操作路径
-     * @param resource     修改数据
-     */
-    public static <D extends DataObject> void doMergeToConfigWithAllFields(String netconfId, InstanceIdentifier<D> resourcePath, D resource) {
-        try {
-            DataObjectStreamer.setEmitAllFields(true);
-            doMergeToConfig(netconfId, resourcePath, resource);
-        } finally {
-            DataObjectStreamer.clearEmitAllFields();
-        }
-    }
-
-    /**
-     * 修改设备config配置（全字段输出，null值的leaf字段也会生成XML标签）
-     *
-     * @param netconfId    设备netconfId
-     * @param resourcePath 修改数据路径
-     * @param resource     修改数据
-     */
-    public static <D extends DataObject> void putConfigWithAllFields(String netconfId, InstanceIdentifier<D> resourcePath, D resource) {
-        try {
-            DataObjectStreamer.setEmitAllFields(true);
-            putConfig(netconfId, resourcePath, resource);
-        } finally {
-            DataObjectStreamer.clearEmitAllFields();
         }
     }
 }
