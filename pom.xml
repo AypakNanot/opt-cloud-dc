@@ -32,16 +32,17 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
 
   <modules>
     <module>parent</module>
-    <!-- common在odl-source之前, 在source中用到了 OptelDCException 来组装错误信息-->
+    <!-- common在odl-infra之前, 在infra中用到了 OptelDCException 来组装错误信息-->
     <module>common</module>
-    <module>odl-source</module>
-	<module>general</module>
-    <module>universal-adapter</module>
-    <module>otn-adapter</module>
-    <module>wdm-adapter</module>
-    <module>snmp</module>
-    <module>dc-package</module>
-
+    <module>odl-infra</module>
+    <module>yang-models</module>
+    <module>nc-core</module>
+    <module>general</module>
+    <module>adapter/universal</module>
+    <module>adapter/otn</module>
+    <module>adapter/dci</module>
+    <module>adapter/snmp</module>
+    <module>distribution</module>
   </modules>
 
   <!-- DO NOT install or deploy the repo root pom as it's only needed to initiate a build -->

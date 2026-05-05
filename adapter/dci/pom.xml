@@ -12,7 +12,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
     <groupId>com.optel.tmaster.dc</groupId>
     <artifactId>repo-parent</artifactId>
     <version>${changelist}</version>
-    <relativePath>../parent/repo-parent</relativePath>
+    <relativePath>../../parent/repo-parent</relativePath>
   </parent>
 
   <groupId>com.optel.tmaster.dc.dci</groupId>

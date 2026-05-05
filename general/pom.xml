@@ -20,14 +20,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
   <packaging>pom</packaging>
 
   <modules>
-    <module>otn-yang-cmcc</module>
-    <module>otn-yang-ctc</module>
-    <module>openconfig-yang-ctc</module>
-	<module>base-util</module>
-    <module>controller-service</module>
-    <module>nc/nc-core</module>
-	<module>features</module>
-    <module>dci-yang-cmcc</module>
+    <module>features</module>
   </modules>
 
 </project>

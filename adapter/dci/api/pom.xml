@@ -15,7 +15,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
         <groupId>com.optel.tmaster.dc</groupId>
         <artifactId>api-parent</artifactId>
         <version>${changelist}</version>
-        <relativePath>../../parent/api-parent</relativePath>
+        <relativePath>../../../parent/api-parent</relativePath>
     </parent>
 
     <groupId>com.optel.tmaster.dc.dci</groupId>

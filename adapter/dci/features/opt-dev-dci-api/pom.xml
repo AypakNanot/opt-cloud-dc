@@ -15,7 +15,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
     <groupId>com.optel.tmaster.dc</groupId>
     <artifactId>feature-parent</artifactId>
     <version>${changelist}</version>
-    <relativePath>../../../parent/feature-parent</relativePath>
+    <relativePath>../../../../parent/feature-parent</relativePath>
   </parent>
 
   <groupId>com.optel.tmaster.dc.dci</groupId>
