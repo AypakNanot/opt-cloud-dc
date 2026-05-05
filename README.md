@@ -69,7 +69,7 @@ opt-cloud-dc
 │   ├── impl-otn-cmcc/       # 中国移动 OTN 适配
 │   ├── impl-otn-ctc/        # 中国电信 OTN 适配
 │   └── features/            # Feature 定义
-├── wdm-adapter/             # WDM/DCI 设备适配器
+├── adapter/dci/            # WDM/DCI 设备适配器
 │   ├── api/                 # DCI YANG API (ne/alarm/edfa/otdr/port...)
 │   ├── dci-data-api/        # DCI 数据 YANG 模型 (OpenConfig 映射)
 │   ├── impl-dci-base/       # DCI 基础实现
@@ -129,7 +129,7 @@ IDeviceService (接口)
 | `dci-yang-cmcc` | `openconfig-*` / `miniotn-*` | CMCC DCI OpenConfig 模型 |
 | `openconfig-yang-ctc` | `openconfig-*` | CTC OpenConfig 模型 |
 | `otn-adapter/api` | `opt-otn-*` | OTN 北向 RPC API |
-| `wdm-adapter/api` | `opt-dci-*` | DCI 北向 RPC API |
+| `adapter/dci/api` | `opt-dci-*` | DCI 北向 RPC API |
 | `universal-adapter/api` | `base-types` / `cli` | 通用类型与 CLI 命令 |
 | `snmp/api` | `snmp-config` / `dev-toptel` | SNMP 配置与设备管理 |
 
