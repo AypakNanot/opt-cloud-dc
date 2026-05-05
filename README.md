@@ -41,47 +41,49 @@ opt-cloud-dc
 │   ├── feature-parent/      # Karaf Feature 父 POM
 │   ├── feature-repo-parent/ # Feature 仓库父 POM
 │   └── karaf-parent/        # Karaf 打包父 POM
-├── common/                  # 公共工具与异常定义
-├── odl-source/              # OpenDaylight 定制源码
+├── common/                  # 公共组件
+│   ├── core/                # 核心工具类与异常定义
+│   ├── base-util/           # 基础工具类
+│   └── controller-service/  # 控制器核心服务
+├── odl-infra/               # OpenDaylight 定制源码
 │   ├── yang-binding/        # YANG Java 绑定生成
 │   ├── mdsal-binding-*/     # MDSAL 绑定适配器与编解码
 │   ├── sal-netconf-connector/ # NetConf 连接器
 │   ├── netconf-topology-impl/ # NetConf 拓扑实现
 │   ├── shaded-sshd/         # SSH 守护进程
 │   └── yang-parser-impl/    # YANG 解析器
-├── general/                 # 核心框架与基础服务
-│   ├── base-util/           # 基础工具类
-│   ├── controller-service/  # 控制器核心服务
-│   ├── nc/                  # NetConf 核心封装
-│   ├── otn-yang-cmcc/       # CMCC OTN YANG 模型
-│   ├── otn-yang-ctc/        # CTC OTN YANG 模型
-│   ├── dci-yang-cmcc/       # CMCC DCI YANG 模型
-│   ├── openconfig-yang-ctc/ # CTC OpenConfig YANG 模型
+├── yang-models/             # YANG 数据模型
+│   ├── otn-cmcc/            # CMCC OTN YANG 模型
+│   ├── otn-ctc/             # CTC OTN YANG 模型
+│   ├── openconfig-ctc/      # CTC OpenConfig YANG 模型
+│   └── dci-cmcc/            # CMCC DCI YANG 模型
+├── nc-core/                 # NetConf 核心封装
+├── general/                 # 核心框架
 │   └── features/            # 通用 Feature 定义
-├── universal-adapter/       # 通用设备适配器
-│   ├── api/                 # 通用 YANG API (base-types, cli, route)
-│   ├── impl/                # 通用适配实现
-│   └── features/            # Feature 定义
-├── otn-adapter/             # OTN 设备适配器
-│   ├── api/                 # OTN YANG API (device/alarm/clock/connection...)
-│   ├── data-api/            # OTN 数据 YANG 模型
-│   ├── impl-base/           # OTN 基础实现
-│   ├── impl-otn-cmcc/       # 中国移动 OTN 适配
-│   ├── impl-otn-ctc/        # 中国电信 OTN 适配
-│   └── features/            # Feature 定义
-├── adapter/dci/            # WDM/DCI 设备适配器
-│   ├── api/                 # DCI YANG API (ne/alarm/edfa/otdr/port...)
-│   ├── dci-data-api/        # DCI 数据 YANG 模型 (OpenConfig 映射)
-│   ├── impl-dci-base/       # DCI 基础实现
-│   ├── impl-dci-cmcc/       # 中国移动 DCI 适配
-│   ├── impl-dci-ctc/        # 中国电信 DCI 适配
-│   └── features/            # Feature 定义
-├── snmp/                    # SNMP 设备管理
-│   ├── api/                 # SNMP YANG API
-│   ├── impl/                # SNMP 实现 (设备查询/心跳/注册)
-│   └── features/            # Feature 定义
-├── error/                   # 错误码与 YANG 错误模型
-└── dc-package/              # Karaf 发行包打包
+├── adapter/                 # 设备适配层
+│   ├── universal/           # 通用设备适配器
+│   │   ├── api/             # 通用 YANG API (base-types, cli, route)
+│   │   ├── impl/            # 通用适配实现
+│   │   └── features/        # Feature 定义
+│   ├── otn/                 # OTN 设备适配器
+│   │   ├── api/             # OTN YANG API (device/alarm/clock/connection...)
+│   │   ├── data-api/        # OTN 数据 YANG 模型
+│   │   ├── impl-base/       # OTN 基础实现
+│   │   ├── impl-otn-cmcc/   # 中国移动 OTN 适配
+│   │   ├── impl-otn-ctc/    # 中国电信 OTN 适配
+│   │   └── features/        # Feature 定义
+│   ├── dci/                 # WDM/DCI 设备适配器
+│   │   ├── api/             # DCI YANG API (ne/alarm/edfa/otdr/port...)
+│   │   ├── dci-data-api/    # DCI 数据 YANG 模型 (OpenConfig 映射)
+│   │   ├── impl-dci-base/   # DCI 基础实现
+│   │   ├── impl-dci-cmcc/   # 中国移动 DCI 适配
+│   │   ├── impl-dci-ctc/    # 中国电信 DCI 适配
+│   │   └── features/        # Feature 定义
+│   └── snmp/                # SNMP 设备管理
+│       ├── api/             # SNMP YANG API
+│       ├── impl/            # SNMP 实现 (设备查询/心跳/注册)
+│       └── features/        # Feature 定义
+└── distribution/            # Karaf 发行包打包
     ├── dc-artifacts/        # 依赖制品仓库
     ├── features/            # 聚合 Feature 仓库
     └── karaf/               # Karaf Assembly 构建
@@ -93,10 +95,10 @@ opt-cloud-dc
 ┌─────────────────────────────────────────────────────────┐
 │                  RESTConf / NETCONF  API                 │  北向接口
 ├─────────────────────────────────────────────────────────┤
-│  OTN Adapter  │  WDM/DCI Adapter  │  Universal Adapter  │  设备适配层
-├───────────────┴───────────────────┴─────────────────────┤
-│       CMCC 实现  │  CTC 实现  │  Base 实现               │  厂商/运营商实现
-├─────────────────────────────────────────────────────────┤
+│     OTN Adapter  │  DCI Adapter  │  Universal Adapter   │  设备适配层
+├──────────────────────────────┬──────────────────────────┤
+│    CMCC 实现  │  CTC 实现    │    Base 实现              │  厂商/运营商实现
+├──────────────────────────────┴──────────────────────────┤
 │              General 核心框架 (BaseDeviceProvider)        │  框架层
 ├─────────────────────────────────────────────────────────┤
 │           OpenDaylight 定制源码 (MDSAL/NetConf/SSH)      │  ODL 扩展层
@@ -124,14 +126,14 @@ IDeviceService (接口)
 
 | 模块 | 命名空间前缀 | 用途 |
 |------|-------------|------|
-| `otn-yang-cmcc` | `acc-*` | CMCC OTN 设备模型 (告警/时钟/连接/保护组...) |
-| `otn-yang-ctc` | `acc-*` | CTC OTN 设备模型 (含扩展字段与 RPC) |
-| `dci-yang-cmcc` | `openconfig-*` / `miniotn-*` | CMCC DCI OpenConfig 模型 |
-| `openconfig-yang-ctc` | `openconfig-*` | CTC OpenConfig 模型 |
-| `otn-adapter/api` | `opt-otn-*` | OTN 北向 RPC API |
+| `yang-models/otn-cmcc` | `acc-*` | CMCC OTN 设备模型 (告警/时钟/连接/保护组...) |
+| `yang-models/otn-ctc` | `acc-*` | CTC OTN 设备模型 (含扩展字段与 RPC) |
+| `yang-models/dci-cmcc` | `openconfig-*` / `miniotn-*` | CMCC DCI OpenConfig 模型 |
+| `yang-models/openconfig-ctc` | `openconfig-*` | CTC OpenConfig 模型 |
+| `adapter/otn/api` | `opt-otn-*` | OTN 北向 RPC API |
 | `adapter/dci/api` | `opt-dci-*` | DCI 北向 RPC API |
-| `universal-adapter/api` | `base-types` / `cli` | 通用类型与 CLI 命令 |
-| `snmp/api` | `snmp-config` / `dev-toptel` | SNMP 配置与设备管理 |
+| `adapter/universal/api` | `base-types` / `cli` | 通用类型与 CLI 命令 |
+| `adapter/snmp/api` | `snmp-config` / `dev-toptel` | SNMP 配置与设备管理 |
 
 ## 构建与部署
 
@@ -154,7 +156,7 @@ mvn clean install -Dmaven.test.skip=true
 
 ```bash
 # 进入 Karaf 发行目录
-cd dc-package/karaf/target/assembly/bin
+cd distribution/karaf/target/assembly/bin
 
 # 启动 Karaf
 ./karaf
@@ -214,7 +216,7 @@ log:tail
 2. 在 `impl-base` 实现基础逻辑
 3. 在 `impl-xxx-cmcc` / `impl-xxx-ctc` 实现运营商特化逻辑
 4. 在 `features` 模块注册 Karaf Feature
-5. 在 `dc-package` 聚合 Feature 仓库
+5. 在 `distribution` 聚合 Feature 仓库
 
 ## 版本
 
