@@ -50,7 +50,8 @@ public final class EnumStringCodec extends TypeDefinitionAwareCodec<String, Enum
 //                values.keySet());
         //dc兼容处理 取不到枚举时 取Unknown ，取不到Unknown 取最后一个
         if(result==null){
-            LOG.error("Invalid value "+product+" for enum type. Allowed values are: "+values.keySet());
+            LOG.error("Invalid value '{}' for enum type '{}'. Allowed values are: {}", product,
+                getTypeDefinition().map(Object::toString).orElse("unknown"), values.keySet());
             UnmodifiableIterator<String> iterator = values.values().iterator();
             while (iterator.hasNext()){
                 result=iterator.next();
@@ -58,7 +59,12 @@ public final class EnumStringCodec extends TypeDefinitionAwareCodec<String, Enum
                     break;
                 }
             }
-
+            if (result == null) {
+                iterator = values.values().iterator();
+                if (iterator.hasNext()) {
+                    result = iterator.next();
+                }
+            }
         }
         return result;
     }

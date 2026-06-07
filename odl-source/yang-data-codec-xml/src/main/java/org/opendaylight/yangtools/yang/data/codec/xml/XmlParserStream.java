@@ -733,7 +733,12 @@ public final class XmlParserStream implements Closeable, Flushable {
             return new DOMSourceAnydata(new DOMSource(((Document) value).getDocumentElement()));
         } else if (node instanceof TypedDataSchemaNode typedNode) {
             checkArgument(value instanceof String);
-            return codecs.codecFor(typedNode, stack).parseValue(namespaceCtx, (String) value);
+            try {
+                return codecs.codecFor(typedNode, stack).parseValue(namespaceCtx, (String) value);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException(
+                    "Error parsing value '" + value + "' for field " + node.getQName() + ": " + e.getMessage(), e);
+            }
         } else {
             throw new IllegalStateException("Unhandled schema " + node);
         }

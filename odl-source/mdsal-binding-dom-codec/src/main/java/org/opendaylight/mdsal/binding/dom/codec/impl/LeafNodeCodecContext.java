@@ -65,7 +65,16 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
 
     @Override
     protected Object deserializeObject(final NormalizedNode normalizedNode) {
-        return normalizedNode != null ? getValueCodec().deserialize(normalizedNode.body()) : null;
+        if (normalizedNode == null) {
+            return null;
+        }
+        try {
+            return getValueCodec().deserialize(normalizedNode.body());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                "Error deserializing " + getGetterName() + " (" + getSchema().getQName()
+                + "): " + e.getMessage(), e);
+        }
     }
 
     private static Object createDefaultObject(final LeafSchemaNode schema, final ValueCodec<Object, Object> codec,

@@ -89,7 +89,8 @@ final class EnumerationCodec extends SchemaUnawareCodec {
     protected Enum<?> deserializeImpl(final Object input) {
         checkArgument(input instanceof String, "Input %s is not a String", input);
         final Enum<?> value = nameToEnum.get(input);
-        checkArgument(value != null, "Invalid enumeration value %s. Valid values are %s", input, nameToEnum.keySet());
+        checkArgument(value != null, "Invalid enumeration value '%s'. Valid values for %s are %s",
+            input, enumClass.getSimpleName(), nameToEnum.keySet());
         return value;
     }
 

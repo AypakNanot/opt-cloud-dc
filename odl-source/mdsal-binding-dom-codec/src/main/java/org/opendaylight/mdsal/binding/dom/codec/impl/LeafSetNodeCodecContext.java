@@ -34,7 +34,13 @@ final class LeafSetNodeCodecContext extends ValueNodeCodecContext.WithCodec {
             final var codec = getValueCodec();
             final var builder = builderFactory.apply(domValues.size());
             for (var valueNode : domValues) {
-                builder.add(codec.deserialize(valueNode.body()));
+                try {
+                    builder.add(codec.deserialize(valueNode.body()));
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException(
+                        "Error deserializing entry '" + valueNode.body() + "' of " + getGetterName()
+                        + " (" + getSchema().getQName() + "): " + e.getMessage(), e);
+                }
             }
             return builder.build();
         }

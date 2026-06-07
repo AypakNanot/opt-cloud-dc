@@ -8,11 +8,8 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.base.Throwables;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -25,7 +22,6 @@ final class ValueContext {
     private final MethodHandle getter;
     private final Class<?> identifier;
     private final String getterName;
-    private static final Logger LOG = LoggerFactory.getLogger(ValueContext.class);
 
     ValueContext(final Class<?> identifier, final ValueNodeCodecContext leaf) {
         getterName = leaf.getGetterName();
@@ -56,12 +52,12 @@ final class ValueContext {
 
     Object deserialize(final Object obj) {
         checkArgument(obj != null, "Attempted to serialize null for %s component of %s", getterName, identifier);
-//        return verifyNotNull(codec.deserialize(obj), "Codec for %s of %s returned null for %s", getterName, identifier,
-//            obj); dc兼容处理 取消枚举空判断
-        final Object result=codec.deserialize(obj);
-        if(result==null){
-            LOG.error("Codec for "+getterName+" of %s returned null for"+identifier);
+        try {
+            return codec.deserialize(obj);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(
+                "Error deserializing " + getterName + " of " + identifier.getSimpleName()
+                + ": " + e.getMessage(), e);
         }
-        return codec.deserialize(obj);
     }
 }
