@@ -1,0 +1,8 @@
+{
+  "name": "device-mapping",
+  "sourceType": "com.optel.tmaster.dc.general.base.transform.fixture.TestFixtures.DeviceSource",
+  "targetBuilder": "com.optel.tmaster.dc.general.base.transform.fixture.TestFixtures$DeviceTargetBuilder",
+  "autoFields": ["name", "status", "description", "location", "enabled", "portCount"],
+  "renameFields": {},
+  "skipFields": ["priority"]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "rename-mapping",
+  "sourceType": "com.optel.tmaster.dc.general.base.transform.fixture.TestFixtures.RenameSource",
+  "targetBuilder": "com.optel.tmaster.dc.general.base.transform.fixture.TestFixtures$DeviceTargetBuilder",
+  "autoFields": [],
+  "renameFields": {
+    "adminStatus": "adminState",
+    "operStatus": "operState"
+  },
+  "skipFields": []
+}
